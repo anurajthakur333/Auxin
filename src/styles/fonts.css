@@ -1,0 +1,112 @@
+/* AuxinNumbers Font */
+@font-face {
+  font-family: 'AuxinNumbers';
+  /* format('truetype') - Tells browsers this is a TrueType font file (.ttf) */
+  src: url('../assets/fonts/AuxinNumbers.ttf') format('truetype');
+}
+/* Aeonik Regular */
+@font-face {
+    font-family: 'Aeonik';
+    src: url('../assets/fonts/Aeonik/AeonikTRIAL-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  /* Aeonik Bold */
+  @font-face {
+    font-family: 'Aeonik';
+    src: url('../assets/fonts/Aeonik/AeonikTRIAL-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  /* Aeonik Light */
+  @font-face {
+    font-family: 'Aeonik';
+    src: url('../assets/fonts/Aeonik/AeonikTRIAL-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  /* Aeonik Regular Italic */
+  @font-face {
+    font-family: 'Aeonik';
+    src: url('../assets/fonts/Aeonik/AeonikTRIAL-RegularItalic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  /* Aeonik Bold Italic */
+  @font-face {
+    font-family: 'Aeonik';
+    src: url('../assets/fonts/Aeonik/AeonikTRIAL-BoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  /* Aeonik Light Italic */
+  @font-face {
+    font-family: 'Aeonik';
+    src: url('../assets/fonts/Aeonik/AeonikTRIAL-LightItalic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  /* === Aeonik Font Utility Classes === */
+
+/* Base Aeonik font */
+.aeonik-font {
+  font-family: 'Aeonik';
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Aeonik weights */
+.aeonik-light {
+  font-family: 'Aeonik';
+  font-weight: 300;
+  font-style: normal;
+}
+
+.aeonik-regular {
+  font-family: 'Aeonik';
+  font-weight: 400;
+  font-style: normal;
+}
+
+.aeonik-bold {
+  font-family: 'Aeonik';
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Aeonik italics */
+.aeonik-light-italic {
+  font-family: 'Aeonik';
+  font-weight: 300;
+  font-style: italic;
+}
+
+.aeonik-italic {
+  font-family: 'Aeonik';
+  font-weight: 400;
+  font-style: italic;
+}
+
+.aeonik-bold-italic {
+  font-family: 'Aeonik';
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* === AuxinNumbers Font Utility Class === */
+.auxin-numbers {
+  font-family: 'AuxinNumbers';
+  /* Optionally, only apply to numbers using a selector or span */
+}
