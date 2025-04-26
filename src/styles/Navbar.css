@@ -1,5 +1,3 @@
 .navbar {
   background-color: rgba(139, 139, 139, 0.2);
-  position: fixed;  /* Makes navbar stay at top while scrolling */
-  z-index: 1000;  /* Ensures navbar stays above other content */
 }
