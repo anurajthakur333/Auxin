@@ -4,27 +4,13 @@ import "./styles/fonts.css";
 function App() {
   return (
     
-    <div className="bg-black min-vh-100">
+<div className="bg-black min-vh-100">
     <Navbar />
 
-    <header className="container-fluid">
-<div
-  className="aeonik-font text-white"
-  style={{
-    fontSize: "10vw",      // Responsive large font size
-    lineHeight: 1,
-    width: "1000px",       // Match the SVG width
-    height: "1000px",      // Match the SVG height
-    display: "flex",
-    alignItems: "left",
-    justifyContent: "left",
-    margin: "0px",      // Center horizontally
-    overflow: "hidden",    // Prevent overflow
-    whiteSpace: "nowrap"   // Prevent wrapping
-  }}
->
-  Auxin Media
-</div>  
+<header className="container-fluid p-0 m-0 align-items-center">
+  <div className="aeonik-font text-white" style={{ fontSize: "10vw", lineHeight: 0.72, letterSpacing: "-0.05em"}}>
+    Auxin Media
+  </div>
 </header>
 
 

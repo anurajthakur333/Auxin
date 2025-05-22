@@ -110,3 +110,21 @@
   font-family: 'AuxinNumbers';
   /* Optionally, only apply to numbers using a selector or span */
 }
+/* Font smoothing */
+.aeonik-font,
+.aeonik-light,
+.aeonik-regular,
+.aeonik-bold,
+.aeonik-light-italic,
+.aeonik-italic,
+.aeonik-bold-italic {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: inherit;
+  font-style: normal;
+}
+
+/* Global rendering optimization */
+html {
+  text-rendering: optimizeLegibility;
+}
