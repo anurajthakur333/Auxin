@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="bg-black min-vh-100">
     <Navbar />
-    <main className="container py-5 mt-5">
+    <main className="container py-5">
       <div className="row">
         <div className="col-12 text-center">
           <h1 className="display-4 fw-bold text-white">Welcome to Auxin</h1>

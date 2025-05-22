@@ -5,7 +5,7 @@ import "../styles/Navbar.css";
 const Navbar = () => {
 
   return (
-  <nav className="navbar navbar-expand-lg py-1">
+  <nav className="navbar navbar-expand-lg py-1 fixed-bottom">
       <div className="container">
           <div className="navbar-nav mx-auto align-items-center gap-5">
             <a className="nav-link text-white aeonik-regular" href="#experience">Experience</a>
