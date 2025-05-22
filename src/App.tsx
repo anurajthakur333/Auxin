@@ -3,13 +3,35 @@ import "./styles/fonts.css";
 
 function App() {
   return (
+    
     <div className="bg-black min-vh-100">
     <Navbar />
-    <main className="container py-5">
+
+    <header className="container-fluid">
+<div
+  className="aeonik-font text-white"
+  style={{
+    fontSize: "10vw",      // Responsive large font size
+    lineHeight: 1,
+    width: "1000px",       // Match the SVG width
+    height: "1000px",      // Match the SVG height
+    display: "flex",
+    alignItems: "left",
+    justifyContent: "left",
+    margin: "0px",      // Center horizontally
+    overflow: "hidden",    // Prevent overflow
+    whiteSpace: "nowrap"   // Prevent wrapping
+  }}
+>
+  Auxin Media
+</div>  
+</header>
+
+
+    <main className="container">
       <div className="row">
         <div className="col-12 text-center">
-          <h1 className="display-4 fw-bold text-white">Welcome to Auxin</h1>
-          
+   
           <div style={{ maxWidth: '400px', margin: '20px auto' }}>
             <div 
               className="tenor-gif-embed" 
