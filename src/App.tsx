@@ -18,7 +18,7 @@ function App() {
       <div className="row">
         <div className="col-12 text-center">
    
-          <div style={{ maxWidth: '400px', margin: '20px auto' }}>
+          {/* <div style={{ maxWidth: '400px', margin: '20px auto' }}>
             <div 
               className="tenor-gif-embed" 
               data-postid="17569464" 
@@ -32,9 +32,9 @@ function App() {
               from 
               <a href="https://tenor.com/search/modiji-gifs">Modiji GIFs</a>
             </div>
-          </div>
+          </div> */}
   
-          <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+          {/* <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
 
 
@@ -77,7 +77,7 @@ function App() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
 
 
