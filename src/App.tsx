@@ -1,19 +1,44 @@
 import Navbar from './components/Navbar'
 import "./styles/fonts.css";
 import "./styles/Main.css";
-
+// import ScrambleText from "./components/ScrambleText";
 function App() {
   return (
     
 <div className="bg-black min-vh-100">
     <Navbar />
 
-<header className="container-fluid p-0 m-0 align-items-center">
-  <div className="aeonik-font text-white" style={{ fontSize: "10vw", lineHeight: 0.72, letterSpacing: "-0.05em"}}>
+
+<div className='container-fluid d-flex align-items-center justify-content-between'>
+
+    <img src="public/auxin.svg" className="mt-3 ms-3" alt="Auxin Logo" width="85" height="35"/>
+
+  <div>
+<h1 className="text-white text-end mb-0 aeonik-regular"  style={{ fontSize: "5vw"}}>
+  Adapting your business<br />
+  with AI <span style={{ color: "#39FF14" }}>power</span> - Like<br />
+  never before
+</h1>
+
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+{/* <header className="container-fluid p-0 m-0">
+  <div className="aeonik-font text-white" style={{ fontSize: "20vw", lineHeight: 0.72, letterSpacing: "-0.05em"}}>
     Auxin Media
   </div>
-</header>
-
+</header> */}
+{/* <ScrambleText text="Hover Over Me!"/> */}
 
     <main className="container">
       <div className="row">
