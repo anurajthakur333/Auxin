@@ -1,0 +1,17 @@
+.scramble-text {
+    font-family: monospace;
+    font-size: 48px;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .char {
+    display: inline-block;
+    transition: color 0.2s;
+  }
+  
+  .green {
+    color: #00ff00;
+  }
+  
