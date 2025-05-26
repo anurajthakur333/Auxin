@@ -1,84 +1,170 @@
-import { useRef, useState } from "react";
-import "../styles/ScrambleText.css";
+import React, { useRef, useState, useEffect, ElementType } from "react";
 
-// All characters for scrambling
-const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
-
-// Define props with optional duration/frameInterval
 interface ScrambleTextProps {
-  text: string;
-  duration?: number;       // Total duration of animation in milliseconds
-  frameInterval?: number;  // Time per frame in ms
+  children: React.ReactNode;
+  duration?: number; // total animation duration in ms
+  frameInterval?: number; // ms between frames
+  trigger?: "hover" | "load";
+  className?: string;
+  as?: ElementType;
+  style?: React.CSSProperties;
+
+  letters?: string;
+  scrambleColorClass?: string;
+  scrambleColor?: string;
+  easing?: (t: number) => number;
+
+  onAnimationEnd?: () => void;
 }
 
+const defaultLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+
+// SUPER smooth easeInOutSine for silky effect
+const easeInOutSine = (t: number) =>
+  -(Math.cos(Math.PI * t) - 1) / 2;
+
 export default function ScrambleText({
-  text,
-  duration = 1000,
-  frameInterval = 10,
+  children,
+  duration = 2000,       // longer duration for smoothness
+  frameInterval = 16,    // ~60fps
+  trigger = "hover",
+  className = "",
+  as: Tag = "span",
+  style = {},
+
+  letters = defaultLetters,
+  scrambleColorClass = "green",
+  scrambleColor = "#00ff99",
+  easing = easeInOutSine,
+
+  onAnimationEnd,
 }: ScrambleTextProps) {
-  const [displayText, setDisplayText] = useState<string>(text);
-  const originalText = useRef<string>(text);
-  const intervalRef = useRef<number | null>(null);
-  const [isGreen, setIsGreen] = useState<boolean>(false);
-  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const containerRef = useRef<HTMLElement | null>(null);
+  const spansRef = useRef<HTMLElement[]>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isScrambled, setIsScrambled] = useState(false);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    spansRef.current = [];
+
+    const wrapTextNodes = (node: ChildNode) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent || "";
+        const fragment = document.createDocumentFragment();
+
+        for (let char of text) {
+          const span = document.createElement("span");
+          span.className = "char";
+          span.textContent = char;
+          fragment.appendChild(span);
+          spansRef.current.push(span);
+        }
+
+        node.parentNode!.replaceChild(fragment, node);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        Array.from(node.childNodes).forEach(wrapTextNodes);
+      }
+    };
+
+    Array.from(containerRef.current.childNodes).forEach(wrapTextNodes);
+  }, [children]);
 
   const scramble = (toOriginal: boolean) => {
-    if (isAnimating) return;
-
+    if (!containerRef.current || isAnimating) return;
     setIsAnimating(true);
-    let frame = 0;
+
     const totalFrames = Math.floor(duration / frameInterval);
+    let frame = 0;
 
-    if (intervalRef.current !== null) {
-      clearInterval(intervalRef.current);
-    }
+    const originalChars = spansRef.current.map((span) => span.textContent || " ");
 
-    intervalRef.current = window.setInterval(() => {
-      const progress = frame / totalFrames;
-      let output = "";
+    const interval = window.setInterval(() => {
+      const linearProgress = frame / totalFrames;
+      const progress = easing(linearProgress);
 
-      for (let i = 0; i < originalText.current.length; i++) {
-        if (i < progress * originalText.current.length) {
-          // Show actual character
-          output += `<span class="char ${toOriginal ? "" : "green"}">${originalText.current[i]}</span>`;
+      spansRef.current.forEach((span, i) => {
+        if (i < progress * spansRef.current.length) {
+          span.textContent = originalChars[i];
+          if (!toOriginal) {
+            span.classList.add(scrambleColorClass);
+            if (!scrambleColorClass) {
+              span.style.color = scrambleColor;
+            }
+          } else {
+            span.classList.remove(scrambleColorClass);
+            if (!scrambleColorClass) {
+              span.style.color = "";
+            }
+          }
         } else {
-          // Show random scrambled character
           const randomChar = letters[Math.floor(Math.random() * letters.length)];
-          const colorClass = Math.random() > 0.5 ? "green" : "";
-          output += `<span class="char ${colorClass}">${randomChar}</span>`;
-        }
-      }
+          span.textContent = randomChar;
 
-      setDisplayText(output);
+          if (Math.random() > 0.5) {
+            span.classList.add(scrambleColorClass);
+            if (!scrambleColorClass) {
+              span.style.color = scrambleColor;
+            }
+          } else {
+            span.classList.remove(scrambleColorClass);
+            if (!scrambleColorClass) {
+              span.style.color = "";
+            }
+          }
+        }
+      });
 
       if (frame >= totalFrames) {
-        clearInterval(intervalRef.current!);
-
-        if (toOriginal) {
-          setDisplayText(originalText.current);
-          setIsGreen(false);
-        } else {
-          const finalGreenText = originalText.current
-            .split("")
-            .map((char) => `<span class="char green">${char}</span>`)
-            .join("");
-          setDisplayText(finalGreenText);
-          setIsGreen(true);
-        }
-
+        clearInterval(interval);
+        spansRef.current.forEach((span, i) => {
+          span.textContent = originalChars[i];
+          if (!toOriginal) {
+            span.classList.add(scrambleColorClass);
+            if (!scrambleColorClass) {
+              span.style.color = scrambleColor;
+            }
+          } else {
+            span.classList.remove(scrambleColorClass);
+            if (!scrambleColorClass) {
+              span.style.color = "";
+            }
+          }
+        });
+        setIsScrambled(!toOriginal);
         setIsAnimating(false);
+
+        if (onAnimationEnd) onAnimationEnd();
       }
 
       frame++;
     }, frameInterval);
   };
 
+  useEffect(() => {
+    if (trigger === "load") {
+      scramble(false);
+    }
+  }, [trigger]);
+
+  const handleHover = {
+    onMouseEnter: () => !isAnimating && !isScrambled && scramble(false),
+    onMouseLeave: () => !isAnimating && isScrambled && scramble(true),
+  };
+
   return (
-    <h1
-      className="scramble-text"
-      onMouseEnter={() => !isAnimating && !isGreen && scramble(false)}
-      onMouseLeave={() => !isAnimating && isGreen && scramble(true)}
-      dangerouslySetInnerHTML={{ __html: displayText }}
-    />
+    <Tag
+      ref={containerRef as any}
+      className={`scramble-text ${className}`}
+      style={{
+        ...style,
+        userSelect: "none",
+        cursor: trigger === "hover" ? "pointer" : "default",
+      }}
+      {...(trigger === "hover" ? handleHover : {})}
+    >
+      {children}
+    </Tag>
   );
 }
