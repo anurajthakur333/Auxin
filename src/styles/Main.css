@@ -8,3 +8,8 @@ html::-webkit-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .green-text {
+    color :#39FF14;
+  }
+

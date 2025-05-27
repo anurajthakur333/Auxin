@@ -1,17 +1,12 @@
-.scramble-text {
-    font-family: monospace;
-    font-size: 48px;
-    color: white;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
-  
-  .char {
-    display: inline-block;
-    transition: color 0.2s;
-  }
-  
-  .green {
-    color: #00ff00;
-  }
-  
+.scramble-text .char {
+  display: inline;
+  white-space: pre;
+  transition: color 0.25s ease, filter 0.25s ease;
+  /* You can add subtle glow */
+  /* filter: drop-shadow(0 0 3px #00ff99); */
+}
+
+.scramble-text .char.green {
+  color: #00ff99;
+  transition: color 0.25s ease;
+}
