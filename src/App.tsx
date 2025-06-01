@@ -1,130 +1,61 @@
-import Navbar from './components/Navbar'
-import ScrambleText from './components/Scramble'
+// src/App.tsx
+
+import Navbar from "./components/Navbar";
+import ScrambleText from "./components/Scramble";
 import "./styles/fonts.css";
 import "./styles/Main.css";
 
-function App() {
+export default function App() {
   return (
-    <div className="bg-black min-vh-100">
+    <div className="bg-black min-vh-100" style={{ minHeight: "100vh" }}>
       <Navbar />
-      <div className="container-fluid">
-        <div className="d-flex justify-content-between align-items-start">
-          {/* Logo in left */}
-          <img 
-            className="mt-3" 
-            src="auxin.svg" 
-            alt="Auxin Logo" 
-            width="85" 
-            height="35"
-          />
 
-          <div>
-            <div className="text-white p-6 rounded-lg text-end">
-              <div>
-                <div 
-                  className="text-2xl cursor-pointer aeonik-regular" 
-                  style={{ 
-                    fontSize: "78.45px",
-                    letterSpacing: "-3px", 
-                    lineHeight: "70px", 
-                    fontWeight: 300 
-                  }}
-                >
-                  <ScrambleText
-                    trigger="load"
-                    duration={1500}
-                    speed={30}
-                  >
-                    Adapting your business
-                  </ScrambleText>
-                  <br /> 
-                  <ScrambleText
-                    trigger="load"
-                    duration={1500}
-                    speed={30}
-                  >
-                    with AI 
-                  </ScrambleText>
-                  <ScrambleText
-                    trigger="load"
-                    duration={1500}
-                    speed={30}
-                    scrambleColor="#39FF14"
-                    className="green-text"
-                  >
-                     power
-                  </ScrambleText>
-                  <ScrambleText
-                    trigger="load"
-                    duration={1500}
-                    speed={30}
-                  >
-                     - Like
-                  </ScrambleText>
-                  <br />
-                  <ScrambleText
-                    trigger="load"
-                    duration={1500}
-                    speed={30}
-                  >
-                    never before
-                  </ScrambleText>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div 
-          className="position-absolute bottom-0 ms-3 aeonik-light fw-light" 
-          style={{paddingBottom:"70px", fontWeight:"300"}}
-        >
-          <p 
-            className="text-white m-0" 
-            style={{ 
-              fontSize: '48.49px', 
-              letterSpacing: '-2px', 
-              lineHeight: '50px' 
+      {/* Fullscreen centered container */}
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+        <div className="text-center px-4">
+          <div
+            className="aeonik-regular text-white"
+            style={{
+              fontSize: "clamp(32px, 6vw, 77px)",
+              letterSpacing: "-4px",
+              lineHeight: "70px",
+              fontWeight: 400,
+              maxWidth: "800px",
+              margin: "0 auto",
             }}
           >
             <ScrambleText
               trigger="visible"
-              duration={1200}
-              speed={40}
+              duration={1500}
+              fps={80}
+              delay={0}
+              style={{ color: "white" }}
             >
-              Crafted with 
-            </ScrambleText>
-            <ScrambleText
-              trigger="visible"
-              duration={1200}
-              speed={40}
-              scrambleColor="#39FF14"
-              className="green-text"
-            >
-              INTENT.
+              REDEFINING BUSINESS
             </ScrambleText>
             <br />
             <ScrambleText
               trigger="visible"
-              duration={1200}
-              speed={40}
+              duration={1500}
+              fps={80}
+              delay={600}
+              style={{ color: "white" }}
             >
-              Optimized with 
+              WITH THE INTELLIGENCE
             </ScrambleText>
+            <br />
             <ScrambleText
               trigger="visible"
-              duration={1200}
-              speed={40}
-              scrambleColor="#39FF14"
-              className="green-text"
+              duration={1500}
+              fps={80}
+              delay={1200}
+              style={{ color: "white" }}
             >
-              PURPOSE.
+              YOU CAN TRUST.
             </ScrambleText>
-          </p>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-export default App;
