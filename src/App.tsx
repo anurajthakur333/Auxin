@@ -26,8 +26,9 @@ export default function App() {
           >
             <ScrambleText
               trigger="visible"
-              duration={1500}
-              fps={80}
+              speed="fast"
+              revealSpeed={0.7}
+              scrambleIntensity={8}
               delay={0}
               style={{ color: "white" }}
             >
@@ -36,9 +37,10 @@ export default function App() {
             <br />
             <ScrambleText
               trigger="visible"
-              duration={1500}
-              fps={80}
-              delay={600}
+              speed="medium"
+              revealSpeed={0.5}
+              scrambleIntensity={6}
+              delay={800}
               style={{ color: "white" }}
             >
               WITH THE INTELLIGENCE
@@ -46,8 +48,9 @@ export default function App() {
             <br />
             <ScrambleText
               trigger="visible"
-              duration={1500}
-              fps={80}
+              speed={2}  // Custom speed: 2x faster than default
+              revealSpeed={0.8}
+              scrambleIntensity={10}
               delay={1200}
               style={{ color: "white" }}
             >

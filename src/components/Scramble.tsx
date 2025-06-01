@@ -20,6 +20,9 @@ interface ScrambleTextProps {
   glowEffect?: boolean;
   waveEffect?: boolean;
   onComplete?: () => void;
+  speed?: "ultra-slow" | "slow" | "medium" | "fast" | "ultra-fast" | number;
+  revealSpeed?: number;
+  scrambleIntensity?: number;
 }
 
 const DEFAULT_LETTERS =
@@ -28,6 +31,15 @@ const DEFAULT_LETTERS =
 const DEFAULT_GLOW_BLUR = 8;         // px
 const DEFAULT_WAVE_AMPLITUDE = 3;     // px
 const DEFAULT_WAVE_FREQ = 0.2;        // radians per frame
+
+// Speed presets
+const SPEED_PRESETS = {
+  "ultra-slow": { duration: 4000, fps: 30 },
+  "slow": { duration: 2500, fps: 45 },
+  "medium": { duration: 1500, fps: 60 },
+  "fast": { duration: 800, fps: 80 },
+  "ultra-fast": { duration: 400, fps: 100 },
+};
 
 export default function ScrambleText({
   children,
@@ -42,7 +54,26 @@ export default function ScrambleText({
   glowEffect = false,
   waveEffect = false,
   onComplete,
+  speed,
+  revealSpeed = 0.6,
+  scrambleIntensity = 5,
 }: ScrambleTextProps) {
+  // Apply speed presets if provided
+  let finalDuration = duration;
+  let finalFps = fps;
+  
+  if (speed !== undefined) {
+    if (typeof speed === "string" && speed in SPEED_PRESETS) {
+      const preset = SPEED_PRESETS[speed];
+      finalDuration = preset.duration;
+      finalFps = preset.fps;
+    } else if (typeof speed === "number") {
+      // Custom speed multiplier (1 = normal, 2 = 2x faster, 0.5 = 2x slower)
+      finalDuration = duration / speed;
+      finalFps = Math.min(fps * speed, 120); // Cap at 120fps
+    }
+  }
+
   // Replace all characters with spaces so nothing shows pre-scramble:
   const blank = children.replace(/./g, " ");
   const [displayText, setDisplayText] = useState(blank);
@@ -54,8 +85,8 @@ export default function ScrambleText({
   const hasStartedRef = useRef(false);
   const charSpansRef = useRef<HTMLSpanElement[]>([]);
 
-  const frameInterval = 1000 / fps;
-  const totalFrames = Math.ceil(duration / frameInterval);
+  const frameInterval = 1000 / finalFps;
+  const totalFrames = Math.ceil(finalDuration / frameInterval);
 
   // Wrap each character (including spaces) in its own <span>, preserving whitespace
   useEffect(() => {
@@ -154,8 +185,8 @@ export default function ScrambleText({
           return;
         }
 
-        // Reveal threshold now 0.6 so long text finishes faster
-        const revealThreshold = ((idx + 1) / originalChars.length) * 0.6;
+        // Use configurable reveal speed
+        const revealThreshold = ((idx + 1) / originalChars.length) * revealSpeed;
         if (progress >= revealThreshold) {
           workArray[idx] = orig;
           span.textContent = orig;
@@ -168,11 +199,15 @@ export default function ScrambleText({
             if (glowSpan) glowSpan.style.opacity = "0";
           }
         } else {
-          const randomChar = letters.charAt(
-            Math.floor(Math.random() * letters.length)
-          );
-          workArray[idx] = randomChar;
-          span.textContent = randomChar;
+          // Use scramble intensity to control character change frequency
+          const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
+          if (shouldScramble || workArray[idx] === "") {
+            const randomChar = letters.charAt(
+              Math.floor(Math.random() * letters.length)
+            );
+            workArray[idx] = randomChar;
+            span.textContent = randomChar;
+          }
           span.style.color = scrambleColor;
 
           if (glowEffect) {
@@ -182,7 +217,7 @@ export default function ScrambleText({
             if (glowSpan) {
               glowSpan.style.opacity = `${Math.random() * 0.5 + 0.3}`; 
               glowSpan.style.color = scrambleColor;
-              glowSpan.textContent = randomChar;
+              glowSpan.textContent = workArray[idx];
             }
           }
 
