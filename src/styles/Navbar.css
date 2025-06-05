@@ -4,3 +4,26 @@
   font-size: 20px;
   backdrop-filter: blur(10px);
 }
+
+.navbar-item {
+  transition: color 0.3s ease;
+  position: relative;
+  color: white !important;
+}
+
+.navbar-item span {
+  color: white !important;
+  display: inline-block;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.navbar-item:hover span {
+  color: #39FF14 !important;
+}
+
+/* Ensure stable positioning during scramble */
+.char-wrapper,
+.char {
+  display: inline-block;
+}
