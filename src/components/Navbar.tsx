@@ -1,6 +1,6 @@
 import "../styles/fonts.css";
 import "../styles/Navbar.css";
-// import ScrambleText from "./Scramble";
+import ScrambleText from "./Scramble";
 
 const Navbar = () => {
   return (
@@ -18,11 +18,41 @@ const Navbar = () => {
 >
   {/* Left side links */}
   <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
-    <a href="#experience" className="nav-link text-white aeonik-light">
-      EXPERIENCE
+    <a href="#experience" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
+      <ScrambleText 
+        trigger="hover" 
+        scrambleColor="#39FF14" 
+        speed="fast"
+        waveEffect={false}
+        style={{ 
+          color: 'white', 
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          minWidth: '120px',
+          textAlign: 'center'
+        }}
+        delay={0}
+      >
+        EXPERIENCE
+      </ScrambleText>
     </a>
-    <a href="#articles" className="nav-link text-white aeonik-light">
-      ARTICLES
+    <a href="#articles" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
+      <ScrambleText 
+        trigger="hover" 
+        scrambleColor="#39FF14" 
+        speed="fast"
+        waveEffect={false}
+        style={{ 
+          color: 'white', 
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          minWidth: '100px',
+          textAlign: 'center'
+        }}
+        delay={0}
+      >
+        ARTICLES
+      </ScrambleText>
     </a>
   </div>
 
@@ -31,11 +61,41 @@ const Navbar = () => {
 
   {/* Right side links */}
   <div className="d-flex justify-content-start" style={{ gap: '2rem' }}>
-    <a href="#about" className="nav-link text-white aeonik-light">
-      ABOUT US
+    <a href="#about" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
+      <ScrambleText 
+        trigger="hover" 
+        scrambleColor="#39FF14" 
+        speed="fast"
+        waveEffect={false}
+        style={{ 
+          color: 'white', 
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          minWidth: '100px',
+          textAlign: 'center'
+        }}
+        delay={0}
+      >
+        ABOUT US
+      </ScrambleText>
     </a>
-    <a href="#appointments" className="nav-link text-white aeonik-light">
-      APPOINTMENTS
+    <a href="#appointments" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
+      <ScrambleText 
+        trigger="hover" 
+        scrambleColor="#39FF14" 
+        speed="fast"
+        waveEffect={false}
+        style={{ 
+          color: 'white', 
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          minWidth: '140px',
+          textAlign: 'center'
+        }}
+        delay={0}
+      >
+        APPOINTMENTS
+      </ScrambleText>
     </a>
   </div>
 </div>

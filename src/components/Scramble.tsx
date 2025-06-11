@@ -76,7 +76,7 @@ export default function ScrambleText({
 
   // Replace all characters with spaces so nothing shows pre-scramble:
   const blank = children.replace(/./g, " ");
-  const [displayText, setDisplayText] = useState(blank);
+  const [displayText, setDisplayText] = useState(trigger === 'hover' ? children : blank);
   const [isScrambling, setIsScrambling] = useState(false);
 
   const elementRef = useRef<HTMLSpanElement | null>(null);
