@@ -6,10 +6,10 @@ const Navbar = () => {
 
   return (
   <nav className="navbar navbar-expand-lg fixed-bottom" style={{ height: '50px' }}>
-      <div className="container-fluid justify-content-center">
-          <div className="navbar-nav gap-5 d-flex align-items-center">
+      <div className="container-fluid d-flex justify-content-center">
+          <div className="d-flex align-items-center gap-5">
             <a 
-              className="nav-link aeonik-light px-3 fw-light navbar-item" 
+              className="nav-link aeonik-light px-4 fw-light navbar-item" 
               href="#experience" 
               style={{ 
                 textDecoration: 'none',
@@ -37,7 +37,7 @@ const Navbar = () => {
               </ScrambleText>
             </a>
             <a 
-              className="nav-link aeonik-light px-3 fw-light navbar-item" 
+              className="nav-link aeonik-light px-3 ms-4 fw-light navbar-item" 
               href="#articles" 
               style={{ 
                 textDecoration: 'none',
@@ -55,7 +55,8 @@ const Navbar = () => {
                   color: "white",
                   transition: "color 0.3s ease",
                   display: "inline-block",
-                  whiteSpace: "nowrap"
+                  whiteSpace: "nowrap",
+                  paddingLeft: "10px"
                 }}
                 scrambleColor="#39FF14"
                 glowEffect={false}
@@ -66,7 +67,7 @@ const Navbar = () => {
             </a>
               <img src="/auxin.svg" alt="Auxin Logo" width="85" height="35" />
             <a 
-              className="nav-link aeonik-light px-3 fw-light navbar-item" 
+              className="nav-link aeonik-light pe-4 fw-light navbar-item" 
               href="#about" 
               style={{ 
                 textDecoration: 'none',
@@ -94,7 +95,7 @@ const Navbar = () => {
               </ScrambleText>
             </a>
             <a 
-              className="nav-link aeonik-light px-3 fw-light navbar-item" 
+              className="nav-link aeonik-light px-4 fw-light navbar-item" 
               href="#appointments" 
               style={{ 
                 textDecoration: 'none',
