@@ -1,4 +1,4 @@
-import "../styles/Fonts.css";
+import "../styles/fonts.css";
 import "../styles/Navbar.css";
 import ScrambleText from "./Scramble";
 

@@ -3,7 +3,7 @@
 import Navbar from "./components/Navbar";
 import ScrambleText from "./components/Scramble";
 import Footer from "./components/Footer";
-import "./styles/Fonts.css";
+import "./styles/fonts.css";
 import "./styles/Main.css";
 
 export default function App() {
