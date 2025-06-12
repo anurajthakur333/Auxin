@@ -94,7 +94,7 @@ const Navbar = () => {
         }}
         delay={0}
       >
-        APPOINTMENTS
+        MEETINGS
       </ScrambleText>
     </a>
   </div>
