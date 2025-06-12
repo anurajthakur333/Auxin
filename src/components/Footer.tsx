@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/Footer.css'; // create this file for background image and fonts
 import '../styles/Fonts.css';
 import '../styles/Main.css';
 const Footer: React.FC = () => {
