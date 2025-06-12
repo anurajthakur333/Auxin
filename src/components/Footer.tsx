@@ -1,7 +1,6 @@
-import React from 'react';
 import '../styles/Fonts.css';
 import '../styles/Main.css';
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
     <footer className="footer-wrapper text-white">
       {/* Hover effect */}
