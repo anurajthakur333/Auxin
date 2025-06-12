@@ -1,17 +1,11 @@
 import React from 'react';
-
+import '../styles/Footer.css'; // create this file for background image and fonts
+import '../styles/Fonts.css';
+import '../styles/Main.css';
 const Footer: React.FC = () => {
-  const linkStyle = {
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '18px',
-    fontWeight: 400,
-    transition: 'color 0.3s ease'
-  };
-
   return (
-    <footer style={{ position: 'relative', backgroundColor: '#000', overflow: 'hidden' }}>
-      {/* Add CSS for hover effects */}
+    <footer className="footer-wrapper text-white">
+      {/* Hover effect */}
       <style>
         {`
           .footer-link:hover {
@@ -20,190 +14,61 @@ const Footer: React.FC = () => {
         `}
       </style>
 
-
-
-      {/* Footer Content */}
-      <div style={{ position: 'relative', zIndex: 2, padding: '80px 25px 40px 25px' }}>
-        {/* Navigation Grid */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-          gap: '60px', 
-          marginBottom: '80px',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          {/* THE STUDIO */}
+      <div className="container-fluid px-4 py-5 ms-3">
+        {/* Top Grid */}
+        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+          {/* Column 1 */}
           <div>
-            <h3 className="aeonik-regular" style={{
-              color: '#00ff00',
-              fontSize: '24px',
-              fontWeight: 400,
-              marginBottom: '30px',
-              letterSpacing: '-0.5px'
-            }}>
-              THE STUDIO
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#about" className="aeonik-regular footer-link" style={linkStyle}>
-                  About Us
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#team" className="aeonik-regular footer-link" style={linkStyle}>
-                  Our Team
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#careers" className="aeonik-regular footer-link" style={linkStyle}>
-                  Careers
-                </a>
-              </li>
+            <h1 className="green-text fw-bold mb-4 aeonik-light">THE <br />STUDIO</h1>
+            <ul className="list-unstyled">
+              <li><a href="#about" className="footer-link text-white text-decoration-none">About Us</a></li>
+              <li><a href="#team" className="footer-link text-white text-decoration-none">Our Team</a></li>
+              <li><a href="#careers" className="footer-link text-white text-decoration-none">Careers</a></li>
             </ul>
           </div>
-
-          {/* THE WORKFLOW */}
+          {/* Column 2 */}
           <div>
-            <h3 className="aeonik-regular" style={{
-              color: '#00ff00',
-              fontSize: '24px',
-              fontWeight: 400,
-              marginBottom: '30px',
-              letterSpacing: '-0.5px'
-            }}>
-              THE WORKFLOW
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#portfolio" className="aeonik-regular footer-link" style={linkStyle}>
-                  Portfolio
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#case-studies" className="aeonik-regular footer-link" style={linkStyle}>
-                  Case Studies
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#testimonials" className="aeonik-regular footer-link" style={linkStyle}>
-                  Client Testimonials
-                </a>
-              </li>
+            <h1 className="green-text fw-bold mb-4 aeonik-light">THE <br />WORKFLOW</h1>
+            <ul className="list-unstyled">
+              <li><a href="#portfolio" className="footer-link text-white text-decoration-none">Portfolio</a></li>
+              <li><a href="#case-studies" className="footer-link text-white text-decoration-none">Case Studies</a></li>
+              <li><a href="#testimonials" className="footer-link text-white text-decoration-none">Client Testimonials</a></li>
             </ul>
           </div>
-
-          {/* THE PLAYBOOK */}
+          {/* Column 3 */}
           <div>
-            <h3 className="aeonik-regular" style={{
-              color: '#00ff00',
-              fontSize: '24px',
-              fontWeight: 400,
-              marginBottom: '30px',
-              letterSpacing: '-0.5px'
-            }}>
-              THE PLAYBOOK
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#growth-scripts" className="aeonik-regular footer-link" style={linkStyle}>
-                  Growth Scripts
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#insights" className="aeonik-regular footer-link" style={linkStyle}>
-                  Insights
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#trends" className="aeonik-regular footer-link" style={linkStyle}>
-                  Trends
-                </a>
-              </li>
+            <h1 className="green-text fw-bold mb-4 aeonik-light">THE <br />PLAYBOOK</h1>
+            <ul className="list-unstyled">
+              <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none">Growth Scripts</a></li>
+              <li><a href="#insights" className="footer-link text-white text-decoration-none">Insights</a></li>
+              <li><a href="#trends" className="footer-link text-white text-decoration-none">Trends</a></li>
             </ul>
           </div>
-
-          {/* LEGAL & SEO */}
+          {/* Column 4 */}
           <div>
-            <h3 className="aeonik-regular" style={{
-              color: '#00ff00',
-              fontSize: '24px',
-              fontWeight: 400,
-              marginBottom: '30px',
-              letterSpacing: '-0.5px'
-            }}>
-              LEGAL & SEO
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#privacy" className="aeonik-regular footer-link" style={linkStyle}>
-                  Privacy Policy
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#terms" className="aeonik-regular footer-link" style={linkStyle}>
-                  Terms of Service
-                </a>
-              </li>
-              <li style={{ marginBottom: '15px' }}>
-                <a href="#sitemap" className="aeonik-regular footer-link" style={linkStyle}>
-                  Sitemap
-                </a>
-              </li>
+              <h1 className="green-text fw-bold mb-4 aeonik-regular">LEGAL & <br />SEO</h1>
+            <ul className="list-unstyled">
+              <li><a href="#privacy" className="footer-link text-white text-decoration-none">Privacy Policy</a></li>
+              <li><a href="#terms" className="footer-link text-white text-decoration-none">Terms of Service</a></li>
+              <li><a href="#sitemap" className="footer-link text-white text-decoration-none">Sitemap</a></li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          marginBottom: '40px',
-          flexWrap: 'wrap',
-          gap: '20px'
-        }}>
-          <div className="aeonik-regular" style={{
-            color: '#00ff00',
-            fontSize: '16px',
-            fontWeight: 400
-          }}>
-            © Auxin Media 2025
-          </div>
-          
-          <div className="aeonik-regular" style={{
-            color: 'white',
-            fontSize: '18px',
-            fontWeight: 400
-          }}>
-            auxinmedia@gmail.com
-          </div>
-          
-          <div className="aeonik-regular" style={{
-            color: '#00ff00',
-            fontSize: '16px',
-            fontWeight: 400
-          }}>
-            Connect with Team
-          </div>
+        {/* Bottom Row */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center mb-5">
+          <div className="green-text">© Auxin Media 2025</div>
+          <div className="green-text">auxinmedia@gmail.com</div>
+          <div className="green-text">Connect with Team</div>
         </div>
 
-        {/* Large Brand Name */}
-        <div style={{ textAlign: 'center' }}>
-          <h1 className="aeonik-regular" style={{
-            color: 'white',
-            fontSize: 'clamp(60px, 12vw, 180px)',
-            fontWeight: 400,
-            margin: 0,
-            letterSpacing: '-2px',
-            lineHeight: '0.9'
-          }}>
-            Auxin Media
-          </h1>
+        {/* Large Logo */}
+        <div className="text-center">
+          <h1 className="footer-brand aeonik-regular" style={{fontSize : "303px"}}>Auxin Media</h1>
         </div>
       </div>
     </footer>
   );
 };
 
-export default Footer; 
+export default Footer;
