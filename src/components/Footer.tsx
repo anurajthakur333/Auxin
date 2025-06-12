@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
         `}
       </style>
 
-      <div className="container-fluid px-4 py-5 ms-3">
+      <div className="container-fluid px-4  ms-3">
         {/* Top Grid */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Row */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center mb-5">
+        <div className="d-flex flex-wrap justify-content-between align-items-center">
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
@@ -63,7 +63,7 @@ const Footer: React.FC = () => {
 
         {/* Large Logo */}
         <div className="text-center">
-          <h1 className="footer-brand aeonik-regular" style={{fontSize : "303px"}}>Auxin Media</h1>
+          <h1 className="footer-brand aeonik-regular" style={{fontSize : "300px"}}>Auxin Media</h1>
         </div>
       </div>
     </footer>
