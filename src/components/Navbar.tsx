@@ -83,7 +83,7 @@ const Navbar = () => {
           color: 'white', 
           whiteSpace: 'nowrap',
           display: 'inline-block',
-          minWidth: '140px',
+          minWidth: '120px',
           textAlign: 'center'
         }}
         delay={0}
