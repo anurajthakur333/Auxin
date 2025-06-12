@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Row */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center">
+        <div className="d-flex flex-wrap justify-content-between align-items-center px-5">
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
