@@ -32,9 +32,7 @@ const Navbar = () => {
           textAlign: 'center'
         }}
         delay={0}
-      >
-        EXPERIENCE
-      </ScrambleText>
+      >EXPERIENCE</ScrambleText>
     </a>
     <a href="#articles" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
       <ScrambleText 
@@ -50,9 +48,7 @@ const Navbar = () => {
           textAlign: 'center'
         }}
         delay={0}
-      >
-        ARTICLES
-      </ScrambleText>
+      >ARTICLES</ScrambleText>
     </a>
   </div>
 
@@ -75,9 +71,7 @@ const Navbar = () => {
           textAlign: 'center'
         }}
         delay={0}
-      >
-        ABOUT US
-      </ScrambleText>
+      >ABOUT US</ScrambleText>
     </a>
     <a href="#appointments" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
       <ScrambleText 
@@ -93,9 +87,7 @@ const Navbar = () => {
           textAlign: 'center'
         }}
         delay={0}
-      >
-        MEETINGS
-      </ScrambleText>
+      >MEETINGS</ScrambleText>
     </a>
   </div>
 </div>
