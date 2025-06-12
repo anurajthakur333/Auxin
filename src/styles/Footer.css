@@ -1,0 +1,22 @@
+.footer-wrapper {
+    background-color: #000;
+    background-image: url('/path/to/your/pattern.png'); /* Replace with your actual pattern */
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .footer-brand {
+    font-size: clamp(60px, 12vw, 180px);
+    color: white;
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: -2px;
+    line-height: 0.9;
+  }
+  
+  .footer-link {
+    transition: color 0.3s ease;
+  }
+  
