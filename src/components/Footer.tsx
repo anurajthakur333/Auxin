@@ -1,18 +1,39 @@
 import '../styles/fonts.css';
 import '../styles/Main.css';
+
 const Footer = () => {
   return (
-    <footer className="footer-wrapper text-white">
+    <footer className="footer-wrapper text-white" style={{ overflow: 'hidden', margin: 0, padding: 0 }}>
       {/* Hover effect */}
       <style>
         {`
           .footer-link:hover {
             color: #00ff00 !important;
           }
+          .footer-wrapper {
+            margin: 0 !important;
+            padding: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+          }
+          .auxin-text {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 0.7 !important;
+            overflow: hidden !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+          }
+          .auxin-text span {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+            display: block !important;
+            line-height: 0.7 !important;
+          }
         `}
       </style>
 
-      <div className="container-fluid px-4  ms-3">
+      <div className="container-fluid px-4 ms-3">
         {/* Top Grid */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
@@ -60,10 +81,20 @@ const Footer = () => {
           <div className="green-text">Connect with Team</div>
         </div>
 
-        {/* Large Logo */}
-        <div className="text-center">
-          <h1 className="footer-brand aeonik-regular" style={{fontSize : "300px"}}>Auxin Media</h1>
-        </div>
+      </div>
+
+      {/* Large AUXINMEDIA text - Flush with bottom */}
+      <div className="auxin-text aeonik-regular" style={{
+        overflow: 'hidden',
+        height: 'auto',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        background: 'transparent',
+      }}>
+        <span className="aeonik-regular  mt-5"style={{fontSize : "260px"}}>
+          Auxin Media
+        </span>
       </div>
     </footer>
   );
