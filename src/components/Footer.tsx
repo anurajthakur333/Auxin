@@ -84,7 +84,7 @@ const Footer = () => {
       </div>
 
       {/* Large AUXINMEDIA text - Flush with bottom */}
-      <div className="auxin-text aeonik-regular" style={{
+      <div className="auxin-text aeonik-regular mb-3" style={{
         overflow: 'hidden',
         height: 'auto',
         display: 'flex',
@@ -92,7 +92,7 @@ const Footer = () => {
         justifyContent: 'center',
         background: 'transparent',
       }}>
-        <span className="aeonik-regular  mt-5"style={{fontSize : "260px"}}>
+        <span className="aeonik-regular  mt-5"style={{fontSize : "300px", letterSpacing: "-0.07em"}}>
           Auxin Media
         </span>
       </div>
