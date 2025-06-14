@@ -33,12 +33,12 @@ const Footer = () => {
         `}
       </style>
 
-      <div className="container-fluid px-4" style={{marginLeft:"150px"}}>
+      <div className="container-fluid px-4" style={{marginLeft:"0px"}}>
         {/* Top Grid */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
           <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular">THE <br />STUDIO</h1>
+            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>THE <br />STUDIO</h1>
             <ul className="list-unstyled">
               <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-regular">About Us</a></li>
               <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-regular">Our Team</a></li>
@@ -47,7 +47,7 @@ const Footer = () => {
           </div>
           {/* Column 2 */}
           <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular">THE <br />WORKFLOW</h1>
+            <h1 className="green-text fw-bold mb-4 aeonik-regular"style={{lineHeight:"40px"}}>THE <br />WORKFLOW</h1>
             <ul className="list-unstyled">
               <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Portfolio</a></li>
               <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-regular">Case Studies</a></li>
@@ -56,7 +56,7 @@ const Footer = () => {
           </div>
           {/* Column 3 */}
           <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular">THE <br />PLAYBOOK</h1>
+            <h1 className="green-text fw-bold mb-4 aeonik-regular"style={{lineHeight:"40px"}}>THE <br />PLAYBOOK</h1>
             <ul className="list-unstyled">
               <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-regular">Growth Scripts</a></li>
               <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-regular">Insights</a></li>
@@ -65,7 +65,7 @@ const Footer = () => {
           </div>
           {/* Column 4 */}
           <div>
-              <h1 className="green-text fw-bold mb-4 aeonik-regular">LEGAL & <br />SEO</h1>
+              <h1 className="green-text fw-bold mb-4 aeonik-regular"style={{lineHeight:"40px"}}>LEGAL & <br />SEO</h1>
             <ul className="list-unstyled">
               <li><a href="#privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</a></li>
               <li><a href="#terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms of Service</a></li>
