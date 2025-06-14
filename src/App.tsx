@@ -296,8 +296,8 @@ export default function App() {
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "35px",
-                  fontWeight: 400,
+                  lineHeight: "30px",
+                  fontWeight: 300,
                   textAlign: "left",
                 }}
               >
@@ -457,8 +457,8 @@ export default function App() {
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "35px",
-                  fontWeight: 400,
+                  lineHeight: "30px",
+                  fontWeight: 300,
                   textAlign: "left",
                 }}
               >
@@ -498,7 +498,7 @@ export default function App() {
             </div>
 
             {/* Right green text */}
-            <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
+            <div style={{ maxWidth: "700px", flex: "1", textAlign: "right" }}>
               <div
                 className="aeonik-regular"
                 style={{
@@ -528,18 +528,7 @@ export default function App() {
                   delay={2000}
                   style={{ color: "#00ff00" }}
                 >
-                  Every Scroll, A Strategic
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="visible"
-                  speed="fast"
-                  revealSpeed={0.8}
-                  scrambleIntensity={7}
-                  delay={2200}
-                  style={{ color: "#00ff00" }}
-                >
-                  Climax
+                  Every Scroll, A Strategic Climax
                 </ScrambleText>
               </div>
             </div>
@@ -596,8 +585,8 @@ export default function App() {
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "35px",
-                  fontWeight: 400,
+                  lineHeight: "30px",
+                  fontWeight: 300,
                   textAlign: "left",
                 }}
               >
@@ -735,8 +724,8 @@ export default function App() {
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "35px",
-                  fontWeight: 400,
+                  lineHeight: "30px",
+                  fontWeight: 300,
                   textAlign: "left",
                 }}
               >
@@ -874,8 +863,8 @@ export default function App() {
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "35px",
-                  fontWeight: 400,
+                  lineHeight: "30px",
+                  fontWeight: 300,
                   textAlign: "left",
                 }}
               >
