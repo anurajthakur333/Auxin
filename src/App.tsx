@@ -13,7 +13,7 @@ export default function App() {
 
       {/* Main content wrapper, flex: 1 to fill space */}
       <div style={{ flex: 1 }}>
-        {/* Fullscreen centered container */}
+    {/* Section - 1 */}
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
           <div className="text-center px-4">
             <div
@@ -63,7 +63,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Second section with scroll-triggered text */}
+       {/* Section - 2 */}
         <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "25px 0 80px 25px" }}>
           <div className="">
             <div
@@ -157,7 +157,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Third section with AI-powered ad solutions text */}
+     {/* Section - 3  */}
         <div className="d-flex align-items-start justify-content-end" style={{ minHeight: "100vh", padding: "25px 25px 80px 0" }}>
           <div className="">
             <div
@@ -218,7 +218,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Fourth section with Areas Where We Focus text */}
+       {/* Section - 4  */}
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", padding: "80px 0" }}>
           <div className="text-center px-4">
             <div
@@ -246,7 +246,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Fifth section with Brand Identity & Creative Direction */}
+      {/* Snapscroll - 1 */}
         <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
@@ -396,7 +396,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Sixth section with Performance Marketing & Media Buying */}
+      {/* Snapscroll - 2 */}
         <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
@@ -535,7 +535,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Seventh section with Digital Strategy & SEO */}
+       {/* Snapscroll - 3 */}
         <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
@@ -674,7 +674,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Eighth section with Analytics & Optimization */}
+     {/* Snapscroll - 4 */}
         <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
@@ -802,7 +802,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Ninth section with Immersive 3D Websites */}
+      {/* Snapscroll - 5 */}
         <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
