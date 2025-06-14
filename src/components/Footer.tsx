@@ -33,7 +33,7 @@ const Footer = () => {
         `}
       </style>
 
-      <div className="container-fluid px-4 ms-3">
+      <div className="container-fluid px-4 ms-3 ">
         {/* Top Grid */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
@@ -75,7 +75,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Row */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center px-5">
+        <div className="d-flex flex-wrap justify-content-between align-items-center px-5 aeonik-regular">
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
