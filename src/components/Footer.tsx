@@ -33,7 +33,7 @@ const Footer = () => {
         `}
       </style>
 
-      <div className="container-fluid px-4 ms-3 ">
+      <div className="container-fluid px-4" style={{marginLeft:"150px"}}>
         {/* Top Grid */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
@@ -75,13 +75,18 @@ const Footer = () => {
         </div>
 
         {/* Bottom Row */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center px-5 aeonik-regular">
+   
+
+      </div>
+
+      <div className="d-flex flex-wrap justify-content-between align-items-center aeonik-regular" style={{marginLeft:"200px",marginRight:"200px"}}>
           <div className="green-text">© Auxin Media 2025</div>
-          <div className="green-text">auxinmedia@gmail.com</div>
+          <div className="green-text">Auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
         </div>
 
-      </div>
+
+
 
       {/* Large AUXINMEDIA text - Flush with bottom */}
       <div className="auxin-text aeonik-regular mb-3" 
