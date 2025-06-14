@@ -83,14 +83,13 @@ const Footer = () => {
           /* Animation styles for individual letters */
           .animated-letter {
             display: inline-block !important;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(500px);
+            transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             vertical-align: baseline;
+            opacity: 1;
           }
           
           .animated-letter.visible {
-            opacity: 1;
             transform: translateY(0);
           }
         `}
