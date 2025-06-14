@@ -1,7 +1,55 @@
+import { useState, useEffect, useRef } from 'react';
 import '../styles/fonts.css';
 import '../styles/Main.css';
 
 const Footer = () => {
+  const [animatedLetters, setAnimatedLetters] = useState<boolean[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+  const fullText = "Auxin Media";
+  const letters = fullText.split('');
+
+  useEffect(() => {
+    // Initialize all letters as not animated
+    setAnimatedLetters(new Array(letters.length).fill(false));
+    
+    // Set up Intersection Observer
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+          
+          // Start animation after a short delay
+          setTimeout(() => {
+            letters.forEach((_, index) => {
+              setTimeout(() => {
+                setAnimatedLetters(prev => {
+                  const newState = [...prev];
+                  newState[index] = true;
+                  return newState;
+                });
+              }, index * 100); // 100ms delay between each letter
+            });
+          }, 300); // Initial delay before animation starts
+        }
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of the element is visible
+        rootMargin: '0px 0px -100px 0px' // Start animation slightly before the element is fully visible
+      }
+    );
+
+    if (textRef.current) {
+      observer.observe(textRef.current);
+    }
+
+    return () => {
+      if (textRef.current) {
+        observer.unobserve(textRef.current);
+      }
+    };
+  }, [isVisible]);
+
   return (
     <footer className="footer-wrapper text-white" style={{ overflow: 'hidden', margin: 0, padding: 0 }}>
       {/* Hover effect */}
@@ -24,11 +72,26 @@ const Footer = () => {
             margin-bottom: 0 !important;
             padding-bottom: 0 !important;
           }
-          .auxin-text span {
+          .auxin-text > span {
             margin-bottom: 0 !important;
             padding-bottom: 0 !important;
-            display: block !important;
+            display: inline-block !important;
             line-height: 0.7 !important;
+            white-space: nowrap !important;
+          }
+          
+          /* Animation styles for individual letters */
+          .animated-letter {
+            display: inline-block !important;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            vertical-align: baseline;
+          }
+          
+          .animated-letter.visible {
+            opacity: 1;
+            transform: translateY(0);
           }
         `}
       </style>
@@ -89,18 +152,20 @@ const Footer = () => {
 
 
       {/* Large AUXINMEDIA text - Flush with bottom */}
-      <div className="auxin-text aeonik-regular mb-3" 
-      style={{
-        overflow: 'hidden',
-        height: 'auto',
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        background: 'transparent',
-        width: '100%',
-        minWidth: 0
-      }}
-    >
+      <div 
+        ref={textRef}
+        className="auxin-text aeonik-regular mb-3" 
+        style={{
+          overflow: 'hidden',
+          height: 'auto',
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'center',
+          background: 'transparent',
+          width: '100%',
+          minWidth: 0
+        }}
+      >
       <span 
         className="aeonik-regular mt-5 leading-none"
         style={{
@@ -112,7 +177,17 @@ const Footer = () => {
           minWidth: 'max-content'
         }}
       >
-        Auxin Media
+        {letters.map((letter, index) => (
+          <span
+            key={index}
+            className={`animated-letter ${animatedLetters[index] ? 'visible' : ''}`}
+            style={{
+              transitionDelay: `${index * 50}ms`
+            }}
+          >
+            {letter === ' ' ? '\u00A0' : letter}
+          </span>
+        ))}
       </span>
     </div>
     </footer>
