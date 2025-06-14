@@ -5,16 +5,39 @@ import '../styles/Main.css';
 const Footer = () => {
   const [animatedLetters, setAnimatedLetters] = useState<boolean[]>([]);
   const [isVisible, setIsVisible] = useState(false);
+  const [headerAnimations, setHeaderAnimations] = useState({
+    studio: [] as boolean[],
+    workflow: [] as boolean[],
+    playbook: [] as boolean[],
+    legal: [] as boolean[]
+  });
   const textRef = useRef<HTMLDivElement>(null);
+  const headersRef = useRef<HTMLDivElement>(null);
   const fullText = "Auxin Media";
   const letters = fullText.split('');
+  
+  const headerTexts = {
+    studio: "THE STUDIO",
+    workflow: "THE WORKFLOW",
+    playbook: "THE PLAYBOOK", 
+    legal: "LEGAL & SEO"
+  };
 
   useEffect(() => {
     // Initialize all letters as not animated
     setAnimatedLetters(new Array(letters.length).fill(false));
     
-    // Set up Intersection Observer
-    const observer = new IntersectionObserver(
+    // Initialize header animations
+    const initialHeaderAnimations = {
+      studio: new Array(headerTexts.studio.length).fill(false),
+      workflow: new Array(headerTexts.workflow.length).fill(false),
+      playbook: new Array(headerTexts.playbook.length).fill(false),
+      legal: new Array(headerTexts.legal.length).fill(false)
+    };
+    setHeaderAnimations(initialHeaderAnimations);
+    
+    // Set up Intersection Observer for main text
+    const mainObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !isVisible) {
           setIsVisible(true);
@@ -39,16 +62,75 @@ const Footer = () => {
       }
     );
 
+    // Set up Intersection Observer for headers  
+    const headersObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Animate each header with a delay
+          Object.keys(headerTexts).forEach((headerKey, headerIndex) => {
+            const key = headerKey as keyof typeof headerTexts;
+            const text = headerTexts[key];
+            
+            setTimeout(() => {
+              text.split('').forEach((_, letterIndex) => {
+                setTimeout(() => {
+                  setHeaderAnimations(prev => {
+                    const newLetters = [...prev[key]];
+                    newLetters[letterIndex] = true;
+                    return {
+                      ...prev,
+                      [key]: newLetters
+                    };
+                  });
+                }, letterIndex * 50); // 50ms between each letter
+              });
+            }, headerIndex * 300); // 300ms between each header
+          });
+        }
+      },
+      {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
     if (textRef.current) {
-      observer.observe(textRef.current);
+      mainObserver.observe(textRef.current);
+    }
+    if (headersRef.current) {
+      headersObserver.observe(headersRef.current);
     }
 
     return () => {
       if (textRef.current) {
-        observer.unobserve(textRef.current);
+        mainObserver.unobserve(textRef.current);
+      }
+      if (headersRef.current) {
+        headersObserver.unobserve(headersRef.current);
       }
     };
-  }, [isVisible]);
+     }, []);
+
+  // Helper function to render animated header text
+  const renderAnimatedHeader = (headerKey: keyof typeof headerTexts) => {
+    const text = headerTexts[headerKey];
+    const letters = text.split('');
+    const animatedLetters = headerAnimations[headerKey];
+    
+    return letters.map((letter, index) => {
+      if (letter === ' ') {
+        return <span key={index}>&nbsp;</span>;
+      }
+      return (
+        <span
+          key={index}
+          className={`header-letter ${animatedLetters[index] ? 'visible' : ''}`}
+        >
+          {letter}
+        </span>
+      );
+    });
+  };
 
   return (
     <footer className="footer-wrapper text-white" style={{ overflow: 'hidden', margin: 0, padding: 0 }}>
@@ -92,15 +174,28 @@ const Footer = () => {
           .animated-letter.visible {
             transform: translateY(0);
           }
+
+          /* Header letter animation - fade in place */
+          .header-letter {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+          }
+          
+          .header-letter.visible {
+            opacity: 1;
+          }
         `}
       </style>
 
       <div className="container-fluid px-4" style={{marginLeft:"0px"}}>
         {/* Top Grid */}
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+        <div ref={headersRef} className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
           <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>THE <br />STUDIO</h1>
+            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+              {renderAnimatedHeader('studio').slice(0, 3)} <br />
+              {renderAnimatedHeader('studio').slice(4)}
+            </h1>
             <ul className="list-unstyled">
               <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-regular">About Us</a></li>
               <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-regular">Our Team</a></li>
@@ -109,7 +204,10 @@ const Footer = () => {
           </div>
           {/* Column 2 */}
           <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular"style={{lineHeight:"40px"}}>THE <br />WORKFLOW</h1>
+            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+              {renderAnimatedHeader('workflow').slice(0, 3)} <br />
+              {renderAnimatedHeader('workflow').slice(4)}
+            </h1>
             <ul className="list-unstyled">
               <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Portfolio</a></li>
               <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-regular">Case Studies</a></li>
@@ -118,7 +216,10 @@ const Footer = () => {
           </div>
           {/* Column 3 */}
           <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular"style={{lineHeight:"40px"}}>THE <br />PLAYBOOK</h1>
+            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+              {renderAnimatedHeader('playbook').slice(0, 3)} <br />
+              {renderAnimatedHeader('playbook').slice(4)}
+            </h1>
             <ul className="list-unstyled">
               <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-regular">Growth Scripts</a></li>
               <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-regular">Insights</a></li>
@@ -127,7 +228,10 @@ const Footer = () => {
           </div>
           {/* Column 4 */}
           <div>
-              <h1 className="green-text fw-bold mb-4 aeonik-regular"style={{lineHeight:"40px"}}>LEGAL & <br />SEO</h1>
+              <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+                {renderAnimatedHeader('legal').slice(0, 7)} <br />
+                {renderAnimatedHeader('legal').slice(8)}
+              </h1>
             <ul className="list-unstyled">
               <li><a href="#privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</a></li>
               <li><a href="#terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms of Service</a></li>
