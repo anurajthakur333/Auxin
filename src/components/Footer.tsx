@@ -184,6 +184,37 @@ const Footer = () => {
           .header-letter.visible {
             opacity: 1;
           }
+
+          /* === Responsive font-size for the large “Auxin Media” footer text === */
+          .auxin-text > span {
+            font-size: 14vw;
+            letter-spacing: -0.07em;
+            line-height: 0.8;
+          }
+
+          /* Large tablets / small laptops */
+          @media (max-width: 1200px) {
+            .auxin-text > span {
+              font-size: 18vw;
+              letter-spacing: -0.065em;
+            }
+          }
+
+          /* Tablets / phones landscape */
+          @media (max-width: 768px) {
+            .auxin-text > span {
+              font-size: 22vw;
+              letter-spacing: -0.06em;
+            }
+          }
+
+          /* Phones portrait */
+          @media (max-width: 480px) {
+            .auxin-text > span {
+              font-size: 28vw;
+              letter-spacing: -0.05em;
+            }
+          }
         `}
       </style>
 
