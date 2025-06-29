@@ -136,87 +136,93 @@ const Footer = () => {
     <footer className="footer-wrapper text-white" style={{ overflow: 'hidden', margin: 0, padding: 0 }}>
       {/* Hover effect */}
       <style>
-        {`
-          .footer-link:hover {
-            color: #00ff00 !important;
-          }
-          .footer-wrapper {
-            margin: 0 !important;
-            padding: 0 !important;
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-          }
-          .auxin-text {
-            margin: 0 !important;
-            padding: 0 !important;
-            line-height: 0.7 !important;
-            overflow: hidden !important;
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-          }
-          .auxin-text > span {
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-            display: inline-block !important;
-            line-height: 0.7 !important;
-            white-space: nowrap !important;
-          }
-          
-          /* Animation styles for individual letters */
-          .animated-letter {
-            display: inline-block !important;
-            transform: translateY(500px);
-            transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            vertical-align: baseline;
-            opacity: 1;
-          }
-          
-          .animated-letter.visible {
-            transform: translateY(0);
-          }
+{`
+  .footer-link:hover {
+    color: #00ff00 !important;
+  }
+  .footer-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .auxin-text {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0.7 !important;
+    overflow: hidden !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .auxin-text > span {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    display: inline-block !important;
+    line-height: 0.7 !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Animation styles for individual letters */
+  .animated-letter {
+    display: inline-block !important;
+    transform: translateY(500px);
+    transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    vertical-align: baseline;
+    opacity: 1;
+  }
+  
+  .animated-letter.visible {
+    transform: translateY(0);
+  }
 
-          /* Header letter animation - fade in place */
-          .header-letter {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-          }
-          
-          .header-letter.visible {
-            opacity: 1;
-          }
+  /* Header letter animation - fade in place */
+  .header-letter {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .header-letter.visible {
+    opacity: 1;
+  }
 
-          /* === Responsive font-size for the large “Auxin Media” footer text === */
-          .auxin-text > span {
-            font-size: 14vw;
-            letter-spacing: -0.07em;
-            line-height: 0.8;
-          }
+  /* === ENHANCED: Clamp-based responsive font-size for the large "Auxin Media" footer text === */
+  .footer-text {
+    /* 
+    clamp(minimum, preferred, maximum)
+    - min: 8vw (viewport width) for very small screens
+    - preferred: 25vw for responsive scaling
+    - max: 620px for ultra-wide screens
+    */
+    font-size: clamp(8vw, 21vw, 620px) !important;
+    letter-spacing: -0.07em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-          /* Large tablets / small laptops */
-          @media (max-width: 1200px) {
-            .auxin-text > span {
-              font-size: 18vw;
-              letter-spacing: -0.065em;
-            }
-          }
 
-          /* Tablets / phones landscape */
-          @media (max-width: 768px) {
-            .auxin-text > span {
-              font-size: 22vw;
-              letter-spacing: -0.06em;
-            }
-          }
+  /* High DPI displays - ensure text remains crisp */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .footer-text {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
 
-          /* Phones portrait */
-          @media (max-width: 480px) {
-            .auxin-text > span {
-              font-size: 28vw;
-              letter-spacing: -0.05em;
-            }
-          }
-        `}
-      </style>
+  /* Fine-tune for very small screens */
+  @media (max-width: 320px) {
+    .footer-text {
+      font-size: clamp(6vw, 20vw, 320px) !important;
+    }
+  }
+
+  /* Fine-tune for very large screens */
+  @media (min-width: 2560px) {
+    .footer-text {
+      font-size: clamp(400px, 15vw, 800px) !important;
+    }
+  }
+`}
+</style>
 
       <div className="container-fluid px-4" style={{marginLeft:"0px"}}>
         {/* Top Grid */}
@@ -265,7 +271,7 @@ const Footer = () => {
               </h1>
             <ul className="list-unstyled">
               <li><a href="#privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</a></li>
-              <li><a href="#terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms of Service</a></li>
+              <li><a href="#terms" className="footer-link text-white text-decoration-none aeolik-regular">Terms of Service</a></li>
               <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-regular">Sitemap</a></li>
             </ul>
           </div>
@@ -276,14 +282,11 @@ const Footer = () => {
 
       </div>
 
-      <div className="d-flex flex-wrap justify-content-between align-items-center aeonik-regular" style={{marginLeft:"200px",marginRight:"200px"}}>
+      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular">
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">Auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
         </div>
-
-
-
 
       {/* Large AUXINMEDIA text - Flush with bottom */}
       <div 
@@ -301,9 +304,8 @@ const Footer = () => {
         }}
       >
       <span 
-        className="aeonik-regular mt-5 leading-none"
+        className="aeonik-regular mt-5 footer-text"
         style={{
-          fontSize: '300px', 
           letterSpacing: '-0.07em',
           whiteSpace: 'nowrap',
           transform: 'scale(1)',
