@@ -517,7 +517,7 @@ export default function App() {
                   delay={1800}
                   style={{ color: "#00ff00" }}
                 >
-                  Every Click Is A Plot Twist.
+                  Every Click Is A Plot Twist
                 </ScrambleText>
                 <br />
                 <ScrambleText
