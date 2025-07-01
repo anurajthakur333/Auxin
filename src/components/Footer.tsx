@@ -282,7 +282,7 @@ const Footer = () => {
 
       </div>
 
-      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular">
+      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular px-4">
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">Auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
