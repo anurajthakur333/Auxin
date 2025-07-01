@@ -23,6 +23,7 @@ interface ScrambleTextProps {
   speed?: "ultra-slow" | "slow" | "medium" | "fast" | "ultra-fast" | number;
   revealSpeed?: number;
   scrambleIntensity?: number;
+  randomReveal?: boolean;
 }
 
 const DEFAULT_LETTERS =
@@ -57,6 +58,7 @@ export default function ScrambleText({
   speed,
   revealSpeed = 0.6,
   scrambleIntensity = 5,
+  randomReveal = false,
 }: ScrambleTextProps) {
   // Apply speed presets if provided
   let finalDuration = duration;
@@ -87,6 +89,23 @@ export default function ScrambleText({
 
   const frameInterval = 1000 / finalFps;
   const totalFrames = Math.ceil(finalDuration / frameInterval);
+
+  // Precompute reveal order if randomReveal is true
+  const revealOrderRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    if (randomReveal) {
+      const order = Array.from({ length: children.length }, (_, i) => i);
+      // Fisher-Yates shuffle
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      revealOrderRef.current = order;
+    } else {
+      revealOrderRef.current = [];
+    }
+  }, [children, randomReveal]);
 
   // Wrap each character (including spaces) in its own <span>, preserving whitespace
   useEffect(() => {
@@ -185,8 +204,11 @@ export default function ScrambleText({
           return;
         }
 
-        // Use configurable reveal speed
-        const revealThreshold = ((idx + 1) / originalChars.length) * revealSpeed;
+        let orderPos = idx;
+        if (randomReveal && revealOrderRef.current.length) {
+          orderPos = revealOrderRef.current.indexOf(idx);
+        }
+        const revealThreshold = ((orderPos + 1) / originalChars.length) * revealSpeed;
         if (progress >= revealThreshold) {
           workArray[idx] = orig;
           span.textContent = orig;
@@ -252,7 +274,19 @@ export default function ScrambleText({
         });
         setDisplayText(children);
         setIsScrambling(false);
-        hasStartedRef.current = false;
+
+        // Allow subsequent scrambles only for hover or click triggers
+        if (trigger === "hover" || trigger === "click") {
+          hasStartedRef.current = false;
+        }
+
+        // If a reverse scramble was queued, start it now
+        if (queuedRef.current) {
+          queuedRef.current = false;
+          triggerScramble();
+          return; // prevent onComplete from firing twice in immediate succession
+        }
+
         if (onComplete) onComplete();
       }
     };
@@ -304,21 +338,20 @@ export default function ScrambleText({
     }
   };
 
-  // Trigger scramble again on mouse leave when using hover trigger
+  // Queue a reverse scramble when leaving while one is already running
+  const queuedRef = useRef(false);
+
   const handleMouseLeave = () => {
-    if (trigger === "hover") {
-      if (isScrambling && frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-        frameRef.current = null;
-        setIsScrambling(false);
-        hasStartedRef.current = false;
-      }
-      // Defer the new scramble until after state has updated
-      window.setTimeout(() => {
-        triggerScramble();
-      }, 0);
+    if (trigger !== "hover") return;
+
+    if (isScrambling) {
+      // Let current animation finish, then run again once
+      queuedRef.current = true;
+    } else {
+      triggerScramble();
     }
   };
+
   // Click always scrambles
   const handleClick = () => {
     triggerScramble();
