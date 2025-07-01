@@ -3,6 +3,38 @@ import "../styles/Navbar.css";
 import ScrambleText from "./Scramble";
 import { useEffect, useState } from "react";
 
+// Reusable nav link with scramble on hover in/out
+const NavItem = ({ href, label, minWidth = 100 }: { href: string; label: string; minWidth?: number }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <a
+      href={href}
+      className="nav-link text-white aeonik-light"
+      style={{ textDecoration: "none" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <ScrambleText
+        trigger="hover"
+        scrambleColor="#39FF14"
+        speed="fast"
+        waveEffect={false}
+        style={{
+          color: hovered ? "#39FF14" : "white",
+          whiteSpace: "nowrap",
+          display: "inline-block",
+          minWidth: `${minWidth}px`,
+          textAlign: "center",
+        }}
+        delay={0}
+      >
+        {label}
+      </ScrambleText>
+    </a>
+  );
+};
+
 const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -38,38 +70,8 @@ const Navbar = () => {
     >
       {/* Left side links */}
       <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
-        <a href="#experience" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
-          <ScrambleText 
-            trigger="hover" 
-            scrambleColor="#39FF14" 
-            speed="fast"
-            waveEffect={false}
-            style={{ 
-              color: 'white', 
-              whiteSpace: 'nowrap',
-              display: 'inline-block',
-              minWidth: '120px',
-              textAlign: 'center'
-            }}
-            delay={0}
-          >EXPERIENCE</ScrambleText>
-        </a>
-        <a href="#articles" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
-          <ScrambleText 
-            trigger="hover" 
-            scrambleColor="#39FF14" 
-            speed="fast"
-            waveEffect={false}
-            style={{ 
-              color: 'white', 
-              whiteSpace: 'nowrap',
-              display: 'inline-block',
-              minWidth: '100px',
-              textAlign: 'center'
-            }}
-            delay={0}
-          >ARTICLES</ScrambleText>
-        </a>
+        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} />
+        <NavItem href="#articles" label="ARTICLES" minWidth={100} />
       </div>
 
       {/* Center logo */}
@@ -77,38 +79,8 @@ const Navbar = () => {
 
       {/* Right side links */}
       <div className="d-flex justify-content-start" style={{ gap: '2rem' }}>
-        <a href="#about" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
-          <ScrambleText 
-            trigger="hover" 
-            scrambleColor="#39FF14" 
-            speed="fast"
-            waveEffect={false}
-            style={{ 
-              color: 'white', 
-              whiteSpace: 'nowrap',
-              display: 'inline-block',
-              minWidth: '100px',
-              textAlign: 'center'
-            }}
-            delay={0}
-          >ABOUT US</ScrambleText>
-        </a>
-        <a href="#appointments" className="nav-link text-white aeonik-light" style={{ textDecoration: 'none' }}>
-          <ScrambleText 
-            trigger="hover" 
-            scrambleColor="#39FF14" 
-            speed="fast"
-            waveEffect={false}
-            style={{ 
-              color: 'white', 
-              whiteSpace: 'nowrap',
-              display: 'inline-block',
-              minWidth: '120px',
-              textAlign: 'center'
-            }}
-            delay={0}
-          >MEETINGS</ScrambleText>
-        </a>
+        <NavItem href="#about" label="ABOUT US" minWidth={100} />
+        <NavItem href="#appointments" label="MEETINGS" minWidth={120} />
       </div>
     </div>
   );
