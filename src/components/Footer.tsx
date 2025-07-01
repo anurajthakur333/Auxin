@@ -294,6 +294,8 @@ const Footer = () => {
         className="auxin-text aeonik-regular mb-3" 
         style={{
           height: 'auto',
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
           background: 'transparent',
           width: '100%',
