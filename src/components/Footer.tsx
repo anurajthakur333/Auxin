@@ -218,7 +218,7 @@ const Footer = () => {
   /* Fine-tune for very large screens */
   @media (min-width: 2560px) {
     .footer-text {
-      font-size: clamp(400px, 15vw, 800px) !important;
+      font-size: clamp(400px, 21vw, 800px) !important;
     }
   }
 `}
@@ -294,7 +294,6 @@ const Footer = () => {
         className="auxin-text aeonik-regular mb-3" 
         style={{
           height: 'auto',
-          display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           background: 'transparent',
