@@ -293,10 +293,7 @@ const Footer = () => {
         ref={textRef}
         className="auxin-text aeonik-regular mb-3" 
         style={{
-          overflow: 'hidden',
           height: 'auto',
-          display: 'flex',
-          alignItems: 'flex-end',
           justifyContent: 'center',
           background: 'transparent',
           width: '100%',
