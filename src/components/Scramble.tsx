@@ -252,6 +252,7 @@ export default function ScrambleText({
         });
         setDisplayText(children);
         setIsScrambling(false);
+        hasStartedRef.current = false;
         if (onComplete) onComplete();
       }
     };
@@ -302,6 +303,22 @@ export default function ScrambleText({
       triggerScramble();
     }
   };
+
+  // Trigger scramble again on mouse leave when using hover trigger
+  const handleMouseLeave = () => {
+    if (trigger === "hover") {
+      if (isScrambling && frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+        setIsScrambling(false);
+        hasStartedRef.current = false;
+      }
+      // Defer the new scramble until after state has updated
+      window.setTimeout(() => {
+        triggerScramble();
+      }, 0);
+    }
+  };
   // Click always scrambles
   const handleClick = () => {
     triggerScramble();
@@ -326,6 +343,7 @@ export default function ScrambleText({
             : "inherit",
       }}
       onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
       {displayText}
