@@ -5,8 +5,59 @@ import ScrambleText from "./components/Scramble";
 import Footer from "./components/Footer";
 import "./styles/fonts.css";
 import "./styles/Main.css";
+import { useEffect, useRef } from "react";
+import Lenis from "lenis";
 
 export default function App() {
+  const lenisRef = useRef<Lenis | null>(null);
+
+  useEffect(() => {
+    // Initialize Lenis
+    const lenis = new Lenis({
+      duration: 1.2,      // approximate duration in seconds
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // custom ease-out expo
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+
+    lenisRef.current = lenis;
+
+    const raf = (time: number) => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+    requestAnimationFrame(raf);
+
+    // Smooth anchor navigation
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a[href^="#"]');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#') return;
+
+      const element = document.querySelector(href);
+      if (!element) return;
+
+      e.preventDefault();
+      lenis.scrollTo(element as HTMLElement, {
+        offset: -60,
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    };
+
+    document.addEventListener('click', handleAnchorClick);
+
+    return () => {
+      document.removeEventListener('click', handleAnchorClick);
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#000" }}>
       <Navbar />
