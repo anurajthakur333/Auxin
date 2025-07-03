@@ -271,7 +271,7 @@ const Footer = () => {
               </h1>
             <ul className="list-unstyled">
               <li><a href="#privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</a></li>
-              <li><a href="#terms" className="footer-link text-white text-decoration-none aeolik-regular">Terms of Service</a></li>
+              <li><a href="#terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms of Service</a></li>
               <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-regular">Sitemap</a></li>
             </ul>
           </div>
