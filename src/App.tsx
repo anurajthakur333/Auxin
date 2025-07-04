@@ -80,7 +80,7 @@ export default function App() {
             >
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.7}
                 scrambleIntensity={8}
                 delay={0}
@@ -91,7 +91,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="medium"
+                speed="slow"
                 revealSpeed={0.5}
                 scrambleIntensity={6}
                 delay={800}
@@ -102,7 +102,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed={2}  // Custom speed: 2x faster than default
+                speed={1.5}  // Custom speed: slower than before
                 revealSpeed={0.8}
                 scrambleIntensity={10}
                 delay={1200}
@@ -130,7 +130,7 @@ export default function App() {
             >
               <ScrambleText
                 trigger="visible"
-                speed="medium"
+                speed="slow"
                 revealSpeed={0.6}
                 scrambleIntensity={7}
                 delay={0}
@@ -141,7 +141,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.7}
                 scrambleIntensity={6}
                 delay={400}
@@ -152,7 +152,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="medium"
+                speed="slow"
                 revealSpeed={0.5}
                 scrambleIntensity={8}
                 delay={800}
@@ -163,7 +163,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.8}
                 scrambleIntensity={7}
                 delay={1200}
@@ -174,7 +174,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="medium"
+                speed="slow"
                 revealSpeed={0.6}
                 scrambleIntensity={9}
                 delay={1600}
@@ -185,7 +185,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.7}
                 scrambleIntensity={8}
                 delay={2000}
@@ -196,7 +196,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed={2}
+                speed={1.5}
                 revealSpeed={0.9}
                 scrambleIntensity={10}
                 delay={2400}
@@ -224,7 +224,7 @@ export default function App() {
             >
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.7}
                 scrambleIntensity={8}
                 delay={0}
@@ -235,7 +235,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="medium"
+                speed="slow"
                 revealSpeed={0.6}
                 scrambleIntensity={7}
                 delay={400}
@@ -246,7 +246,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.8}
                 scrambleIntensity={9}
                 delay={800}
@@ -257,7 +257,7 @@ export default function App() {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed={2}
+                speed={1.5}
                 revealSpeed={0.9}
                 scrambleIntensity={10}
                 delay={1200}
@@ -285,7 +285,7 @@ export default function App() {
             >
               <ScrambleText
                 trigger="visible"
-                speed="fast"
+                speed="medium"
                 revealSpeed={0.8}
                 scrambleIntensity={9}
                 delay={0}
@@ -315,7 +315,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={0}
@@ -326,7 +326,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
                   delay={400}
@@ -354,7 +354,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={800}
@@ -365,7 +365,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1000}
@@ -376,7 +376,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1200}
@@ -387,7 +387,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1400}
@@ -412,7 +412,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1200}
@@ -423,7 +423,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1400}
@@ -434,7 +434,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1600}
@@ -465,7 +465,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={0}
@@ -476,7 +476,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
                   delay={400}
@@ -487,7 +487,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={800}
@@ -515,7 +515,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1200}
@@ -526,7 +526,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1400}
@@ -537,7 +537,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1600}
@@ -562,7 +562,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1800}
@@ -573,7 +573,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={2000}
@@ -604,7 +604,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={0}
@@ -615,7 +615,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
                   delay={400}
@@ -643,7 +643,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={800}
@@ -654,7 +654,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1000}
@@ -665,7 +665,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1200}
@@ -690,7 +690,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1200}
@@ -701,7 +701,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1400}
@@ -712,7 +712,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1600}
@@ -743,7 +743,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={0}
@@ -754,7 +754,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
                   delay={400}
@@ -782,7 +782,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={800}
@@ -793,7 +793,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1000}
@@ -804,7 +804,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1200}
@@ -829,7 +829,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1200}
@@ -840,7 +840,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1400}
@@ -871,7 +871,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={0}
@@ -882,7 +882,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
                   delay={400}
@@ -893,7 +893,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
                   delay={800}
@@ -921,7 +921,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1200}
@@ -932,7 +932,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1400}
@@ -943,7 +943,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1600}
@@ -954,7 +954,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={1800}
@@ -965,7 +965,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={2000}
@@ -976,7 +976,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
+                  speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
                   delay={2200}
@@ -1001,7 +1001,7 @@ export default function App() {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={1800}
@@ -1012,7 +1012,7 @@ export default function App() {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="fast"
+                  speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
                   delay={2000}
