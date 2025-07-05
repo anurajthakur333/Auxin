@@ -18,7 +18,6 @@ const NavItem = ({ href, label, minWidth = 100 }: { href: string; label: string;
       <ScrambleText
         trigger="hover"
         speed="slow"
-        waveEffect={false}
         randomReveal
         style={{
           color: hovered ? "#39FF14" : "white",
