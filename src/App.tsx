@@ -82,6 +82,7 @@ export default function App() {
                 trigger="visible"
               speed="ultra-slow"
               direction="center-out"
+              matchWidth={true}
                 revealSpeed={0.9}
                 scrambleIntensity={2}
                 delay={0}
@@ -94,6 +95,7 @@ export default function App() {
                 trigger="visible"
                 speed="ultra-slow"
                 direction="center-out"
+                matchWidth={true}
                 revealSpeed={0.9}
                 scrambleIntensity={2}
                 delay={800}
@@ -106,6 +108,7 @@ export default function App() {
                 trigger="visible"
                speed="ultra-slow"
                direction="center-out"
+               matchWidth={true}
                 revealSpeed={0.9}
                 scrambleIntensity={2}
                 delay={1200}
@@ -147,6 +150,7 @@ export default function App() {
                 speed="medium"
                 revealSpeed={0.1}
                 scrambleIntensity={6}
+                matchWidth={true}
                 delay={400}
                 style={{ color: "white" }}
               >
@@ -158,6 +162,7 @@ export default function App() {
                 speed="slow"
                 revealSpeed={0.1}
                 scrambleIntensity={8}
+                matchWidth={true}
                 delay={800}
                 style={{ color: "white" }}
               >
@@ -169,6 +174,7 @@ export default function App() {
                 speed="medium"
                 revealSpeed={0.1}
                 scrambleIntensity={7}
+                matchWidth={true}
                 delay={1200}
                 style={{ color: "white" }}
               >
@@ -180,6 +186,7 @@ export default function App() {
                 speed="slow"
                 revealSpeed={0.6}
                 scrambleIntensity={9}
+                matchWidth={true}
                 delay={1600}
                 style={{ color: "white" }}
               >
@@ -191,6 +198,7 @@ export default function App() {
                 speed="medium"
                 revealSpeed={0.1}
                 scrambleIntensity={8}
+                matchWidth={true}
                 delay={2000}
                 style={{ color: "white" }}
               >
@@ -202,6 +210,7 @@ export default function App() {
                 speed={1.5}
                 revealSpeed={0.1}
                 scrambleIntensity={10}
+                matchWidth={true}
                 delay={2400}
                 style={{ color: "white" }}
               >
@@ -230,6 +239,7 @@ export default function App() {
                 speed="medium"
                 revealSpeed={0.7}
                 scrambleIntensity={8}
+                matchWidth={true}
                 delay={0}
                 style={{ color: "white" }}
               >
@@ -241,6 +251,7 @@ export default function App() {
                 speed="slow"
                 revealSpeed={0.6}
                 scrambleIntensity={7}
+                matchWidth={true}
                 delay={400}
                 style={{ color: "white" }}
               >
@@ -252,6 +263,7 @@ export default function App() {
                 speed="medium"
                 revealSpeed={0.8}
                 scrambleIntensity={9}
+                matchWidth={true}
                 delay={800}
                 style={{ color: "white" }}
               >
@@ -263,6 +275,7 @@ export default function App() {
                 speed={1.5}
                 revealSpeed={0.9}
                 scrambleIntensity={10}
+                matchWidth={true}
                 delay={1200}
                 style={{ color: "white" }}
               >
@@ -291,6 +304,7 @@ export default function App() {
                 speed="medium"
                 revealSpeed={0.8}
                 scrambleIntensity={9}
+                matchWidth={true}
                 delay={0}
                 style={{ color: "white" }}
               >
@@ -321,7 +335,8 @@ export default function App() {
                   speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
-                  delay={0}
+                  matchWidth={true}
+                                delay={0}
                   style={{ color: "white" }}
                 >
                   BRAND IDENTITY &
@@ -332,6 +347,7 @@ export default function App() {
                   speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
+                  matchWidth={true}
                   delay={400}
                   style={{ color: "white" }}
                 >
@@ -360,6 +376,7 @@ export default function App() {
                   speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
+                  matchWidth={true}
                   delay={800}
                   style={{ color: "white" }}
                 >
@@ -371,6 +388,7 @@ export default function App() {
                   speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
+                  matchWidth={true}
                   delay={1000}
                   style={{ color: "white" }}
                 >
@@ -382,6 +400,7 @@ export default function App() {
                   speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
+                  matchWidth={true}
                   delay={1200}
                   style={{ color: "white" }}
                 >
@@ -393,6 +412,7 @@ export default function App() {
                   speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={5}
+                  matchWidth={true}
                   delay={1400}
                   style={{ color: "white" }}
                 >
@@ -418,6 +438,7 @@ export default function App() {
                   speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
+                  matchWidth={true}
                   delay={1200}
                   style={{ color: "#00ff00" }}
                 >
@@ -429,6 +450,7 @@ export default function App() {
                   speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
+                  matchWidth={true}
                   delay={1400}
                   style={{ color: "#00ff00" }}
                 >
@@ -440,6 +462,7 @@ export default function App() {
                   speed="medium"
                   revealSpeed={0.8}
                   scrambleIntensity={7}
+                  matchWidth={true}
                   delay={1600}
                   style={{ color: "#00ff00" }}
                 >
@@ -471,6 +494,7 @@ export default function App() {
                   speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
+                  matchWidth={true}
                   delay={0}
                   style={{ color: "white" }}
                 >
@@ -482,6 +506,7 @@ export default function App() {
                   speed="slow"
                   revealSpeed={0.6}
                   scrambleIntensity={7}
+                  matchWidth={true}
                   delay={400}
                   style={{ color: "white" }}
                 >
@@ -493,6 +518,7 @@ export default function App() {
                   speed="medium"
                   revealSpeed={0.7}
                   scrambleIntensity={8}
+                  matchWidth={true}
                   delay={800}
                   style={{ color: "white" }}
                 >
@@ -748,6 +774,7 @@ export default function App() {
                   trigger="visible"
                   speed="medium"
                   revealSpeed={0.7}
+                  
                   scrambleIntensity={8}
                   delay={0}
                   style={{ color: "white" }}
