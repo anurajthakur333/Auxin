@@ -1,4 +1,12 @@
 // src/components/ScrambleText.tsx
+//
+// USAGE EXAMPLES:
+// <ScrambleText>Default left-to-right</ScrambleText>
+// <ScrambleText direction="right-to-left">Right to left reveal</ScrambleText>
+// <ScrambleText direction="center-out">Center outward reveal</ScrambleText>
+// <ScrambleText direction="random">Random character reveal</ScrambleText>
+// <ScrambleText trigger="load" speed="fast">Auto-start on load</ScrambleText>
+// <ScrambleText trigger="click" scrambleColor="#ff0000">Click to scramble</ScrambleText>
 
 import {
   useEffect,
@@ -7,33 +15,30 @@ import {
   CSSProperties,
 } from "react";
 
+// Props interface - defines what options you can pass to the component
 interface ScrambleTextProps {
-  children: string;
-  duration?: number;
-  fps?: number;
-  delay?: number;
-  trigger?: "hover" | "load" | "click" | "visible";
-  className?: string;
-  style?: CSSProperties;
-  letters?: string;
-  scrambleColor?: string;
-  glowEffect?: boolean;
-  waveEffect?: boolean;
-  onComplete?: () => void;
+  children: string;                    // The text to scramble
+  duration?: number;                   // How long the scramble lasts (ms)
+  fps?: number;                       // Animation frame rate
+  delay?: number;                     // Wait time before starting (ms)
+  trigger?: "hover" | "load" | "click" | "visible"; // When to start scrambling
+  className?: string;                 // CSS class name
+  style?: CSSProperties;             // Inline styles
+  letters?: string;                  // Characters to use for scrambling
+  scrambleColor?: string;            // Color of scrambled characters
+  onComplete?: () => void;           // Function to call when done
   speed?: "ultra-slow" | "slow" | "medium" | "fast" | "ultra-fast" | number;
-  revealSpeed?: number;
-  scrambleIntensity?: number;
-  randomReveal?: boolean;
+  revealSpeed?: number;              // How fast characters reveal (0-1)
+  scrambleIntensity?: number;        // How often characters change (1-10)
+  direction?: "left-to-right" | "right-to-left" | "center-out" | "random"; // Reveal direction
+  randomReveal?: boolean;            // Reveal characters in random order (deprecated - use direction="random")
 }
 
+// Default characters used for scrambling effect
 const DEFAULT_LETTERS =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
 
-const DEFAULT_GLOW_BLUR = 8;         // px
-const DEFAULT_WAVE_AMPLITUDE = 3;     // px
-const DEFAULT_WAVE_FREQ = 0.2;        // radians per frame
-
-// Speed presets
+// Pre-made speed settings for easy use
 const SPEED_PRESETS = {
   "ultra-slow": { duration: 4000, fps: 30 },
   "slow": { duration: 2500, fps: 45 },
@@ -52,75 +57,116 @@ export default function ScrambleText({
   style = {},
   letters = DEFAULT_LETTERS,
   scrambleColor = style.color || "#ffffff",
-  glowEffect = false,
-  waveEffect = false,
   onComplete,
   speed,
   revealSpeed = 0.6,
   scrambleIntensity = 5,
+  direction = "left-to-right",
   randomReveal = false,
 }: ScrambleTextProps) {
-  // Apply speed presets if provided
+  // Convert speed presets to actual duration and fps values
   let finalDuration = duration;
   let finalFps = fps;
   
   if (speed !== undefined) {
     if (typeof speed === "string" && speed in SPEED_PRESETS) {
+      // Use preset values
       const preset = SPEED_PRESETS[speed];
       finalDuration = preset.duration;
       finalFps = preset.fps;
     } else if (typeof speed === "number") {
-      // Custom speed multiplier (1 = normal, 2 = 2x faster, 0.5 = 2x slower)
+      // Use custom speed multiplier (higher = faster)
       finalDuration = duration / speed;
       finalFps = Math.min(fps * speed, 120); // Cap at 120fps
     }
   }
 
-  // Replace all characters with spaces so nothing shows pre-scramble:
+  // Create blank text (all spaces) for initial state
   const blank = children.replace(/./g, " ");
+  
+  // State variables
   const [displayText, setDisplayText] = useState(trigger === 'hover' ? children : blank);
   const [isScrambling, setIsScrambling] = useState(false);
 
+  // Refs to store references and prevent memory leaks
   const elementRef = useRef<HTMLSpanElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
   const hasStartedRef = useRef(false);
   const charSpansRef = useRef<HTMLSpanElement[]>([]);
 
+  // Calculate animation timing
   const frameInterval = 1000 / finalFps;
   const totalFrames = Math.ceil(finalDuration / frameInterval);
 
-  // Precompute reveal order if randomReveal is true
+  // Store reveal order for different directions
   const revealOrderRef = useRef<number[]>([]);
 
-  useEffect(() => {
-    if (randomReveal) {
-      const order = Array.from({ length: children.length }, (_, i) => i);
-      // Fisher-Yates shuffle
-      for (let i = order.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [order[i], order[j]] = [order[j], order[i]];
-      }
-      revealOrderRef.current = order;
-    } else {
-      revealOrderRef.current = [];
+  // Calculate reveal order based on direction
+  const calculateRevealOrder = (direction: string, length: number): number[] => {
+    const positions = Array.from({ length }, (_, i) => i);
+    
+    switch (direction) {
+      case "right-to-left":
+        return positions.reverse(); // [4, 3, 2, 1, 0]
+        
+      case "center-out":
+        const result: number[] = [];
+        const center = Math.floor(length / 2);
+        let left = center;
+        let right = center + (length % 2 === 0 ? -1 : 0);
+        
+        // Add center character(s) first
+        if (length % 2 === 1) result.push(center);
+        
+        // Add characters expanding outward
+        while (left >= 0 || right < length) {
+          if (left >= 0 && left !== center) result.push(left);
+          if (right < length && right !== center) result.push(right);
+          left--;
+          right++;
+        }
+        return result;
+        
+      case "random":
+        // Fisher-Yates shuffle
+        const shuffled = [...positions];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+        
+      case "left-to-right":
+      default:
+        return positions; // [0, 1, 2, 3, 4]
     }
-  }, [children, randomReveal]);
+  };
 
-  // Wrap each character (including spaces) in its own <span>, preserving whitespace
+  // Set up reveal order when component mounts or props change
+  useEffect(() => {
+    // Support legacy randomReveal prop
+    const effectiveDirection = randomReveal ? "random" : direction;
+    revealOrderRef.current = calculateRevealOrder(effectiveDirection, children.length);
+  }, [children, direction, randomReveal]);
+
+  // Wrap each character in its own <span> element for individual control
   useEffect(() => {
     if (!elementRef.current) return;
     charSpansRef.current = [];
     const container = elementRef.current;
 
+    // Function to wrap text nodes with spans
     const wrapNode = (node: ChildNode) => {
       if (node.nodeType === Node.TEXT_NODE) {
         const text = node.textContent || "";
         const fragment = document.createDocumentFragment();
 
+        // Create a span for each character
         for (let i = 0; i < text.length; i++) {
           const char = text[i];
-          // Outer wrapper keeps whitespace: inline-block + white-space: pre
+          
+          // Outer wrapper keeps spacing correct
           const wrapper = document.createElement("span");
           wrapper.style.cssText = `
             position: relative;
@@ -130,7 +176,7 @@ export default function ScrambleText({
           `;
           wrapper.className = "char-wrapper";
 
-          // Inner span holds the character itself, also preserving whitespace
+          // Inner span holds the actual character
           const span = document.createElement("span");
           span.className = "char";
           span.textContent = char;
@@ -143,23 +189,7 @@ export default function ScrambleText({
             z-index: 1;
           `;
 
-          if (glowEffect) {
-            const glowSpan = document.createElement("span");
-            glowSpan.className = "char-glow";
-            glowSpan.textContent = char;
-            glowSpan.style.cssText = `
-              position: absolute;
-              top: 0;
-              left: 0;
-              white-space: pre;
-              opacity: 0;
-              filter: blur(${DEFAULT_GLOW_BLUR}px);
-              transition: all 0.2s ease;
-              z-index: 0;
-              pointer-events: none;
-            `;
-            wrapper.appendChild(glowSpan);
-          }
+
 
           wrapper.appendChild(span);
           fragment.appendChild(wrapper);
@@ -167,63 +197,57 @@ export default function ScrambleText({
         }
         node.parentNode!.replaceChild(fragment, node);
       } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Recursively wrap child nodes
         Array.from(node.childNodes).forEach(wrapNode);
       }
     };
 
     Array.from(container.childNodes).forEach(wrapNode);
-  }, [children, glowEffect]);
+  }, [children]);
 
+  // Main scramble animation function
   const startScramble = () => {
-    if (isScrambling) return;
+    if (isScrambling) return; // Don't start if already scrambling
     setIsScrambling(true);
 
     let frameCount = 0;
     const originalChars = Array.from(children);
-    const workArray = originalChars.map(() => "");
+    const workArray = originalChars.map(() => ""); // Track current display characters
 
+    // Animation loop - runs every frame
     const animate = () => {
       frameCount++;
-      const progress = frameCount / totalFrames;
+      const progress = frameCount / totalFrames; // 0 to 1
 
+      // Update each character
       charSpansRef.current.forEach((span, idx) => {
         const orig = originalChars[idx];
 
+        // Always keep spaces as spaces
         if (orig === " ") {
-          // Always keep space visible
           workArray[idx] = " ";
           span.textContent = " ";
-          if (glowEffect) {
-            const glowSpan = span.parentElement!.querySelector(
-              ".char-glow"
-            ) as HTMLElement | null;
-            if (glowSpan) glowSpan.style.opacity = "0";
-          }
           span.style.color = style.color || "inherit";
           span.style.transform = "";
           return;
         }
 
-        let orderPos = idx;
-        if (randomReveal && revealOrderRef.current.length) {
-          orderPos = revealOrderRef.current.indexOf(idx);
-        }
+        // Determine when this character should be revealed based on direction
+        const orderPos = revealOrderRef.current.indexOf(idx);
         const revealThreshold = ((orderPos + 1) / originalChars.length) * revealSpeed;
+        
+        // Check if it's time to reveal this character
         if (progress >= revealThreshold) {
+          // Reveal the original character
           workArray[idx] = orig;
           span.textContent = orig;
           span.style.color = style.color || "inherit";
           span.style.transform = "";
-          if (glowEffect) {
-            const glowSpan = span.parentElement!.querySelector(
-              ".char-glow"
-            ) as HTMLElement | null;
-            if (glowSpan) glowSpan.style.opacity = "0";
-          }
         } else {
-          // Use scramble intensity to control character change frequency
+          // Keep scrambling this character
           const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
           if (shouldScramble || workArray[idx] === "") {
+            // Pick a random character from the letters pool
             const randomChar = letters.charAt(
               Math.floor(Math.random() * letters.length)
             );
@@ -232,70 +256,52 @@ export default function ScrambleText({
           }
           span.style.color = scrambleColor;
 
-          if (glowEffect) {
-            const glowSpan = span.parentElement!.querySelector(
-              ".char-glow"
-            ) as HTMLElement | null;
-            if (glowSpan) {
-              glowSpan.style.opacity = `${Math.random() * 0.5 + 0.3}`; 
-              glowSpan.style.color = scrambleColor;
-              glowSpan.textContent = workArray[idx];
-            }
-          }
-
-          if (waveEffect) {
-            const yOffset = 
-              Math.sin(frameCount * DEFAULT_WAVE_FREQ + idx * 0.3) *
-              DEFAULT_WAVE_AMPLITUDE;
-            const scale = 1 + Math.random() * 0.05;
-            span.style.transform = `translateY(${yOffset}px) scale(${scale})`;
-          } else {
-            span.style.transform = "";
-          }
+          // Add wave effect to scrambled characters
+          span.style.transform = "";
         }
       });
 
+      // Update the display text
       setDisplayText(workArray.join(""));
 
+      // Continue animation or finish
       if (frameCount < totalFrames) {
         frameRef.current = requestAnimationFrame(animate);
       } else {
+        // Animation complete - clean up and show final text
         charSpansRef.current.forEach((span, idx) => {
           const orig = originalChars[idx];
           span.textContent = orig;
           span.style.color = style.color || "inherit";
           span.style.transform = "";
-          if (glowEffect) {
-            const glowSpan = span.parentElement!.querySelector(
-              ".char-glow"
-            ) as HTMLElement | null;
-            if (glowSpan) glowSpan.style.opacity = "0";
-          }
         });
         setDisplayText(children);
         setIsScrambling(false);
 
-        // Allow subsequent scrambles only for hover or click triggers
+        // Allow subsequent scrambles for hover/click triggers
         if (trigger === "hover" || trigger === "click") {
           hasStartedRef.current = false;
         }
 
-        // If a reverse scramble was queued, start it now
+        // Handle queued reverse scramble (for hover out)
         if (queuedRef.current) {
           queuedRef.current = false;
           triggerScramble();
-          return; // prevent onComplete from firing twice in immediate succession
+          return; // prevent onComplete from firing twice
         }
 
+        // Call completion callback if provided
         if (onComplete) onComplete();
       }
     };
 
+    // Start the animation
     frameRef.current = requestAnimationFrame(animate);
   };
 
+  // Trigger scramble with delay if needed
   const triggerScramble = () => {
-    if (hasStartedRef.current) return;
+    if (hasStartedRef.current) return; // Prevent multiple triggers
     hasStartedRef.current = true;
     if (delay > 0) {
       timeoutRef.current = window.setTimeout(startScramble, delay);
@@ -304,18 +310,20 @@ export default function ScrambleText({
     }
   };
 
-  // Handle load / visible triggers
+  // Handle automatic triggers (load and visible)
   useEffect(() => {
     if (trigger === "load") {
+      // Start scrambling immediately when component loads
       triggerScramble();
     } else if (trigger === "visible" && elementRef.current) {
+      // Start scrambling when element becomes visible
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
             triggerScramble();
           }
         },
-        { threshold: 0.1 }
+        { threshold: 0.1 } // Trigger when 10% visible
       );
       observer.observe(elementRef.current);
       return () => observer.disconnect();
@@ -323,7 +331,7 @@ export default function ScrambleText({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]);
 
-  // Cleanup on unmount
+  // Clean up timers and animations when component unmounts
   useEffect(() => {
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
@@ -331,36 +339,39 @@ export default function ScrambleText({
     };
   }, []);
 
-  // Hover scrambles if trigger="hover"
+  // Handle mouse hover events
   const handleMouseEnter = () => {
     if (trigger === "hover") {
       triggerScramble();
     }
   };
 
-  // Queue a reverse scramble when leaving while one is already running
+  // Queue for handling hover out while scrambling
   const queuedRef = useRef(false);
 
   const handleMouseLeave = () => {
     if (trigger !== "hover") return;
 
     if (isScrambling) {
-      // Let current animation finish, then run again once
+      // If currently scrambling, queue another scramble for when it finishes
       queuedRef.current = true;
     } else {
+      // Start scrambling immediately
       triggerScramble();
     }
   };
 
-  // Click always scrambles
+  // Handle click events
   const handleClick = () => {
     triggerScramble();
   };
 
+  // Determine text color based on scrambling state
   const appliedColor = isScrambling
     ? scrambleColor
     : style.color || "inherit";
 
+  // Render the component
   return (
     <span
       ref={elementRef}
@@ -369,7 +380,7 @@ export default function ScrambleText({
         ...style,
         color: appliedColor,
         display: "inline-block",
-        whiteSpace: "pre",
+        whiteSpace: "pre", // Preserve spaces and line breaks
         cursor:
           trigger === "hover" || trigger === "click"
             ? "pointer"
