@@ -35,8 +35,9 @@ interface ScrambleTextProps {
 }
 
 // Default characters used for scrambling effect
+// Using characters with similar widths to reduce shaking
 const DEFAULT_LETTERS =
-  "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  "abcdefghijklmnopqrstuvwxyz0123456789";
 
 // Pre-made speed settings for easy use
 const SPEED_PRESETS = {
@@ -377,6 +378,7 @@ export default function ScrambleText({
       ref={elementRef}
       className={className}
       style={{
+        fontFamily: "monospace", // Prevent width shaking with equal-width characters
         ...style,
         color: appliedColor,
         display: "inline-block",
