@@ -5,6 +5,7 @@
 // <ScrambleText direction="right-to-left">Right to left reveal</ScrambleText>
 // <ScrambleText direction="center-out">Center outward reveal</ScrambleText>
 // <ScrambleText direction="random">Random character reveal</ScrambleText>
+// <ScrambleText matchWidth={true}>No width shaking with any font</ScrambleText>
 // <ScrambleText trigger="load" speed="fast">Auto-start on load</ScrambleText>
 // <ScrambleText trigger="click" scrambleColor="#ff0000">Click to scramble</ScrambleText>
 
@@ -31,13 +32,21 @@ interface ScrambleTextProps {
   revealSpeed?: number;              // How fast characters reveal (0-1)
   scrambleIntensity?: number;        // How often characters change (1-10)
   direction?: "left-to-right" | "right-to-left" | "center-out" | "random"; // Reveal direction
+  matchWidth?: boolean;              // Match scrambled character widths to prevent shaking
   randomReveal?: boolean;            // Reveal characters in random order (deprecated - use direction="random")
 }
 
 // Default characters used for scrambling effect
-// Using characters with similar widths to reduce shaking
 const DEFAULT_LETTERS =
-  "abcdefghijklmnopqrstuvwxyz0123456789";
+  "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
+// Character width categories for width-matching scramble
+const WIDTH_CATEGORIES = {
+  narrow: "il1!|.,;:'\"`",           // Very narrow characters
+  normal: "abcdefghjknopqrstuvxyz023456789", // Normal width characters  
+  wide: "mwMWQ@#%&",                 // Wide characters
+  space: " "                         // Spaces stay as spaces
+};
 
 // Pre-made speed settings for easy use
 const SPEED_PRESETS = {
@@ -63,6 +72,7 @@ export default function ScrambleText({
   revealSpeed = 0.6,
   scrambleIntensity = 5,
   direction = "left-to-right",
+  matchWidth = false,
   randomReveal = false,
 }: ScrambleTextProps) {
   // Convert speed presets to actual duration and fps values
@@ -102,6 +112,30 @@ export default function ScrambleText({
 
   // Store reveal order for different directions
   const revealOrderRef = useRef<number[]>([]);
+
+  // Get width category of a character
+  const getCharWidthCategory = (char: string): keyof typeof WIDTH_CATEGORIES => {
+    if (char === " ") return "space";
+    if (WIDTH_CATEGORIES.narrow.includes(char.toLowerCase())) return "narrow";
+    if (WIDTH_CATEGORIES.wide.includes(char.toLowerCase())) return "wide";
+    return "normal";
+  };
+
+  // Get random character with similar width to match original character
+  const getWidthMatchedChar = (originalChar: string): string => {
+    if (originalChar === " ") return " ";
+    
+    const category = getCharWidthCategory(originalChar);
+    const categoryChars = WIDTH_CATEGORIES[category];
+    
+    if (categoryChars.length === 0) {
+      // Fallback to normal category if category is empty
+      const fallbackChars = WIDTH_CATEGORIES.normal;
+      return fallbackChars.charAt(Math.floor(Math.random() * fallbackChars.length));
+    }
+    
+    return categoryChars.charAt(Math.floor(Math.random() * categoryChars.length));
+  };
 
   // Calculate reveal order based on direction
   const calculateRevealOrder = (direction: string, length: number): number[] => {
@@ -248,10 +282,10 @@ export default function ScrambleText({
           // Keep scrambling this character
           const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
           if (shouldScramble || workArray[idx] === "") {
-            // Pick a random character from the letters pool
-            const randomChar = letters.charAt(
-              Math.floor(Math.random() * letters.length)
-            );
+            // Pick a character - either width-matched or random
+            const randomChar = matchWidth 
+              ? getWidthMatchedChar(orig)
+              : letters.charAt(Math.floor(Math.random() * letters.length));
             workArray[idx] = randomChar;
             span.textContent = randomChar;
           }
@@ -378,7 +412,6 @@ export default function ScrambleText({
       ref={elementRef}
       className={className}
       style={{
-        fontFamily: "monospace", // Prevent width shaking with equal-width characters
         ...style,
         color: appliedColor,
         display: "inline-block",
