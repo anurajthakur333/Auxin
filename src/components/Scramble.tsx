@@ -1,14 +1,3 @@
-// src/components/ScrambleText.tsx
-//
-// USAGE EXAMPLES:
-// <ScrambleText>Default left-to-right</ScrambleText>
-// <ScrambleText direction="right-to-left">Right to left reveal</ScrambleText>
-// <ScrambleText direction="center-out">Center outward reveal</ScrambleText>
-// <ScrambleText direction="random">Random character reveal</ScrambleText>
-// <ScrambleText matchWidth={true}>No width shaking with any font</ScrambleText>
-// <ScrambleText trigger="load" speed="fast">Auto-start on load</ScrambleText>
-// <ScrambleText trigger="click" scrambleColor="#ff0000">Click to scramble</ScrambleText>
-
 import {
   useEffect,
   useRef,
@@ -50,7 +39,7 @@ const WIDTH_CATEGORIES = {
 
 // Pre-made speed settings for easy use
 const SPEED_PRESETS = {
-  "ultra-slow": { duration: 4000, fps: 30 },
+  "ultra-slow": { duration: 4000, fps: 60 },
   "slow": { duration: 2500, fps: 45 },
   "medium": { duration: 1500, fps: 60 },
   "fast": { duration: 800, fps: 80 },
@@ -240,9 +229,25 @@ export default function ScrambleText({
     Array.from(container.childNodes).forEach(wrapNode);
   }, [children]);
 
+  // Stop current animation and reset
+  const stopScramble = () => {
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsScrambling(false);
+    hasStartedRef.current = false;
+    queuedRef.current = false;
+  };
+
   // Main scramble animation function
   const startScramble = () => {
-    if (isScrambling) return; // Don't start if already scrambling
+    // Stop any existing animation first
+    stopScramble();
     setIsScrambling(true);
 
     let frameCount = 0;
@@ -318,13 +323,6 @@ export default function ScrambleText({
           hasStartedRef.current = false;
         }
 
-        // Handle queued reverse scramble (for hover out)
-        if (queuedRef.current) {
-          queuedRef.current = false;
-          triggerScramble();
-          return; // prevent onComplete from firing twice
-        }
-
         // Call completion callback if provided
         if (onComplete) onComplete();
       }
@@ -387,13 +385,9 @@ export default function ScrambleText({
   const handleMouseLeave = () => {
     if (trigger !== "hover") return;
 
-    if (isScrambling) {
-      // If currently scrambling, queue another scramble for when it finishes
-      queuedRef.current = true;
-    } else {
-      // Start scrambling immediately
-      triggerScramble();
-    }
+    // Always start scrambling immediately, regardless of current state
+    // This will interrupt any ongoing animation for instant response
+    triggerScramble();
   };
 
   // Handle click events
@@ -412,6 +406,7 @@ export default function ScrambleText({
       ref={elementRef}
       className={className}
       style={{
+        // fontFamily: "monospace",
         ...style,
         color: appliedColor,
         display: "inline-block",
