@@ -3,13 +3,15 @@
 import Navbar from "./components/Navbar";
 import ScrambleText from "./components/Scramble";
 import Footer from "./components/Footer";
+import Preloader from "./components/Preloader";
 import "./styles/fonts.css";
 import "./styles/Main.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 
 export default function App() {
   const lenisRef = useRef<Lenis | null>(null);
+  const [showPreloader, setShowPreloader] = useState(true);
 
   useEffect(() => {
     // Initialize Lenis
@@ -58,12 +60,32 @@ export default function App() {
     };
   }, []);
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#000" }}>
-      <Navbar />
+  const handlePreloaderComplete = () => {
+    setShowPreloader(false);
+  };
 
-      {/* Main content wrapper, flex: 1 to fill space */}
-      <div style={{ flex: 1 }}>
+  return (
+    <>
+      {showPreloader && (
+        <Preloader 
+          onComplete={handlePreloaderComplete}
+          duration={2000}
+          delay={500}
+        />
+      )}
+      
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        minHeight: "100vh", 
+        background: "#000",
+        opacity: showPreloader ? 0 : 1,
+        transition: "opacity 0.5s ease-in-out"
+      }}>
+        <Navbar />
+
+        {/* Main content wrapper, flex: 1 to fill space */}
+        <div style={{ flex: 1 }}>
     {/* Section - 1 */}
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
           <div className="text-center px-4">
@@ -1072,10 +1094,10 @@ export default function App() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }
- 

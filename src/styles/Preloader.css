@@ -1,0 +1,44 @@
+.preloader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.preloader-content {
+  transform-origin: center;
+  transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.preloader-content.animate {
+  transform: rotate(90deg) scale(3);
+  opacity: 0;
+}
+
+.preloader-svg {
+  width: 248px;
+  height: 124px;
+  max-width: 80vw;
+  max-height: 40vh;
+}
+
+@media (max-width: 768px) {
+  .preloader-svg {
+    width: 200px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .preloader-svg {
+    width: 150px;
+    height: 75px;
+  }
+} 
