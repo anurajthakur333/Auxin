@@ -252,7 +252,7 @@ export default function ScrambleText({
 
     let frameCount = 0;
     const originalChars = Array.from(children);
-    const workArray = originalChars.map(() => ""); // Track current display characters
+    const workArray: string[] = originalChars.map(() => trigger === "hover" ? "" : " "); // Different initial state based on trigger
 
     // Animation loop - runs every frame
     const animate = () => {
@@ -272,32 +272,65 @@ export default function ScrambleText({
           return;
         }
 
-        // Determine when this character should be revealed based on direction
-        const orderPos = revealOrderRef.current.indexOf(idx);
-        const revealThreshold = ((orderPos + 1) / originalChars.length) * revealSpeed;
-        
-        // Check if it's time to reveal this character
-        if (progress >= revealThreshold) {
-          // Reveal the original character
-          workArray[idx] = orig;
-          span.textContent = orig;
-          span.style.color = style.color || "inherit";
-          span.style.transform = "";
-        } else {
-          // Keep scrambling this character
-          const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
-          if (shouldScramble || workArray[idx] === "") {
-            // Pick a character - either width-matched or random
-            const randomChar = matchWidth 
-              ? getWidthMatchedChar(orig)
-              : letters.charAt(Math.floor(Math.random() * letters.length));
-            workArray[idx] = randomChar;
-            span.textContent = randomChar;
+        if (trigger === "hover") {
+          // Original hover behavior - all letters scramble at once, then reveal
+          const orderPos = revealOrderRef.current.indexOf(idx);
+          const revealThreshold = ((orderPos + 1) / originalChars.length) * revealSpeed;
+          
+          // Check if it's time to reveal this character
+          if (progress >= revealThreshold) {
+            // Reveal the original character
+            workArray[idx] = orig;
+            span.textContent = orig;
+            span.style.color = style.color || "inherit";
+            span.style.transform = "";
+          } else {
+            // Keep scrambling this character
+            const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
+            if (shouldScramble || workArray[idx] === "") {
+              // Pick a character - either width-matched or random
+              const randomChar = matchWidth 
+                ? getWidthMatchedChar(orig)
+                : letters.charAt(Math.floor(Math.random() * letters.length));
+              workArray[idx] = randomChar;
+              span.textContent = randomChar;
+            }
+            span.style.color = scrambleColor;
+            span.style.transform = "";
           }
-          span.style.color = scrambleColor;
-
-          // Add wave effect to scrambled characters
-          span.style.transform = "";
+        } else {
+          // Letter-by-letter behavior for other triggers
+          const orderPos = revealOrderRef.current.indexOf(idx);
+          const startThreshold = (orderPos / originalChars.length) * revealSpeed;
+          const endThreshold = ((orderPos + 0.3) / originalChars.length) * revealSpeed + 0.2; // Give each char more scramble time
+          
+          // Check if this character should be visible yet
+          if (progress < startThreshold) {
+            // Character hasn't started appearing yet - keep it blank
+            workArray[idx] = " ";
+            span.textContent = " ";
+            span.style.color = style.color || "inherit";
+            span.style.transform = "";
+          } else if (progress >= endThreshold) {
+            // Character is fully revealed
+            workArray[idx] = orig;
+            span.textContent = orig;
+            span.style.color = style.color || "inherit";
+            span.style.transform = "";
+          } else {
+            // Character is in the scrambling phase
+            const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
+            if (shouldScramble || workArray[idx] === " ") {
+              // Pick a character - either width-matched or random
+              const randomChar = matchWidth 
+                ? getWidthMatchedChar(orig)
+                : letters.charAt(Math.floor(Math.random() * letters.length));
+              workArray[idx] = randomChar;
+              span.textContent = randomChar;
+            }
+            span.style.color = scrambleColor;
+            span.style.transform = "";
+          }
         }
       });
 
