@@ -13,15 +13,15 @@ export default function Preloader({
   delay = 500 
 }: PreloaderProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const [animationStarted, setAnimationStarted] = useState(false);
+  const [shouldSlideUp, setShouldSlideUp] = useState(false);
 
   useEffect(() => {
-    // Start animation after delay
-    const startTimer = setTimeout(() => {
-      setAnimationStarted(true);
+    // Start slide-up animation after delay
+    const slideTimer = setTimeout(() => {
+      setShouldSlideUp(true);
     }, delay);
 
-    // Hide preloader and call onComplete after animation finishes
+    // Hide preloader and call onComplete after slide animation finishes
     const hideTimer = setTimeout(() => {
       setIsVisible(false);
       if (onComplete) {
@@ -30,7 +30,7 @@ export default function Preloader({
     }, delay + duration);
 
     return () => {
-      clearTimeout(startTimer);
+      clearTimeout(slideTimer);
       clearTimeout(hideTimer);
     };
   }, [delay, duration, onComplete]);
@@ -38,13 +38,13 @@ export default function Preloader({
   if (!isVisible) return null;
 
   return (
-    <div className="preloader-container">
-      <div 
-        className={`preloader-content ${animationStarted ? 'animate' : ''}`}
-        style={{
-          transition: `all ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
-        }}
-      >
+    <div 
+      className={`preloader-container ${shouldSlideUp ? 'slide-up' : ''}`}
+      style={{
+        transition: `transform ${duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+      }}
+    >
+      <div className="preloader-content">
         <svg 
           width="248" 
           height="124" 

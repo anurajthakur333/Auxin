@@ -79,8 +79,8 @@ export default function App() {
         flexDirection: "column", 
         minHeight: "100vh", 
         background: "#000",
-        opacity: showPreloader ? 0 : 1,
-        transition: "opacity 0.5s ease-in-out"
+        position: "relative",
+        zIndex: 1
       }}>
         <Navbar />
 
