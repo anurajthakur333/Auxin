@@ -5,10 +5,17 @@ html::-webkit-scrollbar {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 
-html {
+html, body {
   -ms-overflow-style: none;
   scrollbar-width: none;
-  background-color: black;
+  background-color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  background-color: #000;
+  min-height: 100vh;
 }
 
 .green-text {
