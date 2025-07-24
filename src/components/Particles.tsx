@@ -20,6 +20,8 @@ interface Particle {
   opacity: number;
   lifetime: number;
   birthTime: number;
+  update(): void;
+  draw(): void;
 }
 
 const Particles: React.FC<ParticleProps> = ({
@@ -91,8 +93,8 @@ const Particles: React.FC<ParticleProps> = ({
       birthTime: number;
 
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.x = Math.random() * (canvas?.width || window.innerWidth);
+        this.y = Math.random() * (canvas?.height || window.innerHeight);
         this.baseSize = Math.random() * sizeValue + 0.5;
         this.size = this.baseSize;
         this.speedX = (Math.random() - 0.5) * speedValue;
@@ -120,11 +122,16 @@ const Particles: React.FC<ParticleProps> = ({
         this.x += this.speedX;
         this.y += this.speedY;
 
-        if (this.x < 0 || this.x > canvas.width) this.x = Math.random() * canvas.width;
-        if (this.y < 0 || this.y > canvas.height) this.y = Math.random() * canvas.height;
+        const canvasWidth = canvas?.width || window.innerWidth;
+        const canvasHeight = canvas?.height || window.innerHeight;
+        
+        if (this.x < 0 || this.x > canvasWidth) this.x = Math.random() * canvasWidth;
+        if (this.y < 0 || this.y > canvasHeight) this.y = Math.random() * canvasHeight;
       }
 
       draw() {
+        if (!ctx) return;
+        
         if (glow) {
           ctx.shadowColor = color;
           ctx.shadowBlur = 15;
@@ -142,6 +149,7 @@ const Particles: React.FC<ParticleProps> = ({
     }
 
     const resizeCanvas = () => {
+      if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width;
       canvas.height = rect.height;
@@ -149,6 +157,7 @@ const Particles: React.FC<ParticleProps> = ({
     };
 
     const adjustParticleCount = () => {
+      if (!canvas) return;
       const area = canvas.width * canvas.height;
       const targetCount = Math.floor(area * densityValue);
       const difference = targetCount - particles.length;
@@ -163,6 +172,8 @@ const Particles: React.FC<ParticleProps> = ({
     };
 
     const animate = () => {
+      if (!ctx || !canvas) return;
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((particle) => {
