@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import ScrambleText from "./components/Scramble";
 import Footer from "./components/Footer";
 import Preloader from "./components/Preloader";
+import Squares from "./components/Squares";
 import "./styles/fonts.css";
 import "./styles/Main.css";
 import { useEffect, useRef, useState } from "react";
@@ -87,8 +88,18 @@ export default function App() {
         {/* Main content wrapper, flex: 1 to fill space */}
         <div style={{ flex: 1 }}>
     {/* Section - 1 */}
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-          <div className="text-center px-4">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", position: "relative" }}>
+          {/* Squares Background */}
+          <Squares 
+            speed={0.3} 
+            squareSize={100}
+            direction='up'
+            borderColor='rgba(255,255,255,0.1)'
+            hoverFillColor='rgba(255,255,255,0.05)'
+          />
+          
+          {/* Text Content */}
+          <div className="text-center px-4" style={{ position: "relative", zIndex: 1 }}>
             <div
               className="aeonik-regular text-white"
               style={{
