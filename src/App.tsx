@@ -99,8 +99,19 @@ export default function App() {
             hoverFillColor='rgba(255,255,255,0.05)'
           />
           
+          {/* Particles Background */}
+          <Particles 
+            density="medium"
+            speed="slow"
+            size="medium"
+            color="rgba(255, 255, 255, 0.6)"
+            glow={true}
+            fadeInDuration={8000}
+            particleLifetime={5000}
+          />
+          
           {/* Text Content */}
-          <div className="text-center px-4" style={{ position: "relative", zIndex: 1 }}>
+          <div className="text-center px-4" style={{ position: "relative", zIndex: 2 }}>
             <div
               className="aeonik-regular text-white"
               style={{
