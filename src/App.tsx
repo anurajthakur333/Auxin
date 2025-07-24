@@ -5,6 +5,7 @@ import ScrambleText from "./components/Scramble";
 import Footer from "./components/Footer";
 import Preloader from "./components/Preloader";
 import Squares from "./components/Squares";
+import Particles from "./components/Particles";
 import "./styles/fonts.css";
 import "./styles/Main.css";
 import { useEffect, useRef, useState } from "react";
@@ -154,8 +155,19 @@ export default function App() {
         </div>
 
        {/* Section - 2 */}
-        <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "25px 0 80px 25px" }}>
-          <div className="">
+        <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "25px 0 80px 25px", position: "relative" }}>
+          {/* Particles Background */}
+          <Particles 
+            density="low"
+            speed="slow"
+            size="small"
+            color="rgba(255, 255, 255, 0.8)"
+            glow={true}
+            fadeInDuration={6000}
+            particleLifetime={4000}
+          />
+          
+          <div className="" style={{ position: "relative", zIndex: 1 }}>
             <div
               className="aeonik-regular text-white"
               style={{
