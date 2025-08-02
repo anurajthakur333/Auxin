@@ -182,10 +182,8 @@ const Terms = () => {
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               10. TERMINATION CLAUSES
             </h2>
-            <ul style={{ marginBottom: "0px" }}>
-              <li style={{ marginBottom: "0px" }}>Immediate termination rights for:</li>
-            </ul>
-            <ul style={{ marginBottom: "0px", paddingLeft: "50px" }}>
+            <p style={{ marginBottom: "20px" }}>Immediate termination rights for:</p>
+            <ul style={{ marginBottom: "20px", paddingLeft: "20px" }}>
               <li>Client fraud or illegal activity</li>
               <li>Payment breaches exceeding 30 days</li>
               <li>Harassment of team members</li>
