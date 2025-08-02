@@ -48,8 +48,8 @@ const Terms = () => {
           <h1 
             className="aeonik-regular text-white"
             style={{
-              fontSize: "clamp(32px, 8vw, 770px)",
-              letterSpacing: "-9px",
+              fontSize: "clamp(32px, 15vw, 770px)",
+              letterSpacing: "-16px",
               lineHeight: "1.1",
               fontWeight: 400,
               textAlign: "left",
@@ -65,7 +65,8 @@ const Terms = () => {
               fontSize: "clamp(16px, 2vw, 18px)",
               lineHeight: "1.6",
               maxWidth: "1300px",
-              textAlign: "left"
+              textAlign: "left",
+              paddingLeft: "10px"
             }}
           >
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
@@ -81,7 +82,7 @@ const Terms = () => {
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               2. COMPANY OVERVIEW
             </h2>
-            <p style={{ marginBottom: "20px" }}>
+            <p style={{ marginBottom: "0px" }}>
               Auxin Media Is A Registered Digital Service Provider Headquartered In India, Delivering Cutting-Edge:
             </p>
             <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
@@ -95,7 +96,7 @@ const Terms = () => {
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               3. SERVICE SCOPE
             </h2>
-            <p style={{ marginBottom: "20px" }}>
+            <p style={{ marginBottom: "0px" }}>
               Our Comprehensive Digital Solutions Include (But Aren't Limited To):
             </p>
             <ul style={{ marginBottom: "20px", paddingLeft: "20px" }}>
@@ -105,14 +106,14 @@ const Terms = () => {
               <li>Workflow Automation & CRM Implementation</li>
               <li>Business Process Consulting</li>
             </ul>
-            <p style={{ marginBottom: "40px", fontStyle: "italic" }}>
+            <p style={{ marginBottom: "40px"}}>
               Note: Specific Service Engagements Are Governed By Individual Proposals Or Statements Of Work.
             </p>
             
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               4. CLIENT OBLIGATIONS
             </h2>
-            <p style={{ marginBottom: "20px" }}>You Agree To:</p>
+            <p style={{ marginBottom: "0px" }}>You Agree To:</p>
             <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
               <li>Provide Timely Access To Systems, Content, And Resources</li>
               <li>Supply Legally Licensed Text, Images, Videos, And Brand Assets</li>
@@ -152,11 +153,14 @@ const Terms = () => {
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               8. LIABILITY LIMITATIONS
             </h2>
-            <p style={{ marginBottom: "20px" }}>
-              No guarantee of specific marketing KPIs, revenue outcomes, or performance metrics
+            <p style={{ marginBottom: "0px" }}>
+            <ul style={{ marginBottom: "0px", paddingLeft: "20px" }}>
+              <li>No guarantee of specific marketing KPIs, revenue outcomes, or performance metrics</li>
+              <li style={{ marginBottom: "0px" }}>Zero liability for:</li>
+            </ul>
             </p>
-            <p style={{ marginBottom: "20px" }}>Zero liability for:</p>
-            <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
+       
+            <ul style={{ marginBottom: "40px", paddingLeft: "47px" }}>
               <li>Third-party platform changes (e.g., Google/Facebook algorithms)</li>
               <li>Data breaches from unsecured client systems</li>
               <li>Business losses related to service utilization</li>
@@ -165,24 +169,28 @@ const Terms = () => {
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               9. CONFIDENTIALITY COMMITMENT
             </h2>
-            <p style={{ marginBottom: "20px" }}>Strict NDA adherence for all:</p>
-            <ul style={{ marginBottom: "20px", paddingLeft: "20px" }}>
+            <ul style={{ marginBottom: "0px", paddingLeft: "20px" }}>
+              <li style={{ marginBottom: "0px" }}>Strict NDA adherence for all:</li>
+            </ul>
+            <ul style={{ marginBottom: "0px", paddingLeft: "47px" }}>
               <li>Business intelligence</li>
               <li>Technical documentation</li>
               <li>Financial information</li>
             </ul>
-            <p style={{ marginBottom: "40px" }}>Confidentiality obligations survive contract termination</p>
+            <li style={{ marginBottom: "40px" }}>Confidentiality obligations survive contract termination</li>
             
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               10. TERMINATION CLAUSES
             </h2>
-            <p style={{ marginBottom: "20px" }}>Immediate termination rights for:</p>
-            <ul style={{ marginBottom: "20px", paddingLeft: "20px" }}>
+            <ul style={{ marginBottom: "0px" }}>
+              <li style={{ marginBottom: "0px" }}>Immediate termination rights for:</li>
+            </ul>
+            <ul style={{ marginBottom: "0px", paddingLeft: "50px" }}>
               <li>Client fraud or illegal activity</li>
               <li>Payment breaches exceeding 30 days</li>
               <li>Harassment of team members</li>
             </ul>
-            <p style={{ marginBottom: "40px" }}>Client termination requires 14-day written notice + settled balances</p>
+            <li style={{ marginBottom: "40px" }}>Client termination requires 14-day written notice + settled balances</li>
             
             <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
               11. LEGAL JURISDICTION
