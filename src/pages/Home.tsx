@@ -96,6 +96,7 @@ const Home = () => {
             direction='up'
             borderColor='rgba(255,255,255,0.1)'
             hoverFillColor='rgba(255,255,255,0.05)'
+            hoverPattern='plus'
           />
           
           {/* Particles Background */}
@@ -166,6 +167,16 @@ const Home = () => {
 
        {/* Section - 2 */}
         <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "25px 0 80px 25px", position: "relative" }}>
+          {/* Squares Background */}
+          <Squares 
+            speed={0.5} 
+            squareSize={75}
+            direction='diagonal'
+            borderColor='rgba(255,255,255,0.08)'
+            hoverFillColor='rgba(255,255,255,0.03)'
+            hoverPattern='diamond'
+          />
+          
           {/* Particles Background */}
           <Particles 
             density="low"

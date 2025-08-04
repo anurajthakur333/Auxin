@@ -13,6 +13,7 @@ interface SquaresProps {
   borderColor?: CanvasStrokeStyle;
   squareSize?: number;
   hoverFillColor?: CanvasStrokeStyle;
+  hoverPattern?: "single" | "plus" | "diamond" | "square3x3" | "square5x5" | "line-horizontal" | "line-vertical" | "l-shape";
 }
 
 const Squares: React.FC<SquaresProps> = ({
@@ -21,13 +22,92 @@ const Squares: React.FC<SquaresProps> = ({
   borderColor = "#333",
   squareSize = 25,
   hoverFillColor = "#222",
+  hoverPattern = "single",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
   const numSquaresX = useRef<number>(0);
   const numSquaresY = useRef<number>(0);
   const gridOffset = useRef<GridOffset>({ x: 0, y: 0 });
-  const hoveredSquareRef = useRef<GridOffset | null>(null);
+  const hoveredSquaresRef = useRef<GridOffset[]>([]);
+
+  // Pattern calculation functions
+  const getPatternSquares = (centerX: number, centerY: number, pattern: string): GridOffset[] => {
+    const squares: GridOffset[] = [];
+    
+    switch (pattern) {
+      case "single":
+        squares.push({ x: centerX, y: centerY });
+        break;
+        
+      case "plus":
+        squares.push(
+          { x: centerX, y: centerY },     // center
+          { x: centerX - 1, y: centerY }, // left
+          { x: centerX + 1, y: centerY }, // right
+          { x: centerX, y: centerY - 1 }, // up
+          { x: centerX, y: centerY + 1 }  // down
+        );
+        break;
+        
+      case "diamond":
+        squares.push(
+          { x: centerX, y: centerY },     // center
+          { x: centerX - 1, y: centerY }, // left
+          { x: centerX + 1, y: centerY }, // right
+          { x: centerX, y: centerY - 1 }, // up
+          { x: centerX, y: centerY + 1 }, // down
+          { x: centerX - 1, y: centerY - 1 }, // top-left
+          { x: centerX + 1, y: centerY - 1 }, // top-right
+          { x: centerX - 1, y: centerY + 1 }, // bottom-left
+          { x: centerX + 1, y: centerY + 1 }  // bottom-right
+        );
+        break;
+        
+      case "square3x3":
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            squares.push({ x: centerX + dx, y: centerY + dy });
+          }
+        }
+        break;
+        
+      case "square5x5":
+        for (let dx = -2; dx <= 2; dx++) {
+          for (let dy = -2; dy <= 2; dy++) {
+            squares.push({ x: centerX + dx, y: centerY + dy });
+          }
+        }
+        break;
+        
+      case "line-horizontal":
+        for (let dx = -2; dx <= 2; dx++) {
+          squares.push({ x: centerX + dx, y: centerY });
+        }
+        break;
+        
+      case "line-vertical":
+        for (let dy = -2; dy <= 2; dy++) {
+          squares.push({ x: centerX, y: centerY + dy });
+        }
+        break;
+        
+      case "l-shape":
+        squares.push(
+          { x: centerX, y: centerY },     // center
+          { x: centerX - 1, y: centerY }, // left
+          { x: centerX - 2, y: centerY }, // left 2
+          { x: centerX, y: centerY + 1 }, // down
+          { x: centerX, y: centerY + 2 }  // down 2
+        );
+        break;
+        
+      default:
+        squares.push({ x: centerX, y: centerY });
+    }
+    
+    return squares;
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -58,12 +138,14 @@ const Squares: React.FC<SquaresProps> = ({
           const squareX = x - (gridOffset.current.x % squareSize);
           const squareY = y - (gridOffset.current.y % squareSize);
 
-          if (
-            hoveredSquareRef.current &&
-            Math.floor((x - startX) / squareSize) ===
-              hoveredSquareRef.current.x &&
-            Math.floor((y - startY) / squareSize) === hoveredSquareRef.current.y
-          ) {
+          const currentSquareX = Math.floor((x - startX) / squareSize);
+          const currentSquareY = Math.floor((y - startY) / squareSize);
+          
+          const isHovered = hoveredSquaresRef.current.some(
+            square => square.x === currentSquareX && square.y === currentSquareY
+          );
+          
+          if (isHovered) {
             ctx.fillStyle = hoverFillColor;
             ctx.fillRect(squareX, squareY, squareSize, squareSize);
           }
@@ -136,17 +218,19 @@ const Squares: React.FC<SquaresProps> = ({
         (mouseY + gridOffset.current.y - startY) / squareSize
       );
 
+      const currentHoveredSquare = hoveredSquaresRef.current.length > 0 ? hoveredSquaresRef.current[0] : null;
+      
       if (
-        !hoveredSquareRef.current ||
-        hoveredSquareRef.current.x !== hoveredSquareX ||
-        hoveredSquareRef.current.y !== hoveredSquareY
+        !currentHoveredSquare ||
+        currentHoveredSquare.x !== hoveredSquareX ||
+        currentHoveredSquare.y !== hoveredSquareY
       ) {
-        hoveredSquareRef.current = { x: hoveredSquareX, y: hoveredSquareY };
+        hoveredSquaresRef.current = getPatternSquares(hoveredSquareX, hoveredSquareY, hoverPattern);
       }
     };
 
     const handleMouseLeave = () => {
-      hoveredSquareRef.current = null;
+      hoveredSquaresRef.current = [];
     };
 
     canvas.addEventListener("mousemove", handleMouseMove);
@@ -159,7 +243,7 @@ const Squares: React.FC<SquaresProps> = ({
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [direction, speed, borderColor, hoverFillColor, squareSize]);
+  }, [direction, speed, borderColor, hoverFillColor, squareSize, hoverPattern]);
 
   return (
     <canvas
