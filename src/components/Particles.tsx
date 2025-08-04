@@ -3,11 +3,12 @@ import React, { useRef, useEffect } from "react";
 interface ParticleProps {
   density?: 'low' | 'medium' | 'high' | number;
   speed?: 'slow' | 'medium' | 'fast' | number;
-  size?: 'small' | 'medium' | 'large' | number;
+  size?: 'small' | 'medium' | 'large' | 'uniform-small' | 'uniform-medium' | 'uniform-large' | number;
   color?: string;
   glow?: boolean;
   fadeInDuration?: number;
   particleLifetime?: number;
+  uniformSize?: boolean;
 }
 
 interface Particle {
@@ -32,6 +33,7 @@ const Particles: React.FC<ParticleProps> = ({
   glow = true,
   fadeInDuration = 8000,
   particleLifetime = 3000,
+  uniformSize = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -59,14 +61,24 @@ const Particles: React.FC<ParticleProps> = ({
     }
   };
 
-  const getSizeValue = (size: 'small' | 'medium' | 'large' | number): number => {
+  const getSizeValue = (size: 'small' | 'medium' | 'large' | 'uniform-small' | 'uniform-medium' | 'uniform-large' | number): number => {
     if (typeof size === 'number') return size;
     switch (size) {
       case 'small': return 1.5;
       case 'medium': return 2.5;
       case 'large': return 4;
+      case 'uniform-small': return 1.5;
+      case 'uniform-medium': return 2.5;
+      case 'uniform-large': return 4;
       default: return 1.5;
     }
+  };
+
+  const isUniformSize = (size: 'small' | 'medium' | 'large' | 'uniform-small' | 'uniform-medium' | 'uniform-large' | number): boolean => {
+    if (typeof size === 'string') {
+      return size.startsWith('uniform-') || uniformSize;
+    }
+    return uniformSize;
   };
 
   useEffect(() => {
@@ -80,6 +92,7 @@ const Particles: React.FC<ParticleProps> = ({
     const densityValue = getDensityValue(density);
     const speedValue = getSpeedValue(speed);
     const sizeValue = getSizeValue(size);
+    const useUniformSize = isUniformSize(size);
 
     class ParticleClass implements Particle {
       x: number;
@@ -95,7 +108,7 @@ const Particles: React.FC<ParticleProps> = ({
       constructor() {
         this.x = Math.random() * (canvas?.width || window.innerWidth);
         this.y = Math.random() * (canvas?.height || window.innerHeight);
-        this.baseSize = Math.random() * sizeValue + 0.5;
+        this.baseSize = useUniformSize ? sizeValue : Math.random() * sizeValue + 0.5;
         this.size = this.baseSize;
         this.speedX = (Math.random() - 0.5) * speedValue;
         this.speedY = (Math.random() - 0.5) * speedValue;
@@ -195,7 +208,7 @@ const Particles: React.FC<ParticleProps> = ({
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [density, speed, size, color, glow, fadeInDuration, particleLifetime]);
+  }, [density, speed, size, color, glow, fadeInDuration, particleLifetime, uniformSize]);
 
   return (
     <canvas
