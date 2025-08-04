@@ -32,7 +32,7 @@ const Particles: React.FC<ParticleProps> = ({
   color = 'rgba(255, 255, 255, 1)',
   glow = true,
   fadeInDuration = 8000,
-  particleLifetime = 3000,
+  particleLifetime = 5000,
   uniformSize = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -67,7 +67,7 @@ const Particles: React.FC<ParticleProps> = ({
       case 'small': return 1.5;
       case 'medium': return 2.5;
       case 'large': return 4;
-      case 'uniform-small': return 1.5;
+      case 'uniform-small': return 1.0;
       case 'uniform-medium': return 2.5;
       case 'uniform-large': return 4;
       default: return 1.5;
