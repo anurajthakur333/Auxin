@@ -100,7 +100,7 @@ const Home = () => {
           
           {/* Particles Background */}
           <Particles 
-            density="medium"
+            density="low"
             speed="slow"
             size="uniform-small"
             color="rgba(255, 255, 255, 0.6)"
