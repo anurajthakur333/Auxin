@@ -102,7 +102,7 @@ const Home = () => {
           <Particles 
             density="medium"
             speed="slow"
-            size="medium"
+            size="uniform-small"
             color="rgba(255, 255, 255, 0.6)"
             glow={true}
             fadeInDuration={8000}
