@@ -105,7 +105,7 @@ const Home = () => {
             speed="slow"
             size="uniform-small"
             color="rgba(255, 255, 255, 0.6)"
-            glow={true}
+            glow={false}
             fadeInDuration={8000}
             particleLifetime={5000}
           />
