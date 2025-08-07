@@ -89,29 +89,47 @@ const Home = () => {
         <div style={{ flex: 1 }}>
     {/* Section - 1 */}
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", position: "relative" }}>
-          {/* Squares Background */}
-          <Squares 
-            speed={0.3} 
-            squareSize={100}
-            direction='up'
-            borderColor='rgba(255,255,255,0.1)'
-            hoverFillColor='rgba(255,255,255,0.05)'
-            hoverPattern='plus'
-          />
+          {/* Squares Background - positioned to capture mouse events */}
+          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 3 }}>
+            <Squares 
+              speed={0.3} 
+              squareSize={100}
+              direction='up'
+              borderColor='rgba(255, 255, 255, 0.19)'
+              hoverFillColor='rgba(255, 255, 255, 0.1)'
+              hoverPattern='plus'
+            />
+          </div>
           
           {/* Particles Background */}
-          <Particles 
-            density="low"
-            speed="slow"
-            size="uniform-small"
-            color="rgba(255, 255, 255, 0.6)"
-            glow={false}
-            fadeInDuration={8000}
-            particleLifetime={5000}
+          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 5 }}>
+            <Particles 
+              density="low"
+              speed="slow"
+              size="uniform-small"
+              color="rgb(255, 255, 255)"
+              glow={false}
+              fadeInDuration={8000}
+              particleLifetime={5000}
+            />
+          </div>
+          
+          {/* CSS Vignette Overlay - Ellipse Wide */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "radial-gradient(ellipse 100% 60% at center, transparent 20%, rgba(0, 0, 0, 0.8) 100%)",
+              pointerEvents: "none",
+              zIndex: 4
+            }}
           />
           
           {/* Text Content */}
-          <div className="text-center px-4" style={{ position: "relative", zIndex: 2 }}>
+          <div className="text-center px-4" style={{ position: "relative", zIndex: 3, pointerEvents: "none" }}>
             <div
               className="aeonik-regular text-white"
               style={{
