@@ -167,27 +167,7 @@ const Home = () => {
 
        {/* Section - 2 */}
         <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "25px 0 80px 25px", position: "relative" }}>
-          {/* Squares Background */}
-          <Squares 
-            speed={0.5} 
-            squareSize={75}
-            direction='diagonal'
-            borderColor='rgba(255,255,255,0.08)'
-            hoverFillColor='rgba(255,255,255,0.03)'
-            hoverPattern='diamond'
-          />
-          
-          {/* Particles Background */}
-          <Particles 
-            density="low"
-            speed="slow"
-            size="small"
-            color="rgba(255, 255, 255, 0.8)"
-            glow={true}
-            fadeInDuration={6000}
-            particleLifetime={4000}
-          />
-          
+       
           <div className="" style={{ position: "relative", zIndex: 1 }}>
             <div
               className="aeonik-regular text-white"
