@@ -43,7 +43,7 @@ const SPEED_PRESETS = {
   "slow": { duration: 2500, fps: 45 },
   "medium": { duration: 1500, fps: 60 },
   "fast": { duration: 800, fps: 80 },
-  "ultra-fast": { duration: 400, fps: 100 },
+  "ultra-fast": { duration: 400, fps: 80 },
 };
 
 export default function ScrambleText({
