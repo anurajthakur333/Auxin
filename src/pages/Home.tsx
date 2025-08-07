@@ -12,7 +12,7 @@ import { useState } from "react";
 
 const Home = () => {
   const lenisRef = useRef<Lenis | null>(null);
-  const [showPreloader, setShowPreloader] = useState(true);
+  const [showPreloader, setShowPreloader] = useState(false);
 
   useEffect(() => {
     // Initialize Lenis
