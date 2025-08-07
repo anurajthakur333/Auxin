@@ -122,7 +122,7 @@ const Home = () => {
               left: 0,
               width: "100%",
               height: "100%",
-              background: "radial-gradient(ellipse 100% 60% at center, transparent 20%, rgba(0, 0, 0, 0.8) 100%)",
+              background: "radial-gradient(ellipse 100% 58% at center, transparent 20%, rgba(0, 0, 0, 0.8) 100%)",
               pointerEvents: "none",
               zIndex: 4
             }}
@@ -143,10 +143,10 @@ const Home = () => {
             >
               <ScrambleText
                 trigger="visible"
-              speed="ultra-slow"
-              direction="center-out"
+                  speed="fast"
+              direction="left-to-right"
               matchWidth={true}
-                revealSpeed={0.6}
+              revealSpeed={0.3}
                 scrambleIntensity={1}
                 delay={0}
                 style={{ color: "white" }}
@@ -156,10 +156,10 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                direction="center-out"
+                speed="fast"
+                direction="left-to-right"
                 matchWidth={true}
-                revealSpeed={0.6}
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 delay={800}
                 style={{ color: "white" }}
@@ -169,10 +169,10 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-               speed="ultra-slow"
-               direction="center-out"
+               speed="fast"
+                direction="left-to-right"
                matchWidth={true}
-                revealSpeed={0.6}
+               revealSpeed={0.3}
                 scrambleIntensity={1}
                 delay={1200}
                 style={{ color: "white" }}
@@ -200,8 +200,8 @@ const Home = () => {
             >
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 delay={0}
                 style={{ color: "white" }}
@@ -211,8 +211,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={400}
@@ -223,8 +223,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={800}
@@ -235,8 +235,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={1200}
@@ -247,8 +247,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={1600}
@@ -259,8 +259,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={2000}
@@ -271,8 +271,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={2400}
@@ -300,8 +300,8 @@ const Home = () => {
             >
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                  revealSpeed={0.3}
                 direction="right-to-left"
                 scrambleIntensity={1}
                 matchWidth={true}
@@ -313,8 +313,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                  revealSpeed={0.3}
                 direction="right-to-left"
                 scrambleIntensity={1}
                 matchWidth={true}
@@ -326,8 +326,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.8}
+                speed="fast"
+                revealSpeed={0.3}
                 direction="right-to-left"
                         scrambleIntensity={1}
                 matchWidth={true}
@@ -339,8 +339,8 @@ const Home = () => {
               <br />
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 direction="right-to-left"
                 scrambleIntensity={1}
                 matchWidth={true}
@@ -369,8 +369,8 @@ const Home = () => {
             >
               <ScrambleText
                 trigger="visible"
-                speed="ultra-slow"
-                revealSpeed={0.6}
+                speed="fast"
+                revealSpeed={0.3}
                 scrambleIntensity={1}
                 matchWidth={true}
                 delay={0}
@@ -400,8 +400,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   matchWidth={true}
                                 delay={0}
@@ -412,8 +412,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={400}
@@ -441,8 +441,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={800}
@@ -453,8 +453,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={1000}
@@ -465,8 +465,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                      revealSpeed={0.1}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={1200}
@@ -477,8 +477,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={1400}
@@ -503,8 +503,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   matchWidth={true}
                   direction="right-to-left"
@@ -516,8 +516,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   matchWidth={true}
                   direction="right-to-left"
@@ -529,8 +529,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                         scrambleIntensity={1}
                   matchWidth={true}
                   direction="right-to-left"
@@ -562,8 +562,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={0}
@@ -574,8 +574,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={400}
@@ -586,8 +586,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.7}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   matchWidth={true}
                   delay={800}
@@ -615,8 +615,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1200}
                   style={{ color: "white" }}
@@ -626,8 +626,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1400}
                   style={{ color: "white" }}
@@ -637,8 +637,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1600}
                   style={{ color: "white" }}
@@ -662,8 +662,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   direction="right-to-left"
                   scrambleIntensity={1}
                   delay={1800}
@@ -674,8 +674,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.6}
+                    speed="fast"
+                  revealSpeed={0.1}
                   direction="right-to-left"
                   scrambleIntensity={1}
                   matchWidth={true}
@@ -707,8 +707,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="medium"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   delay={0}
                   style={{ color: "white" }}
@@ -718,8 +718,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   delay={400}
                   style={{ color: "white" }}
@@ -746,8 +746,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                    speed="fast"
+                  revealSpeed={0.1}
                         scrambleIntensity={1}
                   delay={800}
                   style={{ color: "white" }}
@@ -757,8 +757,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                    speed="fast"
+                      revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1000}
                   style={{ color: "white" }}
@@ -768,8 +768,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   delay={1200}
                   style={{ color: "white" }}
@@ -793,8 +793,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                    revealSpeed={0.1}
                   direction="right-to-left"
                   scrambleIntensity={1}
                   delay={1200}
@@ -805,8 +805,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   direction="right-to-left"
                   scrambleIntensity={1}
                   delay={1400}
@@ -817,8 +817,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   direction="right-to-left"
                   scrambleIntensity={1}
                   delay={1600}
@@ -849,8 +849,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
 
                   scrambleIntensity={1}
                   delay={0}
@@ -861,8 +861,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   delay={400}
                   style={{ color: "white" }}
@@ -889,8 +889,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={800}
                   style={{ color: "white" }}
@@ -900,8 +900,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1000}
                   style={{ color: "white" }}
@@ -911,8 +911,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                    revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1200}
                   style={{ color: "white" }}
@@ -936,8 +936,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   direction="right-to-left"
                   scrambleIntensity={1} 
                   delay={1200}
@@ -948,8 +948,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   direction="right-to-left"
                   scrambleIntensity={1}
                   delay={1400}
@@ -980,9 +980,9 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
-                  direction="right-to-left"
+                  speed="fast"
+                  revealSpeed={0.3}
+                  direction="left-to-right"
                   scrambleIntensity={1} 
                   delay={0}
                   style={{ color: "white" }}
@@ -992,9 +992,9 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
-                  direction="right-to-left"
+                    speed="fast"
+                      revealSpeed={0.3}
+                  direction="left-to-right"
                   scrambleIntensity={1}
                   delay={400}
                   style={{ color: "white" }}
@@ -1004,9 +1004,9 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
-                  direction="right-to-left"
+                  speed="fast"
+                  revealSpeed={0.3}
+                  direction="left-to-right"
                   scrambleIntensity={1}
                   delay={800}
                   style={{ color: "white" }}
@@ -1033,8 +1033,8 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1200}
                   style={{ color: "white" }}
@@ -1044,8 +1044,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                       scrambleIntensity={1}
                   delay={1400}
                   style={{ color: "white" }}
@@ -1055,8 +1055,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.3}
                   scrambleIntensity={1}
                   delay={1600}
                   style={{ color: "white" }}
@@ -1066,8 +1066,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1800}
                   style={{ color: "white" }}
@@ -1077,8 +1077,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={2000}
                   style={{ color: "white" }}
@@ -1088,8 +1088,8 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                    revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={2200}
                   style={{ color: "white" }}
@@ -1113,10 +1113,10 @@ const Home = () => {
               >
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
-                  delay={1800}
+                  delay={200}
                   style={{ color: "#00ff00" }}
                 >
                   Immersive 3D Websites
@@ -1124,10 +1124,10 @@ const Home = () => {
                 <br />
                 <ScrambleText
                   trigger="visible"
-                  speed="ultra-slow"
-                  revealSpeed={0.6}
+                  speed="fast"
+                        revealSpeed={0.1}
                       scrambleIntensity={1}
-                  delay={2000}
+                  delay={200}
                   style={{ color: "#00ff00" }}
                 >
                   Step Inside Your Brand
