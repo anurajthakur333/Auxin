@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { AnimatedText } from "../components/AnimatedText";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
@@ -10,8 +9,15 @@ import Lenis from "lenis";
 const Terms = () => {
   const lenisRef = useRef<Lenis | null>(null);
   const [showContent, setShowContent] = useState(false);
+  const [animatedLetters, setAnimatedLetters] = useState<boolean[]>([]);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const fullText = "TERMS & CONDITIONS";
+  const letters = fullText.split('');
 
   useEffect(() => {
+    // Initialize all letters as not animated
+    setAnimatedLetters(new Array(letters.length).fill(false));
+    
     // Initialize Lenis for smooth scrolling
     const lenis = new Lenis({
       duration: 1.2,
@@ -31,7 +37,22 @@ const Terms = () => {
     requestAnimationFrame(raf);
 
     // Show content after a delay
-    const timer = setTimeout(() => setShowContent(true), 1000);
+    const timer = setTimeout(() => {
+      setShowContent(true);
+      
+      // Start letter animation after black overlay slides up
+      setTimeout(() => {
+        letters.forEach((_, index) => {
+          setTimeout(() => {
+            setAnimatedLetters(prev => {
+              const newLetters = [...prev];
+              newLetters[index] = true;
+              return newLetters;
+            });
+          }, index * 80); // 80ms between each letter
+        });
+      }, 400); // Start letter animation 400ms after content shows
+    }, 1000);
 
     return () => {
       clearTimeout(timer);
@@ -41,6 +62,24 @@ const Terms = () => {
 
   return (
     <div className="relative h-screen overflow-hidden bg-black">
+      {/* CSS styles for letter animation */}
+      <style>
+        {`
+          .animated-letter-terms {
+            display: inline-block !important;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease;
+            vertical-align: baseline;
+          }
+          
+          .animated-letter-terms.visible {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        `}
+      </style>
+      
       {!showContent && (
         <motion.div
           className="absolute inset-0 bg-black z-50"
@@ -63,10 +102,8 @@ const Terms = () => {
         <div style={{ flex: 1 }}>
           <div className="container-fluid">
             {showContent && (
-              <AnimatedText
-                text="TERMS & CONDITIONS"
-                delay={0.2}
-                duration={0.6}
+              <div 
+                ref={headingRef}
                 className="aeonik-regular text-white"
                 style={{
                   fontSize: "clamp(32px, 15vw, 770px)",
@@ -74,9 +111,40 @@ const Terms = () => {
                   lineHeight: "0.9",
                   fontWeight: 600,
                   textAlign: "left",
-                  marginBottom: "600px"
+                  marginBottom: "600px",
+                  overflow: "hidden"
                 }}
-              />
+              >
+                {letters.map((letter, index) => {
+                  if (letter === ' ') {
+                    return <span key={index}>&nbsp;</span>;
+                  }
+                  if (letter === '&') {
+                    return (
+                      <span
+                        key={index}
+                        className={`animated-letter-terms ${animatedLetters[index] ? 'visible' : ''}`}
+                        style={{
+                          transitionDelay: `${index * 80}ms`
+                        }}
+                      >
+                        &amp;<br />
+                      </span>
+                    );
+                  }
+                  return (
+                    <span
+                      key={index}
+                      className={`animated-letter-terms ${animatedLetters[index] ? 'visible' : ''}`}
+                      style={{
+                        transitionDelay: `${index * 80}ms`
+                      }}
+                    >
+                      {letter}
+                    </span>
+                  );
+                })}
+              </div>
             )}
           
             {showContent && (
