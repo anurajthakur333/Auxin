@@ -1,12 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { AnimatedText } from "../components/AnimatedText";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
 
 const Terms = () => {
   const lenisRef = useRef<Lenis | null>(null);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     // Initialize Lenis for smooth scrolling
@@ -27,40 +30,58 @@ const Terms = () => {
     };
     requestAnimationFrame(raf);
 
+    // Show content after a delay
+    const timer = setTimeout(() => setShowContent(true), 1000);
+
     return () => {
+      clearTimeout(timer);
       lenis.destroy();
     };
   }, []);
 
   return (
-    <div style={{ 
-      display: "flex", 
-      flexDirection: "column", 
-      minHeight: "100vh", 
-      background: "#000",
-      position: "relative",
-      zIndex: 1
-    }}>
-      <Navbar />
-      
-      <div style={{ flex: 1,}}>
-        <div className="container-fluid">
-          <h1 
-            className="aeonik-regular text-white"
-            style={{
-              fontSize: "clamp(32px, 15vw, 770px)",
-              letterSpacing: "-16px",
-              lineHeight: "1.1",
-              fontWeight: 400,
-              textAlign: "left",
-              marginBottom: "600px"
-            }}
-          >
-            TERMS & <br />CONDITIONS
-          </h1>
+    <div className="relative h-screen overflow-hidden bg-black">
+      {!showContent && (
+        <motion.div
+          className="absolute inset-0 bg-black z-50"
+          initial={{ y: 0 }}
+          animate={{ y: "-100%" }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+        />
+      )}
+
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        minHeight: "100vh", 
+        background: "#000",
+        position: "relative",
+        zIndex: 1
+      }}>
+        <Navbar />
+        
+        <div style={{ flex: 1 }}>
+          <div className="container-fluid">
+            {showContent && (
+              <AnimatedText
+                text="TERMS & CONDITIONS"
+                delay={0.2}
+                duration={0.6}
+                className="aeonik-regular text-white"
+                style={{
+                  fontSize: "clamp(32px, 15vw, 770px)",
+                  letterSpacing: "-20px",
+                  lineHeight: "0.9",
+                  fontWeight: 600,
+                  textAlign: "left",
+                  marginBottom: "600px"
+                }}
+              />
+            )}
           
-          <div 
-            className="aeonik-regular text-white"
+            {showContent && (
+              <div 
+                className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(16px, 2vw, 18px)",
               lineHeight: "1.6",
@@ -69,7 +90,7 @@ const Terms = () => {
               paddingLeft: "10px"
             }}
           >
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               1. INTRODUCTION
             </h2>
             <p style={{ marginBottom: "40px" }}>
@@ -79,7 +100,7 @@ const Terms = () => {
               Binding Terms And Conditions.
             </p>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               2. COMPANY OVERVIEW
             </h2>
             <p style={{ marginBottom: "0px" }}>
@@ -93,7 +114,7 @@ const Terms = () => {
               <li>Digital Transformation Consulting</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               3. SERVICE SCOPE
             </h2>
             <p style={{ marginBottom: "0px" }}>
@@ -110,7 +131,7 @@ const Terms = () => {
               Note: Specific Service Engagements Are Governed By Individual Proposals Or Statements Of Work.
             </p>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               4. CLIENT OBLIGATIONS
             </h2>
             <p style={{ marginBottom: "0px" }}>You Agree To:</p>
@@ -120,7 +141,7 @@ const Terms = () => {
               <li>Designate A Primary Point Of Contact For Project Coordination</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               5. PAYMENT TERMS
             </h2>
             <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
@@ -130,7 +151,7 @@ const Terms = () => {
               <li>Service suspension permitted for unpaid invoices exceeding 15 days</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               6. REFUND & CANCELLATION POLICY
             </h2>
             <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
@@ -140,7 +161,7 @@ const Terms = () => {
               <li>Completed work billed at contractual rates upon cancellation</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               7. INTELLECTUAL PROPERTY RIGHTS
             </h2>
             <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
@@ -150,7 +171,7 @@ const Terms = () => {
               <li>Source files require separate licensing (detailed in proposals)</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               8. LIABILITY LIMITATIONS
             </h2>
             <p style={{ marginBottom: "0px" }}>
@@ -166,7 +187,7 @@ const Terms = () => {
               <li>Business losses related to service utilization</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               9. CONFIDENTIALITY COMMITMENT
             </h2>
             <ul style={{ marginBottom: "0px", paddingLeft: "20px" }}>
@@ -179,18 +200,18 @@ const Terms = () => {
             </ul>
             <li style={{ marginBottom: "40px" }}>Confidentiality obligations survive contract termination</li>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               10. TERMINATION CLAUSES
             </h2>
             <p style={{ marginBottom: "20px" }}>Immediate termination rights for:</p>
-            <ul style={{ marginBottom: "20px", paddingLeft: "20px" }}>
+            <ul style={{ marginBottom: "0px", paddingLeft: "20px" }}>
               <li>Client fraud or illegal activity</li>
               <li>Payment breaches exceeding 30 days</li>
               <li>Harassment of team members</li>
             </ul>
-            <li style={{ marginBottom: "40px" }}>Client termination requires 14-day written notice + settled balances</li>
+            <li style={{ marginBottom: "px" }}>Client termination requires 14-day written notice + settled balances</li>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               11. LEGAL JURISDICTION
             </h2>
             <ul style={{ marginBottom: "60px", paddingLeft: "20px" }}>
@@ -198,11 +219,13 @@ const Terms = () => {
               <li>Dispute resolution via arbitration in Chandigarh, India</li>
               <li>Exclusive jurisdiction in home state courts for injunctive relief</li>
             </ul>
+              </div>
+            )}
           </div>
         </div>
-      </div>
       
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 };
