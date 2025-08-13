@@ -77,6 +77,7 @@ const Navbar = () => {
         <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" />
       </div>
 
+
       {/* Center logo */}
       <Link
         to="/"
