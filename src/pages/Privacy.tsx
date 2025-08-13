@@ -5,7 +5,8 @@ import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
 // import PopUpText from "../components/PopUpText";
-import CleanSlideUpText from "../components/CleanSlideUpText";
+// import CleanSlideUpText from "../components/CleanSlideUpText";
+import TextReveal from "../components/TextReveal";
 
 const Privacy = () => {
   const lenisRef = useRef<Lenis | null>(null);
@@ -58,13 +59,13 @@ const Privacy = () => {
               marginBottom: "600px",
             }}
           >
-            <CleanSlideUpText trigger="visible" speed="medium" preset="display">
-  PRIVACY
-            </CleanSlideUpText>
+            <TextReveal trigger="visible" speed="slow">
+              PRIVACY
+            </TextReveal>
             <br />
-            <CleanSlideUpText trigger="visible" speed="medium" preset="display">
+            <TextReveal trigger="visible" speed="slow">
               POLICY
-            </CleanSlideUpText>
+            </TextReveal>
           </h1>
           
           <div 
