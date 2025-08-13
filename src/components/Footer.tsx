@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../styles/fonts.css';
 import '../styles/Main.css';
 
 const Footer = () => {
+  const location = useLocation();
   const [animatedLetters, setAnimatedLetters] = useState<boolean[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [headerAnimations, setHeaderAnimations] = useState({
@@ -247,7 +248,7 @@ const Footer = () => {
               {renderAnimatedHeader('workflow').slice(4)}
             </h1>
             <ul className="list-unstyled">
-              <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Portfolio</a></li>
+              <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Experience</a></li>
               <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-regular">Case Studies</a></li>
               <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-regular">Client Testimonials</a></li>
             </ul>
@@ -302,16 +303,34 @@ const Footer = () => {
           minWidth: 0
         }}
       >
-      <span 
-        className="aeonik-regular mt-5 footer-text"
-        style={{
-          letterSpacing: '-0.07em',
-          whiteSpace: 'nowrap',
-          transform: 'scale(1)',
-          transformOrigin: 'center',
-          minWidth: 'max-content'
-        }}
-      >
+        <span 
+          className="aeonik-regular mt-5 footer-text"
+          style={{
+            letterSpacing: '-0.07em',
+            whiteSpace: 'nowrap',
+            transform: 'scale(1)',
+            transformOrigin: 'center',
+            minWidth: 'max-content'
+          }}
+        >
+          <Link
+            to="/"
+            aria-label="Go to home"
+            onClick={(e) => {
+              if (location.pathname === "/") {
+                e.preventDefault();
+                if (location.hash) {
+                  window.history.replaceState(null, "", "/");
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                  }, 0);
+                } else {
+                  window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                }
+              }
+            }}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'inline-block' }}
+          >
         {letters.map((letter, index) => (
           <span
             key={index}
@@ -323,7 +342,8 @@ const Footer = () => {
             {letter === ' ' ? '\u00A0' : letter}
           </span>
         ))}
-      </span>
+          </Link>
+        </span>
     </div>
     </footer>
   );
