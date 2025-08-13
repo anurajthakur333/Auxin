@@ -19,7 +19,7 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: {
         trigger="hover"
         speed="slow"
         direction={direction}
-        randomReveal={false}
+        randomReveal={true}
         revealSpeed={0.3}
         style={{
           color: hovered ? "#39FF14" : "white",
