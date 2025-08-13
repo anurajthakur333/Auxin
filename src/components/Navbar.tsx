@@ -2,6 +2,7 @@ import "../styles/fonts.css";
 import "../styles/Navbar.css";
 import ScrambleText from "./Scramble";
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 // Reusable nav link with scramble on hover in/out
 const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random" }) => {
@@ -37,6 +38,7 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: {
 };
 
 const Navbar = () => {
+  const location = useLocation();
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -76,7 +78,26 @@ const Navbar = () => {
       </div>
 
       {/* Center logo */}
-      <img src="/auxin.svg" alt="Auxin Logo" width="85" height="35" style={{ margin: '0 2rem' }} />
+      <Link
+        to="/"
+        style={{ display: 'inline-block' }}
+        aria-label="Go to home"
+        onClick={(e) => {
+          if (location.pathname === "/") {
+            e.preventDefault();
+            if (location.hash) {
+              window.history.replaceState(null, "", "/");
+              setTimeout(() => {
+                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+              }, 0);
+            } else {
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            }
+          }
+        }}
+      >
+        <img src="/auxin.svg" alt="Auxin Logo" width="85" height="35" style={{ margin: '0 2rem' }} />
+      </Link>
 
       {/* Right side links */}
       <div className="d-flex justify-content-start" style={{ gap: '2rem' }}>
