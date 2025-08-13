@@ -4,6 +4,8 @@ import Footer from "../components/Footer";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
+// import PopUpText from "../components/PopUpText";
+import CleanSlideUpText from "../components/CleanSlideUpText";
 
 const Privacy = () => {
   const lenisRef = useRef<Lenis | null>(null);
@@ -45,7 +47,7 @@ const Privacy = () => {
       
       <div style={{ flex: 1, }}>
         <div className="container-fluid">
-          <h1 
+          <h1
             className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
@@ -53,11 +55,16 @@ const Privacy = () => {
               lineHeight: "0.9",
               fontWeight: 600,
               textAlign: "left",
-              marginBottom: "600px"
-
+              marginBottom: "600px",
             }}
           >
-            PRIVACY <br />POLICY
+            <CleanSlideUpText trigger="visible" speed="fast" preset="display">
+  PRIVACY
+            </CleanSlideUpText>
+            <br />
+            <CleanSlideUpText trigger="visible" speed="fast" preset="display">
+              POLICY
+            </CleanSlideUpText>
           </h1>
           
           <div 
