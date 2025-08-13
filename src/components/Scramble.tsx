@@ -87,6 +87,7 @@ export default function ScrambleText({
   // State variables
   const [displayText, setDisplayText] = useState(trigger === 'hover' ? children : blank);
   const [isScrambling, setIsScrambling] = useState(false);
+  const [isWaitingForDelay, setIsWaitingForDelay] = useState(false);
 
   // Refs to store references and prevent memory leaks
   const elementRef = useRef<HTMLSpanElement | null>(null);
@@ -370,17 +371,44 @@ export default function ScrambleText({
     if (hasStartedRef.current) return; // Prevent multiple triggers
     hasStartedRef.current = true;
     if (delay > 0) {
-      timeoutRef.current = window.setTimeout(startScramble, delay);
+      // Keep text hidden during delay period
+      setIsWaitingForDelay(true);
+      setDisplayText(blank); // Keep as blank during delay
+      timeoutRef.current = window.setTimeout(() => {
+        setIsWaitingForDelay(false);
+        startScramble();
+      }, delay);
     } else {
       startScramble();
     }
   };
 
+  // Reset animation state when children change
+  useEffect(() => {
+    hasStartedRef.current = false;
+    setIsScrambling(false);
+    setIsWaitingForDelay(false);
+    setDisplayText(trigger === 'hover' ? children : blank);
+  }, [children, blank, trigger]);
+
   // Handle automatic triggers (load and visible)
   useEffect(() => {
-    if (trigger === "load") {
-      // Start scrambling immediately when component loads
-      triggerScramble();
+    if (trigger === "load" && elementRef.current) {
+      // Use intersection observer for load trigger - scramble when element comes into view
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            triggerScramble();
+            observer.disconnect(); // Only trigger once
+          }
+        },
+        { 
+          threshold: 0.3, // Trigger when 30% of element is visible
+          rootMargin: '-50px 0px' // Start animation slightly before fully visible
+        }
+      );
+      observer.observe(elementRef.current);
+      return () => observer.disconnect();
     } else if (trigger === "visible" && elementRef.current) {
       // Start scrambling when element becomes visible
       const observer = new IntersectionObserver(
@@ -395,7 +423,7 @@ export default function ScrambleText({
       return () => observer.disconnect();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trigger]);
+  }, [trigger, children]);
 
   // Clean up timers and animations when component unmounts
   useEffect(() => {
@@ -429,7 +457,7 @@ export default function ScrambleText({
   };
 
   // Determine text color based on scrambling state
-  const appliedColor = isScrambling
+  const appliedColor = (isScrambling && !isWaitingForDelay)
     ? scrambleColor
     : style.color || "inherit";
 

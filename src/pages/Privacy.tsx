@@ -49,9 +49,9 @@ const Privacy = () => {
             className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
-              letterSpacing: "-16px",
-              lineHeight: "1.0",
-              fontWeight: 400,
+              letterSpacing: "-15px",
+              lineHeight: "0.9",
+              fontWeight: 600,
               textAlign: "left",
               marginBottom: "600px"
 
@@ -70,7 +70,7 @@ const Privacy = () => {
               textAlign: "left"
             }}
           >
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px",  }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px",  }}>
               1. DATA COLLECTION: WHAT WE GATHER
             </h2>
             <p style={{ marginBottom: "20px" }}>We collect information through:</p>
@@ -99,7 +99,7 @@ const Privacy = () => {
             </ul>
             <p style={{ marginBottom: "40px", fontStyle: "italic" }}>*Note: We never store raw payment card data</p>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               2. PURPOSES OF DATA PROCESSING
             </h2>
             <p style={{ marginBottom: "20px" }}>We use your information exclusively for:</p>
@@ -132,7 +132,7 @@ const Privacy = () => {
               <li>Protecting system integrity through access monitoring</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               3. DATA PROTECTION FRAMEWORK
             </h2>
             <p style={{ marginBottom: "20px", fontWeight: "bold" }}>Our Security Infrastructure Includes:</p>
@@ -152,7 +152,7 @@ const Privacy = () => {
               <li>User alerts via email within 96 hours</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               4. YOUR PRIVACY RIGHTS
             </h2>
             <p style={{ marginBottom: "20px" }}>Regardless of Location, You Can:</p>
@@ -166,7 +166,7 @@ const Privacy = () => {
             </ul>
             <p style={{ marginBottom: "40px" }}>Submit requests to: Auxinmedia@gmail.com with "Privacy Request" in subject (Response within 14 days)</p>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               5. COOKIES & TRACKING TECHNOLOGIES
             </h2>
             <p style={{ marginBottom: "20px" }}>We Utilize:</p>
@@ -194,7 +194,7 @@ const Privacy = () => {
             
             <p style={{ marginBottom: "40px" }}>Control Options: Browser settings | Cookie consent manager | Ad platform opt-outs</p>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               6. THIRD-PARTY DATA SHARING
             </h2>
             <p style={{ marginBottom: "20px" }}>We disclose information only to:</p>
@@ -206,7 +206,7 @@ const Privacy = () => {
             </ul>
             <p style={{ marginBottom: "40px" }}>Strict DPAs (Data Processing Agreements) govern all third-party relationships</p>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               7. DATA RETENTION SCHEDULE
             </h2>
             <ul style={{ marginBottom: "40px", paddingLeft: "20px" }}>
@@ -216,7 +216,7 @@ const Privacy = () => {
               <li>Financial Documents: 10 years (statutory requirement)</li>
             </ul>
             
-            <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+            <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               8. CHILDREN'S PRIVACY & GLOBAL TRANSFERS
             </h2>
             <p style={{ marginBottom: "20px" }}>🚫 Strictly 18+ Services - No data collection from minors</p>
@@ -227,7 +227,7 @@ const Privacy = () => {
               <li>India DPDPA cross-border frameworks</li>
             </ul>
             
-                <h2 style={{ fontSize: "clamp(28px, 6vw, 50px)", marginTop: "60px", marginBottom: "30px", }}>
+                <h2 style={{ fontSize: "clamp(28px, 6vw, 124px)", marginTop: "60px", marginBottom: "30px", }}>
               9. POLICY UPDATES & CONTACT
             </h2>
             <p style={{ marginBottom: "20px", fontWeight: "bold" }}>Modification Protocol:</p>
