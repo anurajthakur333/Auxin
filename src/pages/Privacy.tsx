@@ -51,18 +51,18 @@ const Privacy = () => {
             className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
-              letterSpacing: "-15px",
+              letterSpacing: "-20px",
               lineHeight: "0.9",
               fontWeight: 600,
               textAlign: "left",
               marginBottom: "600px",
             }}
           >
-            <CleanSlideUpText trigger="visible" speed="fast" preset="display">
+            <CleanSlideUpText trigger="visible" speed="medium" preset="display">
   PRIVACY
             </CleanSlideUpText>
             <br />
-            <CleanSlideUpText trigger="visible" speed="fast" preset="display">
+            <CleanSlideUpText trigger="visible" speed="medium" preset="display">
               POLICY
             </CleanSlideUpText>
           </h1>
