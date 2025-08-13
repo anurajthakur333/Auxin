@@ -4,7 +4,7 @@ import ScrambleText from "./Scramble";
 import { useEffect, useState } from "react";
 
 // Reusable nav link with scramble on hover in/out
-const NavItem = ({ href, label, minWidth = 100 }: { href: string; label: string; minWidth?: number }) => {
+const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random" }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -17,8 +17,10 @@ const NavItem = ({ href, label, minWidth = 100 }: { href: string; label: string;
     >
       <ScrambleText
         trigger="hover"
-        speed="ultra-fast"
-        randomReveal
+        speed="slow"
+        direction={direction}
+        randomReveal={false}
+        revealSpeed={0.3}
         style={{
           color: hovered ? "#39FF14" : "white",
           whiteSpace: "nowrap",
@@ -69,8 +71,8 @@ const Navbar = () => {
     >
       {/* Left side links */}
       <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
-        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} />
-        <NavItem href="#articles" label="ARTICLES" minWidth={100} />
+        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" />
+        <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" />
       </div>
 
       {/* Center logo */}
@@ -78,8 +80,8 @@ const Navbar = () => {
 
       {/* Right side links */}
       <div className="d-flex justify-content-start" style={{ gap: '2rem' }}>
-        <NavItem href="#about" label="ABOUT US" minWidth={100} />
-        <NavItem href="#appointments" label="MEETINGS" minWidth={120} />
+        <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" />
+        <NavItem href="#appointments" label="MEETINGS" minWidth={120} direction="right-to-left" />
       </div>
     </div>
   );

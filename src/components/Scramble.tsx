@@ -274,11 +274,10 @@ export default function ScrambleText({
         }
 
         if (trigger === "hover") {
-          // Original hover behavior - all letters scramble at once, then reveal
+          // Original hover behavior - all letters scramble at once, then reveal by direction
           const orderPos = revealOrderRef.current.indexOf(idx);
           const revealThreshold = ((orderPos + 1) / originalChars.length) * revealSpeed;
-          
-          // Check if it's time to reveal this character
+
           if (progress >= revealThreshold) {
             // Reveal the original character
             workArray[idx] = orig;
@@ -289,8 +288,7 @@ export default function ScrambleText({
             // Keep scrambling this character
             const shouldScramble = frameCount % Math.max(1, 11 - scrambleIntensity) === 0;
             if (shouldScramble || workArray[idx] === "") {
-              // Pick a character - either width-matched or random
-              const randomChar = matchWidth 
+              const randomChar = matchWidth
                 ? getWidthMatchedChar(orig)
                 : letters.charAt(Math.floor(Math.random() * letters.length));
               workArray[idx] = randomChar;
