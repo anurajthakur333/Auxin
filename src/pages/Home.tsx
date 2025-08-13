@@ -142,39 +142,39 @@ const Home = () => {
               }}
             >
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                   speed="fast"
               direction="left-to-right"
               matchWidth={true}
               revealSpeed={0.3}
                 scrambleIntensity={1}
-                delay={0}
+                delay={50}
                 style={{ color: "white" }}
               >
                 REDEFINING BUSINESS
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 direction="left-to-right"
                 matchWidth={true}
                 revealSpeed={0.3}
                 scrambleIntensity={1}
-                delay={800}
+                delay={100}
                 style={{ color: "white" }}
               >
                 WITH THE INTELLIGENCE
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                      trigger="load"
                speed="fast"
                 direction="left-to-right"
                matchWidth={true}
                revealSpeed={0.3}
                 scrambleIntensity={1}
-                delay={1200}
+                delay={300}
                 style={{ color: "white" }}
               >
                 YOU CAN TRUST.
@@ -199,7 +199,7 @@ const Home = () => {
               }}
             >
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -210,7 +210,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -222,7 +222,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -234,7 +234,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -246,7 +246,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -258,7 +258,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -270,7 +270,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -299,7 +299,7 @@ const Home = () => {
               }}
             >
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                   revealSpeed={0.3}
                 direction="right-to-left"
@@ -312,7 +312,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                   revealSpeed={0.3}
                 direction="right-to-left"
@@ -325,7 +325,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 direction="right-to-left"
@@ -338,7 +338,7 @@ const Home = () => {
               </ScrambleText>
               <br />
               <ScrambleText
-                trigger="visible"
+                trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 direction="right-to-left"
@@ -368,7 +368,7 @@ const Home = () => {
               }}
             >
               <ScrambleText
-                trigger="visible"
+                  trigger="load"
                 speed="fast"
                 revealSpeed={0.3}
                 scrambleIntensity={1}
@@ -399,7 +399,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -411,7 +411,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -440,7 +440,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -452,7 +452,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -464,7 +464,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                       revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -476,7 +476,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -502,7 +502,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -515,7 +515,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -528,7 +528,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                         scrambleIntensity={1}
@@ -561,7 +561,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -573,7 +573,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -585,7 +585,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                      trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -614,7 +614,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -625,7 +625,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -636,7 +636,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -661,7 +661,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   direction="right-to-left"
@@ -673,7 +673,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                     speed="fast"
                   revealSpeed={0.1}
                   direction="right-to-left"
@@ -706,7 +706,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -717,7 +717,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                      trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -745,7 +745,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                        trigger="load"
                     speed="fast"
                   revealSpeed={0.1}
                         scrambleIntensity={1}
@@ -756,7 +756,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                      trigger="load"
                     speed="fast"
                       revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -767,7 +767,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -792,7 +792,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                     revealSpeed={0.1}
                   direction="right-to-left"
@@ -804,7 +804,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   direction="right-to-left"
@@ -816,7 +816,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   direction="right-to-left"
@@ -848,7 +848,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
 
@@ -860,7 +860,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -888,7 +888,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -899,7 +899,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                      trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -910,7 +910,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                     revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -935,7 +935,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   direction="right-to-left"
@@ -947,7 +947,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   direction="right-to-left"
@@ -979,7 +979,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   direction="left-to-right"
@@ -991,7 +991,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                     speed="fast"
                       revealSpeed={0.3}
                   direction="left-to-right"
@@ -1003,7 +1003,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                      trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   direction="left-to-right"
@@ -1032,7 +1032,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -1043,7 +1043,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                      trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                       scrambleIntensity={1}
@@ -1054,7 +1054,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.3}
                   scrambleIntensity={1}
@@ -1065,7 +1065,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -1076,7 +1076,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -1087,7 +1087,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                    trigger="load"
                   speed="fast"
                     revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -1112,7 +1112,7 @@ const Home = () => {
                 }}
               >
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
@@ -1123,7 +1123,7 @@ const Home = () => {
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                  trigger="visible"
+                  trigger="load"
                   speed="fast"
                         revealSpeed={0.1}
                       scrambleIntensity={1}
