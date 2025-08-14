@@ -52,18 +52,18 @@ const Privacy = () => {
             className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
-              letterSpacing: "-20px",
+              letterSpacing: "-25px",
               lineHeight: "0.9",
               fontWeight: 600,
               textAlign: "left",
               marginBottom: "600px",
             }}
           >
-            <TextReveal trigger="visible" speed="slow">
+            <TextReveal trigger="visible" speed="slow" order='ltr'>
               PRIVACY
             </TextReveal>
             <br />
-            <TextReveal trigger="visible" speed="slow">
+            <TextReveal trigger="visible" speed="slow" order='ltr'>
               POLICY
             </TextReveal>
           </h1>

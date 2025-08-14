@@ -3,21 +3,20 @@ import { motion, useAnimation, useInView } from "framer-motion";
 
 type Trigger = "visible" | "load" | "hover" | "click";
 type Speed = "slow" | "medium" | "fast";
-type Direction = "ltr" | "rtl" | "center" | "random";
-
+type Order = "ltr" | "rtl" | "center" | "random";
 interface TextRevealProps {
   children: string;
   className?: string;
   style?: CSSProperties;
   trigger?: Trigger;
   speed?: Speed;
-  direction?: Direction;
   once?: boolean;
-  stagger?: number; // ms between letters
+  letterDelay?: number; // ms between each letter animation (easy alternative to "stagger")
+  order?: Order; // order of letter reveal
 }
 
 const SPEEDS: Record<Speed, { duration: number; stagger: number }> = {
-  slow: { duration: 800, stagger: 60 },
+  slow: { duration: 1000, stagger: 100 },
   medium: { duration: 500, stagger: 40 },
   fast: { duration: 300, stagger: 25 },
 };
@@ -28,45 +27,46 @@ export default function TextReveal({
   style = {},
   trigger = "visible",
   speed = "medium",
-  direction = "ltr",
   once = true,
-  stagger,
+  letterDelay,
+  order = "ltr",
 }: TextRevealProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const controls = useAnimation();
   const inView = useInView(containerRef, { once, amount: 0.2 });
 
   // Get speed values
-  const { duration, stagger: defaultStagger } = SPEEDS[speed];
-  const letterStagger = stagger ?? defaultStagger;
+  const { duration, stagger } = SPEEDS[speed];
+  const perLetterDelayMs = letterDelay ?? stagger;
+  const perLetterDelayS = perLetterDelayMs / 1000;
 
-  // Split text into letters
+  // Split text into letters while preserving spaces
   const letters = useMemo(() => Array.from(children), [children]);
 
-  // Calculate reveal order
+  // Determine reveal order
   const revealOrder = useMemo(() => {
-    const indices = letters.map((_, i) => i);
-    
-    switch (direction) {
+    const idx = letters.map((_, i) => i);
+    switch (order) {
       case "rtl":
-        return indices.reverse();
-      case "center":
-        const result: number[] = [];
-        const mid = Math.floor(indices.length / 2);
-        let left = mid - 1;
-        let right = mid;
-        
-        while (left >= 0 || right < indices.length) {
-          if (right < indices.length) result.push(right++);
-          if (left >= 0) result.push(left--);
+        return idx.reverse();
+      case "center": {
+        const out: number[] = [];
+        const mid = Math.floor(idx.length / 2);
+        let l = mid - 1;
+        let r = mid;
+        while (l >= 0 || r < idx.length) {
+          if (r < idx.length) out.push(r++);
+          if (l >= 0) out.push(l--);
         }
-        return result;
+        return out;
+      }
       case "random":
-        return [...indices].sort(() => Math.random() - 0.5);
-      default: // ltr
-        return indices;
+        return [...idx].sort(() => Math.random() - 0.5);
+      case "ltr":
+      default:
+        return idx;
     }
-  }, [letters, direction]);
+  }, [letters, order]);
 
   // Handle triggers
   useEffect(() => {
@@ -86,62 +86,54 @@ export default function TextReveal({
   };
 
   return (
-    <motion.span
+    <span
       ref={containerRef}
       className={className}
       style={{
         ...style,
-        display: "inline-flex",
-        overflow: "hidden",
+        display: "inline-block",
         position: "relative",
-        // Add padding to prevent clipping of wide characters
-        paddingLeft: "0.05em",
-        paddingRight: "0.05em",
-        marginLeft: "-0.05em",
-        marginRight: "-0.05em",
-        // Add vertical padding for descenders/ascenders
-        paddingTop: "0.1em",
-        paddingBottom: "0.1em",
-        marginTop: "-0.1em",
-        marginBottom: "-0.1em",
       }}
       onMouseEnter={handleHover}
       onClick={handleClick}
     >
-      {letters.map((letter, index) => {
-        const revealIndex = revealOrder.indexOf(index);
-        const delay = (revealIndex * letterStagger) / 1000;
-
-        return (
-          <motion.span
-            key={index}
-            initial="hidden"
-            animate={controls}
-            variants={{
-              hidden: {
-                y: "100%",
-                opacity: 1,
-              },
-              visible: {
-                y: 0,
-                opacity: 1,
-                transition: {
-                  duration: duration / 1000,
-                  delay,
-                  ease: [0.22, 1, 0.36, 1], // Smooth easing
+      <span
+        style={{
+          display: "block",
+          overflow: "hidden",
+          // Small horizontal padding to avoid clipping very wide glyphs
+          paddingLeft: "0.1em",
+          paddingRight: "0.1em",
+          marginLeft: "-0.1em",
+          marginRight: "-0.1em",
+          whiteSpace: "pre",
+        }}
+      >
+        {letters.map((ch, i) => {
+          const revealIndex = revealOrder.indexOf(i);
+          return (
+            <motion.span
+              key={i}
+              initial={{ y: "100%" }}
+              animate={controls}
+              variants={{
+                visible: {
+                  y: 0,
+                  transition: {
+                    duration: duration / 1000,
+                    delay: revealIndex * perLetterDelayS,
+                    ease: [0.22, 1, 0.36, 1],
+                  },
                 },
-              },
-            }}
-            style={{
-              display: "inline-block",
-              whiteSpace: "pre",
-              position: "relative",
-            }}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        );
-      })}
-    </motion.span>
+                hidden: { y: "100%" },
+              }}
+              style={{ display: "inline-block" }}
+            >
+              {ch === " " ? "\u00A0" : ch}
+            </motion.span>
+          );
+        })}
+      </span>
+    </span>
   );
 }
