@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useRef } from "react";
+import { CSSProperties, useEffect, useMemo, useRef } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 
 type Trigger = "visible" | "load" | "hover" | "click";
@@ -10,6 +10,7 @@ interface TextRevealProps {
   trigger?: Trigger;
   speed?: Speed;
   once?: boolean;
+  letterDelay?: number; // ms per letter delay, left-to-right
 }
 
 const SPEEDS: Record<Speed, { duration: number; stagger: number }> = {
@@ -25,13 +26,18 @@ export default function TextReveal({
   trigger = "visible",
   speed = "medium",
   once = true,
+  letterDelay,
 }: TextRevealProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const controls = useAnimation();
   const inView = useInView(containerRef, { once, amount: 0.2 });
 
-  // Get speed values
-  const { duration } = SPEEDS[speed];
+  // Get speed values and per-letter delay
+  const { duration, stagger } = SPEEDS[speed];
+  const perLetterDelayS = (letterDelay ?? stagger) / 1000;
+
+  // Split text into letters while preserving spaces
+  const letters = useMemo(() => Array.from(children), [children]);
 
   // Handle triggers
   useEffect(() => {
@@ -73,26 +79,27 @@ export default function TextReveal({
           marginRight: "-0.1em",
         }}
       >
-        <motion.span
-          initial="hidden"
-          animate={controls}
-          style={{
-            display: "block",
-            whiteSpace: "pre",
-          }}
-          variants={{
-            hidden: { y: "100%" },
-            visible: { 
-              y: 0,
-              transition: {
-                duration: duration / 1000,
-                ease: [0.22, 1, 0.36, 1],
-              }
-            },
-          }}
-        >
-          {children}
-        </motion.span>
+        {letters.map((ch, i) => (
+          <motion.span
+            key={i}
+            initial={{ y: "100%" }}
+            animate={controls}
+            variants={{
+              visible: {
+                y: 0,
+                transition: {
+                  duration: duration / 1000,
+                  delay: i * perLetterDelayS,
+                  ease: [0.22, 1, 0.36, 1],
+                },
+              },
+              hidden: { y: "100%" },
+            }}
+            style={{ display: "inline-block", whiteSpace: "pre" }}
+          >
+            {ch === " " ? "\u00A0" : ch}
+          </motion.span>
+        ))}
       </span>
     </span>
   );

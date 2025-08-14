@@ -59,7 +59,7 @@ const Privacy = () => {
               marginBottom: "600px",
             }}
           >
-            <TextReveal trigger="visible" speed="slow">
+            <TextReveal trigger="visible" speed="slow" >
               PRIVACY
             </TextReveal>
             <br />
