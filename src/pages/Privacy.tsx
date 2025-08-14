@@ -52,7 +52,7 @@ const Privacy = () => {
             className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
-              letterSpacing: "-25px",
+              letterSpacing: "-15px",
               lineHeight: "0.9",
               fontWeight: 600,
               textAlign: "left",
