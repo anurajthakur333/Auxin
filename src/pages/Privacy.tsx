@@ -7,6 +7,7 @@ import Lenis from "lenis";
 // import PopUpText from "../components/PopUpText";
 // import CleanSlideUpText from "../components/CleanSlideUpText";
 import TextReveal from "../components/TextReveal";
+import LiftUpText from "../components/LiftUpText";
 
 const Privacy = () => {
   const lenisRef = useRef<Lenis | null>(null);
@@ -59,9 +60,9 @@ const Privacy = () => {
               marginBottom: "600px",
             }}
           >
-            <TextReveal trigger="visible" speed="slow" >
+            <LiftUpText>
               PRIVACY
-            </TextReveal>
+            </LiftUpText>
             <br />
             <TextReveal trigger="visible" speed="slow">
               POLICY
