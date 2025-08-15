@@ -130,7 +130,7 @@ const Home = () => {
           />
           
           {/* Text Content */}
-          <div className="text-center px-4" style={{ position: "relative", zIndex: 3, pointerEvents: "none" }}>
+          <div className="text-center px-4" style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
             <div
               className="aeonik-regular text-white"
               style={{
