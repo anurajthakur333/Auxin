@@ -93,12 +93,12 @@ const Home = () => {
           <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 3 }}>
             <Squares 
               speed={0.3} 
-              centerShiftX={-0.58}
               squareSize={100}
               direction='up'
               borderColor='rgba(255, 255, 255, 0.19)'
               hoverFillColor='rgba(255, 255, 255, 0.1)'
               hoverPattern='plus'
+              alignVerticalToCenter
             />
           </div>
           
