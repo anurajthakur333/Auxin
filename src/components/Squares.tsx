@@ -14,6 +14,17 @@ interface SquaresProps {
   squareSize?: number;
   hoverFillColor?: CanvasStrokeStyle;
   hoverPattern?: "single" | "plus" | "diamond" | "square3x3" | "square5x5" | "line-horizontal" | "line-vertical" | "l-shape";
+  /**
+   * Optional: shift grid horizontally by a fractional number of cells.
+   * Negative moves lines to the left; positive moves lines to the right.
+   * Units are in cell widths (so 0.5 = half a cell).
+   */
+  centerShiftX?: number;
+  /**
+   * If true, ensures a vertical line is aligned to the exact canvas center
+   * before applying `centerShiftX`.
+   */
+  alignVerticalToCenter?: boolean;
 }
 
 const Squares: React.FC<SquaresProps> = ({
@@ -23,6 +34,8 @@ const Squares: React.FC<SquaresProps> = ({
   squareSize = 25,
   hoverFillColor = "#222",
   hoverPattern = "single",
+  centerShiftX = 0,
+  alignVerticalToCenter = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -133,9 +146,19 @@ const Squares: React.FC<SquaresProps> = ({
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
       const startY = Math.floor(gridOffset.current.y / squareSize) * squareSize;
 
+      // Compute horizontal alignment/shift
+      let alignX = 0;
+      if (alignVerticalToCenter) {
+        const centerX = canvas.width / 2;
+        const phaseX = (squareSize - (gridOffset.current.x % squareSize)) % squareSize;
+        alignX = (centerX % squareSize - phaseX + squareSize) % squareSize;
+      }
+      const shiftX = ((centerShiftX * squareSize) % squareSize + squareSize) % squareSize;
+      alignX = (alignX + shiftX) % squareSize;
+
       for (let x = startX; x < canvas.width + squareSize; x += squareSize) {
         for (let y = startY; y < canvas.height + squareSize; y += squareSize) {
-          const squareX = x - (gridOffset.current.x % squareSize);
+          const squareX = x - (gridOffset.current.x % squareSize) + alignX;
           const squareY = y - (gridOffset.current.y % squareSize);
 
           const currentSquareX = Math.floor((x - startX) / squareSize);
@@ -211,8 +234,18 @@ const Squares: React.FC<SquaresProps> = ({
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
       const startY = Math.floor(gridOffset.current.y / squareSize) * squareSize;
 
+      // Same alignment/shift for hover mapping
+      let alignX = 0;
+      if (alignVerticalToCenter) {
+        const centerX = canvas.width / 2;
+        const phaseX = (squareSize - (gridOffset.current.x % squareSize)) % squareSize;
+        alignX = (centerX % squareSize - phaseX + squareSize) % squareSize;
+      }
+      const shiftX = ((centerShiftX * squareSize) % squareSize + squareSize) % squareSize;
+      alignX = (alignX + shiftX) % squareSize;
+
       const hoveredSquareX = Math.floor(
-        (mouseX + gridOffset.current.x - startX) / squareSize
+        (mouseX + gridOffset.current.x - startX - alignX) / squareSize
       );
       const hoveredSquareY = Math.floor(
         (mouseY + gridOffset.current.y - startY) / squareSize
@@ -243,7 +276,7 @@ const Squares: React.FC<SquaresProps> = ({
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [direction, speed, borderColor, hoverFillColor, squareSize, hoverPattern]);
+  }, [direction, speed, borderColor, hoverFillColor, squareSize, hoverPattern, centerShiftX, alignVerticalToCenter]);
 
   return (
     <canvas
