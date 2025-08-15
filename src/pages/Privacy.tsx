@@ -4,10 +4,6 @@ import Footer from "../components/Footer";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
-// import PopUpText from "../components/PopUpText";
-// import CleanSlideUpText from "../components/CleanSlideUpText";
-import TextReveal from "../components/TextReveal";
-
 
 const Privacy = () => {
   const lenisRef = useRef<Lenis | null>(null);
