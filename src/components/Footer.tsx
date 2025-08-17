@@ -266,6 +266,24 @@ const Footer = () => {
     color: #39FF14 !important;
     caret-color: #39FF14;
   }
+  /* Override Chrome/Safari autofill styles so colors and fonts stay consistent */
+  .newsletter-input-box:-webkit-autofill,
+  .newsletter-input-box:-webkit-autofill:hover,
+  .newsletter-input-box:-webkit-autofill:focus,
+  .newsletter-input-box:-webkit-autofill:active {
+    -webkit-text-fill-color: #39FF14 !important;
+    caret-color: #39FF14;
+    -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+    box-shadow: 0 0 0px 1000px #000 inset;
+    transition: background-color 9999s ease-in-out 0s;
+    font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+  }
+  .newsletter-input-box:autofill {
+    -webkit-text-fill-color: #39FF14 !important;
+    caret-color: #39FF14;
+    box-shadow: 0 0 0px 1000px #000 inset;
+    font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+  }
   .newsletter-placeholder-overlay {
     position: absolute;
     left: 20px;
