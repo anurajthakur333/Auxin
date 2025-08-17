@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import ScrambleText from './Scramble';
 import { Link, useLocation } from 'react-router-dom';
 import '../styles/fonts.css';
 import '../styles/Main.css';
@@ -259,6 +260,10 @@ const Footer = () => {
     letter-spacing: 0.07em;
     text-transform: uppercase;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px; /* Prevent button width jitter while scrambling */
   }
   @media (max-width: 768px) {
     .newsletter-container {
@@ -356,7 +361,17 @@ const Footer = () => {
           {/* Static newsletter UI */}
           <div className="newsletter-container mt-4 mt-lg-0">
             <div className="newsletter-input-box aeonik-regular w-25">CONNECT TO OUR NEWSLETTER..</div>
-            <div className="newsletter-subscribe aeonik-regular">CONNECT</div>
+            <div className="newsletter-subscribe aeonik-regular">
+              <ScrambleText
+                trigger="hover"
+                scrambleColor="#000"
+                speed="slow"
+                revealSpeed={0.7}
+                matchWidth
+              >
+                CONNECT
+              </ScrambleText>
+            </div>
           </div>
         </div>
 
