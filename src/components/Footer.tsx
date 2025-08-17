@@ -223,6 +223,58 @@ const Footer = () => {
       font-size: clamp(400px, 21vw, 800px) !important;
     }
   }
+
+  /* Socials + Newsletter row */
+  .socials-row {
+    gap: 24px;
+  }
+  .socials-row .social-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    display: block;
+  }
+  .newsletter-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    margin-left: auto;
+  }
+  .newsletter-input-box {
+    flex: 1;
+    border: 1px solid #FFFFFF99;
+    padding: 16px 20px;
+    color: #bfbfbf;
+    letter-spacing: 0.02em;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .newsletter-subscribe {
+    border: 1px solid #FFFFFF99;
+    padding: 16px 28px;
+    color: #00ff00;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  @media (max-width: 768px) {
+    .newsletter-container {
+      max-width: 100%;
+      margin-left: 0;
+    }
+    .socials-row {
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .newsletter-input-box {
+      padding: 12px 16px;
+    }
+    .newsletter-subscribe {
+      padding: 12px 20px;
+    }
+  }
 `}
 </style>
 
@@ -280,9 +332,46 @@ const Footer = () => {
         </div>
 
         {/* Bottom Row */}
-   
+        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5">
+          {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
+          <div className="d-flex align-items-center socials-row">
+            <a href="#" aria-label="LinkedIn" className="me-3">
+              <img src="/Socials/linkedin.svg" alt="LinkedIn" className="social-icon" width={50} height={50} />
+            </a>
+            <a href="#" aria-label="Facebook" className="me-3">
+              <img src="/Socials/facebook.svg" alt="Facebook" className="social-icon" width={50} height={50} />
+            </a>
+            <a href="#" aria-label="Telegram" className="me-3">
+              <img src="/Socials/telegram.svg" alt="Telegram" className="social-icon" width={50} height={50} />
+            </a>
+            <a href="#" aria-label="Instagram" className="me-3">
+              <img src="/Socials/instagram.svg" alt="Instagram" className="social-icon" width={50} height={50} />
+            </a>
+            <a href="#" aria-label="Discord">
+              <img src="/Socials/discord.svg" alt="Discord" className="social-icon" width={50} height={50} />
+            </a>
+          </div>
+
+          {/* Static newsletter UI */}
+          <div className="newsletter-container mt-4 mt-lg-0">
+            <div className="newsletter-input-box aeonik-regular w-100">Subscribe To Our Newsletter...</div>
+            <div className="newsletter-subscribe aeonik-regular">SUBSCRIBE</div>
+          </div>
+        </div>
 
       </div>
+
+
+<div>
+
+
+  
+</div>
+
+
+
+
+
 
       <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular px-4">
           <div className="green-text">© Auxin Media 2025</div>
