@@ -236,6 +236,13 @@ const Footer = () => {
     height: 40px;
     object-fit: contain;
     display: block;
+    transition: filter 200ms ease, transform 200ms ease;
+  }
+  /* Hover green tint for social icons */
+  .social-link:hover .social-icon {
+    /* Approximate #39FF14 using CSS filter */
+    filter: invert(63%) sepia(92%) saturate(867%) hue-rotate(67deg) brightness(104%) contrast(102%);
+    transform: translateY(-1px);
   }
   .newsletter-container {
     display: flex;
@@ -305,6 +312,8 @@ const Footer = () => {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    width: 22px;
     min-width: 160px; /* Prevent button width jitter while scrambling */
   }
   @media (max-width: 768px) {
@@ -383,19 +392,19 @@ const Footer = () => {
         <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5">
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
-            <a href="#" aria-label="LinkedIn" className="me-1">
+            <a href="#" aria-label="LinkedIn" className="me-1 social-link">
               <img src="/Socials/linkedin.svg" alt="LinkedIn" className="social-icon" width={50} height={50} />
             </a>
-            <a href="#" aria-label="Facebook" className="me-1">
+            <a href="#" aria-label="Facebook" className="me-1 social-link">
               <img src="/Socials/facebook.svg" alt="Facebook" className="social-icon" width={40} height={40} />
             </a>
-            <a href="#" aria-label="Telegram" className="me-1">
+            <a href="#" aria-label="Telegram" className="me-1 social-link">
               <img src="/Socials/telegram.svg" alt="Telegram" className="social-icon" width={40} height={40} />
             </a>
-            <a href="#" aria-label="Instagram" className="me-1">
+            <a href="#" aria-label="Instagram" className="me-1 social-link">
               <img src="/Socials/instagram.svg" alt="Instagram" className="social-icon" width={40} height={40} />
             </a>
-            <a href="#" aria-label="Discord">
+            <a href="#" aria-label="Discord" className="social-link">
               <img src="/Socials/discord.svg" alt="Discord" className="social-icon" width={40} height={40} />
             </a>
           </div>
@@ -427,17 +436,17 @@ const Footer = () => {
                 </div>
               )}
             </div>
-            <div className="newsletter-subscribe aeonik-regular">
-              <ScrambleText
-                trigger="hover"
-                scrambleColor="#000"
-                speed="slow"
-                revealSpeed={0.3}
-                matchWidth
-              >
-                CONNECT
-              </ScrambleText>
-            </div>
+            <ScrambleText
+              trigger="hover"
+              scrambleColor="#000"
+              speed="slow"
+              revealSpeed={0.3}
+              matchWidth
+              className="newsletter-subscribe aeonik-regular"
+              style={{ color: '#000' }}
+            >
+              CONNECT
+            </ScrambleText>
           </div>
         </div>
 
