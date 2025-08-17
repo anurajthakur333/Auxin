@@ -8,6 +8,8 @@ const Footer = () => {
   const location = useLocation();
   const [animatedLetters, setAnimatedLetters] = useState<boolean[]>([]);
   const [isVisible, setIsVisible] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false);
   const [headerAnimations, setHeaderAnimations] = useState({
     studio: [] as boolean[],
     workflow: [] as boolean[],
@@ -242,13 +244,35 @@ const Footer = () => {
     max-width: 600px;
     margin-left: auto;
   }
-  .newsletter-input-box {
+  .newsletter-input-wrapper {
+    position: relative;
     flex: 1;
+  }
+  .newsletter-input-box {
     border: 1px solid #FFFFFF;
     padding: 16px 20px;
-    color: white
+    color: inherit;
     letter-spacing: 0.02em;
     text-align: left;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    caret-color: #ffffff;
+    font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    white-space: nowrap;
+  }
+  /* Ensure green-text applies on inputs regardless of cascade order */
+  .newsletter-input-box.green-text {
+    color: #39FF14 !important;
+    caret-color: #39FF14;
+  }
+  .newsletter-placeholder-overlay {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    pointer-events: none;
     white-space: nowrap;
   }
   .newsletter-subscribe {
@@ -360,13 +384,37 @@ const Footer = () => {
 
           {/* Static newsletter UI */}
           <div className="newsletter-container mt-4 mt-lg-0">
-            <div className="newsletter-input-box aeonik-regular w-25">CONNECT TO OUR NEWSLETTER..</div>
+            <div className="newsletter-input-wrapper aeonik-regular">
+              <input
+                type="email"
+                aria-label="Email"
+                className="newsletter-input-box aeonik-regular green-text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={() => setIsEmailFocused(false)}
+                placeholder=""
+              />
+              {(!isEmailFocused && email.length === 0) && (
+                <div className="newsletter-placeholder-overlay aeonik-regular">
+                  <ScrambleText
+                    trigger="visible"
+                    scrambleColor="#fff"
+                    speed="slow"
+                    revealSpeed={0.3}
+                    matchWidth
+                  >
+                    CONNECT TO OUR NEWSLETTER..
+                  </ScrambleText>
+                </div>
+              )}
+            </div>
             <div className="newsletter-subscribe aeonik-regular">
               <ScrambleText
                 trigger="hover"
                 scrambleColor="#000"
                 speed="slow"
-                revealSpeed={0.7}
+                revealSpeed={0.3}
                 matchWidth
               >
                 CONNECT
