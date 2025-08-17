@@ -226,11 +226,11 @@ const Footer = () => {
 
   /* Socials + Newsletter row */
   .socials-row {
-    gap: 24px;
+    gap: 10px;
   }
   .socials-row .social-icon {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
     display: block;
   }
@@ -238,24 +238,25 @@ const Footer = () => {
     display: flex;
     align-items: center;
     width: 100%;
-    max-width: 900px;
+    max-width: 600px;
     margin-left: auto;
   }
   .newsletter-input-box {
     flex: 1;
-    border: 1px solid #FFFFFF99;
+    border: 1px solid #FFFFFF;
     padding: 16px 20px;
-    color: #bfbfbf;
+    color: white
     letter-spacing: 0.02em;
-    text-align: center;
+    text-align: left;
     white-space: nowrap;
   }
   .newsletter-subscribe {
-    border: 1px solid #FFFFFF99;
+    border: 1px solid #FFFFFF;
     padding: 16px 28px;
-    color: #00ff00;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    color: black;
+    font-weight: 400;
+    background-color:#ffffff;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
     white-space: nowrap;
   }
@@ -335,27 +336,27 @@ const Footer = () => {
         <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5">
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
-            <a href="#" aria-label="LinkedIn" className="me-3">
+            <a href="#" aria-label="LinkedIn" className="me-1">
               <img src="/Socials/linkedin.svg" alt="LinkedIn" className="social-icon" width={50} height={50} />
             </a>
-            <a href="#" aria-label="Facebook" className="me-3">
-              <img src="/Socials/facebook.svg" alt="Facebook" className="social-icon" width={50} height={50} />
+            <a href="#" aria-label="Facebook" className="me-1">
+              <img src="/Socials/facebook.svg" alt="Facebook" className="social-icon" width={40} height={40} />
             </a>
-            <a href="#" aria-label="Telegram" className="me-3">
-              <img src="/Socials/telegram.svg" alt="Telegram" className="social-icon" width={50} height={50} />
+            <a href="#" aria-label="Telegram" className="me-1">
+              <img src="/Socials/telegram.svg" alt="Telegram" className="social-icon" width={40} height={40} />
             </a>
-            <a href="#" aria-label="Instagram" className="me-3">
-              <img src="/Socials/instagram.svg" alt="Instagram" className="social-icon" width={50} height={50} />
+            <a href="#" aria-label="Instagram" className="me-1">
+              <img src="/Socials/instagram.svg" alt="Instagram" className="social-icon" width={40} height={40} />
             </a>
             <a href="#" aria-label="Discord">
-              <img src="/Socials/discord.svg" alt="Discord" className="social-icon" width={50} height={50} />
+              <img src="/Socials/discord.svg" alt="Discord" className="social-icon" width={40} height={40} />
             </a>
           </div>
 
           {/* Static newsletter UI */}
           <div className="newsletter-container mt-4 mt-lg-0">
-            <div className="newsletter-input-box aeonik-regular w-100">Subscribe To Our Newsletter...</div>
-            <div className="newsletter-subscribe aeonik-regular">SUBSCRIBE</div>
+            <div className="newsletter-input-box aeonik-regular w-25">CONNECT TO OUR NEWSLETTER..</div>
+            <div className="newsletter-subscribe aeonik-regular">CONNECT</div>
           </div>
         </div>
 
