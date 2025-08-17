@@ -362,15 +362,6 @@ const Footer = () => {
       </div>
 
 
-<div>
-
-
-  
-</div>
-
-
-
-
 
 
       <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular px-4">
