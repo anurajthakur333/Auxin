@@ -387,9 +387,12 @@ const Footer = () => {
             </ul>
           </div>
         </div>
+        </div>
 
         {/* Bottom Row */}
-        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5">
+        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5"
+        style={{paddingRight:'110px',paddingLeft:'110px'}
+      }>
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
             <a href="#" aria-label="LinkedIn" className="me-1 social-link">
@@ -450,12 +453,14 @@ const Footer = () => {
           </div>
         </div>
 
-      </div>
 
 
 
 
-      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular px-4">
+
+      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular"
+      style={{paddingRight:'110px',paddingLeft:'110px'}
+      }>
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">Auxinmedia@gmail.com</div>
           <div className="green-text">Connect with Team</div>
