@@ -25,7 +25,9 @@ const Footer = () => {
     studio: "THE STUDIO",
     workflow: "THE WORKFLOW",
     playbook: "THE PLAYBOOK", 
-    legal: "LEGAL & SEO"
+    legal: "SEO & \u00A0 LEGALITIES"
+
+
   };
 
   useEffect(() => {
@@ -334,60 +336,71 @@ const Footer = () => {
   }
 `}
 </style>
+<div 
+  className="container-fluid" 
+  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto' }}
+>
+  {/* Top Flex Row */}
+  <div 
+    ref={headersRef} 
+    className="d-flex justify-content-between flex-wrap mb-5"
+    style={{ gap: "40px" }}   // optional gap between columns
+  >
+    {/* Column 1 (Left pinned) */}
+    <div>
+      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+        {renderAnimatedHeader('studio').slice(0, 3)} <br />
+        {renderAnimatedHeader('studio').slice(4)}
+      </h1>
+      <ul className="list-unstyled">
+        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-regular">About Us</a></li>
+        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-regular">Our Team</a></li>
+        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-regular">Careers</a></li>
+      </ul>
+    </div>
 
-      <div className="container-fluid" style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto' }}>
-        {/* Top Grid */}
-        <div ref={headersRef} className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
-          {/* Column 1 */}
-          <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
-              {renderAnimatedHeader('studio').slice(0, 3)} <br />
-              {renderAnimatedHeader('studio').slice(4)}
-            </h1>
-            <ul className="list-unstyled">
-              <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-regular">About Us</a></li>
-              <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-regular">Our Team</a></li>
-              <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-regular">Careers</a></li>
-            </ul>
-          </div>
-          {/* Column 2 */}
-          <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
-              {renderAnimatedHeader('workflow').slice(0, 3)} <br />
-              {renderAnimatedHeader('workflow').slice(4)}
-            </h1>
-            <ul className="list-unstyled">
-              <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Experience</a></li>
-              <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-regular">Case Studies</a></li>
-              <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-regular">Client Testimonials</a></li>
-            </ul>
-          </div>
-          {/* Column 3 */}
-          <div>
-            <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
-              {renderAnimatedHeader('playbook').slice(0, 3)} <br />
-              {renderAnimatedHeader('playbook').slice(4)}
-            </h1>
-            <ul className="list-unstyled">
-              <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-regular">Growth Scripts</a></li>
-              <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-regular">Insights</a></li>
-              <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-regular">Trends</a></li>
-            </ul>
-          </div>
-          {/* Column 4 */}
-          <div>
-              <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
-                {renderAnimatedHeader('legal').slice(0, 7)} <br />
-                {renderAnimatedHeader('legal').slice(8)}
-              </h1>
-            <ul className="list-unstyled">
-              <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms & Conditions</Link></li>
-              <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-regular">Sitemap</a></li>
-            </ul>
-          </div>
-        </div>
-        </div>
+    {/* Column 2 (Middle) */}
+    <div>
+      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+        {renderAnimatedHeader('workflow').slice(0, 3)} <br />
+        {renderAnimatedHeader('workflow').slice(4)}
+      </h1>
+      <ul className="list-unstyled">
+        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Experience</a></li>
+        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-regular">Case Studies</a></li>
+        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-regular">Client Testimonials</a></li>
+      </ul>
+    </div>
+
+    {/* Column 3 (Middle) */}
+    <div>
+      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+        {renderAnimatedHeader('playbook').slice(0, 3)} <br />
+        {renderAnimatedHeader('playbook').slice(4)}
+      </h1>
+      <ul className="list-unstyled">
+        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-regular">Growth Scripts</a></li>
+        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-regular">Insights</a></li>
+        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-regular">Trends</a></li>
+      </ul>
+    </div>
+
+    {/* Column 4 (Right pinned) */}
+    <div>
+      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+        {renderAnimatedHeader('legal').slice(0, 7)} <br />
+        {renderAnimatedHeader('legal').slice(8)}
+      </h1>
+      <ul className="list-unstyled">
+        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</Link></li>
+        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms & Conditions</Link></li>
+        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-regular">Sitemap</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
 
         {/* Bottom Row */}
         <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5"
