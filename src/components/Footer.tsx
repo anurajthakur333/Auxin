@@ -157,21 +157,22 @@ const Footer = () => {
   .footer-bg {
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     pointer-events: none;
     z-index: 0;
-  }
-  .footer-bg-logo {
-    width: min(1400px, 95%);
-    height: auto;
+    background-image: url('/Footer-logo.svg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
     opacity: 0.18;
     filter: grayscale(100%) brightness(0.6) contrast(100%);
   }
   .footer-content {
     position: relative;
     z-index: 1;
+  }
+  /* Ensure footer has enough height for the background to fully fit without cropping */
+  footer.footer-wrapper {
+    min-height: 520px;
   }
   .auxin-text {
     margin: 0 !important;
@@ -357,10 +358,8 @@ const Footer = () => {
 `}
 </style>
       {/* Background logo (gray) */}
-      <div className="footer-bg" aria-hidden="true">
-        <img src="/Footer-logo.svg" alt="" className="footer-bg-logo" />
-      </div>
-      <div className="footer-content">
+      <div className="footer-bg" aria-hidden="true" />
+      <div className="footer-content" style={{marginTop:'200px'}}>
 <div 
   className="container-fluid" 
   style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto' }}
