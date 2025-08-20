@@ -257,15 +257,24 @@ const Footer = () => {
   .socials-row .social-icon {
     width: 40px;
     height: 40px;
-    object-fit: contain;
     display: block;
-    transition: filter 200ms ease, transform 200ms ease;
+    background-color: #ffffff;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    transition: background-color 200ms ease;
   }
-  /* Hover green tint for social icons */
+  .icon-linkedin { -webkit-mask-image: url('/Socials/linkedin.svg'); mask-image: url('/Socials/linkedin.svg'); }
+  .icon-facebook { -webkit-mask-image: url('/Socials/facebook.svg'); mask-image: url('/Socials/facebook.svg'); }
+  .icon-telegram { -webkit-mask-image: url('/Socials/telegram.svg'); mask-image: url('/Socials/telegram.svg'); }
+  .icon-instagram { -webkit-mask-image: url('/Socials/instagram.svg'); mask-image: url('/Socials/instagram.svg'); }
+  .icon-discord { -webkit-mask-image: url('/Socials/discord.svg'); mask-image: url('/Socials/discord.svg'); }
+  /* Hover neon green */
   .social-link:hover .social-icon {
-    /* Approximate #39FF14 using CSS filter */
-    filter: invert(63%) sepia(92%) saturate(867%) hue-rotate(67deg) brightness(104%) contrast(102%);
-    transform: translateY(-1px);
+    background-color: #39FF14;
   }
   .newsletter-container {
     display: flex;
@@ -433,19 +442,19 @@ const Footer = () => {
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
             <a href="#" aria-label="LinkedIn" className="me-1 social-link">
-              <img src="/Socials/linkedin.svg" alt="LinkedIn" className="social-icon" width={50} height={50} />
+              <span className="social-icon icon-linkedin" aria-hidden="true" />
             </a>
             <a href="#" aria-label="Facebook" className="me-1 social-link">
-              <img src="/Socials/facebook.svg" alt="Facebook" className="social-icon" width={40} height={40} />
+              <span className="social-icon icon-facebook" aria-hidden="true" />
             </a>
             <a href="#" aria-label="Telegram" className="me-1 social-link">
-              <img src="/Socials/telegram.svg" alt="Telegram" className="social-icon" width={40} height={40} />
+              <span className="social-icon icon-telegram" aria-hidden="true" />
             </a>
             <a href="#" aria-label="Instagram" className="me-1 social-link">
-              <img src="/Socials/instagram.svg" alt="Instagram" className="social-icon" width={40} height={40} />
+              <span className="social-icon icon-instagram" aria-hidden="true" />
             </a>
             <a href="#" aria-label="Discord" className="social-link">
-              <img src="/Socials/discord.svg" alt="Discord" className="social-icon" width={40} height={40} />
+              <span className="social-icon icon-discord" aria-hidden="true" />
             </a>
           </div>
 
