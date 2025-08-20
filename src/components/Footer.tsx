@@ -140,7 +140,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="footer-wrapper text-white" style={{ overflow: 'hidden', margin: 0, padding: 0 }}>
+    <footer className="footer-wrapper text-white" style={{ overflow: 'hidden', margin: 0, padding: 0, position: 'relative' }}>
       {/* Hover effect */}
       <style>
 {`
@@ -152,6 +152,26 @@ const Footer = () => {
     padding: 0 !important;
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
+  }
+  /* Background logo behind footer */
+  .footer-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .footer-bg-logo {
+    width: min(1400px, 95%);
+    height: auto;
+    opacity: 0.18;
+    filter: grayscale(100%) brightness(0.6) contrast(100%);
+  }
+  .footer-content {
+    position: relative;
+    z-index: 1;
   }
   .auxin-text {
     margin: 0 !important;
@@ -336,6 +356,11 @@ const Footer = () => {
   }
 `}
 </style>
+      {/* Background logo (gray) */}
+      <div className="footer-bg" aria-hidden="true">
+        <img src="/Footer-logo.svg" alt="" className="footer-bg-logo" />
+      </div>
+      <div className="footer-content">
 <div 
   className="container-fluid" 
   style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto' }}
@@ -344,7 +369,7 @@ const Footer = () => {
   <div 
     ref={headersRef} 
     className="d-flex justify-content-between flex-wrap mb-5"
-    style={{ gap: "40px" }}   // optional gap between columns
+    style={{ gap: "40px" }}
   >
     {/* Column 1 (Left pinned) */}
     <div>
@@ -533,6 +558,7 @@ const Footer = () => {
         ))}
           </Link>
         </span>
+    </div>
     </div>
     </footer>
   );
