@@ -335,7 +335,7 @@ const Footer = () => {
 `}
 </style>
 
-      <div className="container-fluid px-4" style={{marginLeft:"0px"}}>
+      <div className="container-fluid" style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto' }}>
         {/* Top Grid */}
         <div ref={headersRef} className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
           {/* Column 1 */}
