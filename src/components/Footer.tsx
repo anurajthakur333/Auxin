@@ -267,6 +267,14 @@ const Footer = () => {
     mask-size: contain;
     transition: background-color 200ms ease;
   }
+  /* Inline SVG color control */
+  .social-icon-svg {
+    width: 40px;
+    height: 40px;
+    display: block;
+    color: #ffffff;
+    transition: color 200ms ease;
+  }
   .icon-linkedin { -webkit-mask-image: url('/Socials/linkedin.svg'); mask-image: url('/Socials/linkedin.svg'); }
   .icon-facebook { -webkit-mask-image: url('/Socials/facebook.svg'); mask-image: url('/Socials/facebook.svg'); }
   .icon-telegram { -webkit-mask-image: url('/Socials/telegram.svg'); mask-image: url('/Socials/telegram.svg'); }
@@ -276,12 +284,22 @@ const Footer = () => {
   .social-link:hover .social-icon {
     background-color: #39FF14;
   }
+  .social-link:hover .social-icon-svg {
+    color: #39FF14;
+  }
   .newsletter-container {
     display: flex;
     align-items: center;
     width: 100%;
     max-width: 600px;
     margin-left: auto;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid #363636;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
   .newsletter-input-wrapper {
     position: relative;
@@ -368,15 +386,15 @@ const Footer = () => {
 </style>
       {/* Background logo (gray) */}
       <div className="footer-bg" aria-hidden="true" />
-      <div className="footer-content" style={{marginTop:'200px'}}>
+      <div className="footer-content">
 <div 
   className="container-fluid" 
-  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto' }}
+  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto', marginBottom: '200px' ,marginTop:'200px'}}
 >
   {/* Top Flex Row */}
   <div 
     ref={headersRef} 
-    className="d-flex justify-content-between flex-wrap mb-5"
+    className="d-flex justify-content-between align-items-start flex-wrap mb-5"
     style={{ gap: "40px" }}
   >
     {/* Column 1 (Left pinned) */}
@@ -442,13 +460,19 @@ const Footer = () => {
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
             <a href="#" aria-label="LinkedIn" className="me-1 social-link">
-              <span className="social-icon icon-linkedin" aria-hidden="true" />
+              <svg className="social-icon-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fill="currentColor" d="M15.2144 41.8434V19.3333H7.74747V41.8434H15.2144ZM11.483 16.261C14.0862 16.261 15.7074 14.5321 15.7074 12.3715C15.6593 10.1626 14.0862 8.48193 11.5331 8.48193C8.97794 8.48193 7.30859 10.1626 7.30859 12.3715C7.30859 14.5321 8.92784 16.261 11.4349 16.261H11.483ZM19.3467 41.8434H26.8137V29.2731C26.8137 28.6004 26.8618 27.9277 27.0602 27.4478C27.5993 26.1024 28.8277 24.7108 30.8919 24.7108C33.5933 24.7108 34.6734 26.7751 34.6734 29.8012V41.8414H42.1404V28.9357C42.1404 22.0221 38.457 18.8052 33.5452 18.8052C29.5171 18.8052 27.7496 21.0602 26.7656 22.5964H26.8157V19.3333H19.3467C19.4449 21.4458 19.3467 41.8434 19.3467 41.8434Z"/>
+              </svg>
             </a>
             <a href="#" aria-label="Facebook" className="me-1 social-link">
-              <span className="social-icon icon-facebook" aria-hidden="true" />
+              <svg className="social-icon-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fill="currentColor" d="M33.1289 7.67368H27.5907C24.3042 7.67368 20.6487 9.05594 20.6487 13.8199C20.6648 15.4798 20.6487 17.0695 20.6487 18.8587H16.8467V24.9088H20.7664V42.3262H27.969V24.7939H32.723L33.1531 18.8417H27.8449C27.8449 18.8417 27.8568 16.1939 27.8449 15.425C27.8449 13.5424 29.8038 13.6502 29.9216 13.6502C30.8538 13.6502 32.6663 13.6529 33.1316 13.6502V7.67368H33.1289Z"/>
+              </svg>
             </a>
             <a href="#" aria-label="Telegram" className="me-1 social-link">
-              <span className="social-icon icon-telegram" aria-hidden="true" />
+              <svg className="social-icon-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fill="currentColor" d="M10.4046 24.7832C10.4046 24.7832 22.9046 19.6532 27.2398 17.8468C28.9017 17.1243 34.5375 14.8121 34.5375 14.8121C34.5375 14.8121 37.1387 13.8006 36.9219 16.2572C36.8496 17.2688 36.2716 20.8092 35.6936 24.6387C34.8265 30.0578 33.8872 35.9826 33.8872 35.9826C33.8872 35.9826 33.7427 37.6445 32.5144 37.9335C31.2861 38.2225 29.2629 36.922 28.9017 36.6329C28.6126 36.4162 23.4826 33.1647 21.604 31.5751C21.0982 31.1416 20.5202 30.2746 21.6762 29.263C24.2774 26.8786 27.3843 23.9162 29.2629 22.0376C30.13 21.1705 30.997 19.1474 27.3843 21.604C22.2543 25.1445 17.1965 28.4682 17.1965 28.4682C17.1965 28.4682 16.0404 29.1907 13.8728 28.5404C11.7051 27.8902 9.17622 27.0231 9.17622 27.0231C9.17622 27.0231 7.44222 25.9393 10.4046 24.7832Z"/>
+              </svg>
             </a>
             <a href="#" aria-label="Instagram" className="me-1 social-link">
               <span className="social-icon icon-instagram" aria-hidden="true" />
