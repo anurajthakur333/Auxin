@@ -148,24 +148,27 @@ const Footer = () => {
     color: #00ff00 !important;
   }
   .footer-wrapper {
-    margin: 0 !important;
+    margin-top:0px  !important;
     padding: 0 !important;
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
   }
   /* Background logo behind footer */
-  .footer-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image: url('/Footer-logo.svg');
-    background-size: contain;
-    background-position: bottom;
-    background-repeat: no-repeat;
-    opacity: 0.18;
-    filter: grayscale(100%) brightness(0.6) contrast(100%);
-  }
+.footer-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url('/Footer-logo.svg');
+  background-size: cover; /* Changed from 'contain' to 'cover' for full coverage */
+  background-position: center center; /* Center the logo both horizontally and vertically */
+  background-repeat: no-repeat;
+  opacity: 0.18;
+  filter: grayscale(100%) brightness(0.6) contrast(100%);
+  /* Add responsive scaling */
+  width: 100%;
+  height: 100%;
+}
   .footer-content {
     position: relative;
     z-index: 1;
@@ -385,7 +388,7 @@ const Footer = () => {
       <div className="footer-content">
 <div 
   className="container-fluid" 
-  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto', marginBottom: '96px' ,marginTop:'0px'}}
+  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto', marginBottom: '96px' ,marginTop:'110px'}}
 >
   {/* Top Flex Row */}
   <div 
