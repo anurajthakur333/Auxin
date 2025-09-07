@@ -293,10 +293,6 @@ const Footer = () => {
     width: 100%;
     max-width: 600px;
     margin-left: auto;
-    gap: 10px;
-    padding: 8px 10px;
-    border: 1px solid #363636;
-    border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
