@@ -455,8 +455,7 @@ const Footer = () => {
       }>
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
-       
-        <a href="#" aria-label="LinkedIn" className="me-1 social-link">
+          <a href="#" aria-label="LinkedIn" className="me-1 social-link">
           <span className="social-icon icon-linkedin" aria-hidden="true" />
         </a>
         <a href="#" aria-label="Facebook" className="me-1 social-link">
@@ -471,6 +470,9 @@ const Footer = () => {
             <a href="#" aria-label="Discord" className="social-link">
               <span className="social-icon icon-discord" aria-hidden="true" />
             </a>
+
+                   
+     
           </div>
 
           {/* Static newsletter UI */}
