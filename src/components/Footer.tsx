@@ -161,7 +161,7 @@ const Footer = () => {
     z-index: 0;
     background-image: url('/Footer-logo.svg');
     background-size: contain;
-    background-position: center;
+    background-position: bottom;
     background-repeat: no-repeat;
     opacity: 0.18;
     filter: grayscale(100%) brightness(0.6) contrast(100%);
@@ -385,12 +385,12 @@ const Footer = () => {
       <div className="footer-content">
 <div 
   className="container-fluid" 
-  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto', marginBottom: '200px' ,marginTop:'200px'}}
+  style={{ paddingLeft: '110px', paddingRight: '110px', margin: '0 auto', marginBottom: '96px' ,marginTop:'0px'}}
 >
   {/* Top Flex Row */}
   <div 
     ref={headersRef} 
-    className="d-flex justify-content-between align-items-start flex-wrap mb-5"
+    className="d-flex justify-content-between align-items-start flex-wrap"
     style={{ gap: "40px" }}
   >
     {/* Column 1 (Left pinned) */}
@@ -450,11 +450,14 @@ const Footer = () => {
 
 
         {/* Bottom Row */}
-        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row mb-5"
+        <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row "
         style={{paddingRight:'110px',paddingLeft:'110px'}
       }>
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
+          <a href="#" aria-label="Instagram" className="me-1 social-link">
+              <span className="social-icon icon-instagram" aria-hidden="true" />
+            </a>
           <a href="#" aria-label="LinkedIn" className="me-1 social-link">
           <span className="social-icon icon-linkedin" aria-hidden="true" />
         </a>
@@ -464,9 +467,7 @@ const Footer = () => {
         <a href="#" aria-label="Telegram" className="me-1 social-link">
           <span className="social-icon icon-telegram" aria-hidden="true" />
         </a>
-            <a href="#" aria-label="Instagram" className="me-1 social-link">
-              <span className="social-icon icon-instagram" aria-hidden="true" />
-            </a>
+       
             <a href="#" aria-label="Discord" className="social-link">
               <span className="social-icon icon-discord" aria-hidden="true" />
             </a>
@@ -522,7 +523,7 @@ const Footer = () => {
 
 
       <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular"
-      style={{paddingRight:'110px',paddingLeft:'110px'}
+      style={{paddingRight:'110px',paddingLeft:'110px',marginTop:'96px'}
       }>
           <div className="green-text">© Auxin Media 2025</div>
           <div className="green-text">Auxinmedia@gmail.com</div>
@@ -543,8 +544,9 @@ const Footer = () => {
         }}
       >
         <span 
-          className="aeonik-regular mt-5 footer-text"
+          className="aeonik-regular footer-text"
           style={{
+            marginTop:'96px',
             letterSpacing: '-0.07em',
             whiteSpace: 'nowrap',
             transform: 'scale(1)',
