@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import ShinyText from "../components/ShinyText";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
@@ -53,11 +54,25 @@ const Meeting = () => {
               letterSpacing: "-8px",
               fontWeight: 400,
               textAlign: "left",
-              marginBottom: "760px",
+              marginBottom: "500px",
             }}
           >
             MEETING
           </h1>
+        </div>
+        
+        {/* Bottom section with ShinyText */}
+        <div className="row" style={{ marginTop: 'auto', paddingBottom: '0px' ,marginBottom: '150px'}}>
+          <div className="col-12">
+            <div style={{ marginLeft: '10px' }}>
+              <ShinyText 
+                text="Turn organized time into lasting success." 
+                disabled={false} 
+                speed={3} 
+                className="aeonik-regular meeting-subtitle"
+              />
+            </div>
+          </div>
         </div>
       </div>
       
