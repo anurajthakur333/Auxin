@@ -13,9 +13,9 @@ const ShinyText = ({ text, disabled = false, speed = 5, className = '', style = 
 
   // Default styles for meeting subtitle
   const defaultStyles = className.includes('meeting-subtitle') ? {
-    fontSize: 'clamp(20px, 3vw, 28px)',
-    lineHeight: '1.4',
-    fontWeight: 300
+    lineHeight: '1',
+    fontWeight: 500,
+   fontSize: "clamp(32px, 15vw, 100px)",
   } : {};
 
   return (
