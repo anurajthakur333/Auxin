@@ -44,8 +44,8 @@ const Meeting = () => {
     }}>
       <Navbar />
       
-      <div style={{ flex: 1, }}>
-        <div className="container-fluid">
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div className="container-fluid" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           <h1
             className="aeonik-regular text-white"
             style={{
@@ -54,24 +54,31 @@ const Meeting = () => {
               letterSpacing: "-8px",
               fontWeight: 400,
               textAlign: "left",
+              marginTop: "10px",
               marginBottom: "500px",
             }}
           >
             MEETING
           </h1>
-        </div>
-        
-        {/* Bottom section with ShinyText */}
-        <div className="row" style={{ marginTop: 'auto', paddingBottom: '0px' ,marginBottom: '150px'}}>
-          <div className="col-12">
-            <div style={{ marginLeft: '10px' }}>
-              <ShinyText 
-                text="Turn organized time into lasting success." 
-                disabled={false} 
-                speed={3} 
-                className="aeonik-regular meeting-subtitle"
-              />
-            </div>
+          
+          <div 
+            className="aeonik-regular text-white"
+            style={{
+              fontSize: "clamp(20px, 3vw, 28px)",
+              lineHeight: "1.4",
+              fontWeight: 300,
+              maxWidth: "800px",
+              paddingLeft: "10px",
+              marginTop: "auto",
+              marginBottom: "100px",
+            }}
+          >
+            <ShinyText 
+              text="Turn organized time into lasting success." 
+              disabled={false} 
+              speed={3} 
+              className="aeonik-regular meeting-subtitle"
+            />
           </div>
         </div>
       </div>

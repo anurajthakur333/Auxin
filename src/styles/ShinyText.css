@@ -25,9 +25,3 @@
 .shiny-text.disabled {
   animation: none;
 }
-
-.meeting-subtitle {
-  font-size: clamp(20px, 3vw, 28px) !important;
-  line-height: 1.4 !important;
-  font-weight: 300 !important;
-}
