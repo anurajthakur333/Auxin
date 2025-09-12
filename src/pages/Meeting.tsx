@@ -44,37 +44,35 @@ const Meeting = () => {
     }}>
       <Navbar />
       
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" ,marginBottom:'100px'}}>
         <div className="container-fluid" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           <h1
             className="aeonik-regular text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
               lineHeight: "0.9",
-              letterSpacing: "-8px",
-              fontWeight: 400,
+              letterSpacing: "-15px",
+              fontWeight: 600,
               textAlign: "left",
-              marginTop: "10px",
-              marginBottom: "500px",
+              marginTop: "12px",
+              marginBottom: "400px",
             }}
           >
-            MEETING
+            MEETINGS
           </h1>
           
           <div 
             className="aeonik-regular text-white"
             style={{
-              fontSize: "clamp(20px, 3vw, 28px)",
-              lineHeight: "1.4",
-              fontWeight: 300,
-              maxWidth: "800px",
+
+              maxWidth: "900px",
               paddingLeft: "10px",
               marginTop: "auto",
-              marginBottom: "100px",
+              marginBottom: "120px",
             }}
           >
             <ShinyText 
-              text="Turn organized time into lasting success." 
+              text="Turn Organized Time Into Lasting Success." 
               disabled={false} 
               speed={3} 
               className="aeonik-regular meeting-subtitle"
