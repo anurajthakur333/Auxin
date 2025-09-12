@@ -1,67 +1,67 @@
-import '../styles/fonts.css';
-import '../styles/Main.css';
+import { useEffect, useRef } from 'react';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import "../styles/fonts.css";
+import "../styles/Main.css";
+import Lenis from "lenis";
 
 const Meeting = () => {
+  const lenisRef = useRef<Lenis | null>(null);
+
+  useEffect(() => {
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
+
+    lenisRef.current = lenis;
+
+    const raf = (time: number) => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
-    <div className="container-fluid" style={{ paddingTop: '100px', minHeight: '100vh' }}>
-      <div className="row justify-content-center">
-        <div className="col-lg-8 col-md-10 col-12">
-          <div className="text-center">
-            <h1 className="green-text aeonik-regular mb-4" style={{ fontSize: '3rem' }}>
-              Schedule a Meeting
-            </h1>
-            <p className="text-white aeonik-regular mb-5" style={{ fontSize: '1.2rem' }}>
-              Let's discuss your project and how we can help bring your vision to life.
-            </p>
-            
-            <div className="d-flex flex-column flex-md-row justify-content-center gap-4">
-              <a 
-                href="mailto:auxinmedia@gmail.com" 
-                className="btn btn-outline-light btn-lg aeonik-regular"
-                style={{ 
-                  padding: '15px 30px',
-                  borderColor: '#39FF14',
-                  color: '#39FF14',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#39FF14';
-                  e.currentTarget.style.color = '#000';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = '#39FF14';
-                }}
-              >
-                Email Us
-              </a>
-              
-              <a 
-                href="tel:+1234567890" 
-                className="btn btn-outline-light btn-lg aeonik-regular"
-                style={{ 
-                  padding: '15px 30px',
-                  borderColor: '#39FF14',
-                  color: '#39FF14',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#39FF14';
-                  e.currentTarget.style.color = '#000';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = '#39FF14';
-                }}
-              >
-                Call Us
-              </a>
-            </div>
-          </div>
+    <div style={{ 
+      display: "flex", 
+      flexDirection: "column", 
+      minHeight: "100vh", 
+      background: "#000",
+      position: "relative",
+      zIndex: 1
+    }}>
+      <Navbar />
+      
+      <div style={{ flex: 1, }}>
+        <div className="container-fluid">
+          <h1
+            className="aeonik-regular text-white"
+            style={{
+              fontSize: "clamp(32px, 15vw, 770px)",
+              lineHeight: "0.9",
+              letterSpacing: "-8px",
+              fontWeight: 400,
+              textAlign: "left",
+              marginBottom: "760px",
+            }}
+          >
+            MEETING
+          </h1>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
