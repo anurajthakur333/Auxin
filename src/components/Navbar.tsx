@@ -7,34 +7,73 @@ import { Link, useLocation } from "react-router-dom";
 // Reusable nav link with scramble on hover in/out
 const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random" }) => {
   const [hovered, setHovered] = useState(false);
+  const location = useLocation();
 
-  return (
-    <a
-      href={href}
-      className="nav-link text-white aeonik-light"
-      style={{ textDecoration: "none" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+  // Check if it's an internal route (starts with /) or a hash link (starts with #)
+  const isInternalRoute = href.startsWith('/') && !href.startsWith('#');
+  const isHashLink = href.startsWith('#');
+  
+  const linkProps = {
+    className: "nav-link text-white aeonik-light",
+    style: { textDecoration: "none" },
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false)
+  };
+
+  const scrambleText = (
+    <ScrambleText
+      trigger="hover"
+      speed="slow"
+      direction={direction}
+      randomReveal={true}
+      revealSpeed={0.3}
+      style={{
+        color: hovered ? "#39FF14" : "white",
+        whiteSpace: "nowrap",
+        display: "inline-block",
+        minWidth: `${minWidth}px`,
+        textAlign: "center",
+      }}
+      delay={0}
     >
-      <ScrambleText
-        trigger="hover"
-        speed="slow"
-        direction={direction}
-        randomReveal={true}
-        revealSpeed={0.3}
-        style={{
-          color: hovered ? "#39FF14" : "white",
-          whiteSpace: "nowrap",
-          display: "inline-block",
-          minWidth: `${minWidth}px`,
-          textAlign: "center",
-        }}
-        delay={0}
-      >
-        {label}
-      </ScrambleText>
-    </a>
+      {label}
+    </ScrambleText>
   );
+
+  if (isInternalRoute) {
+    return (
+      <Link to={href} {...linkProps}>
+        {scrambleText}
+      </Link>
+    );
+  } else if (isHashLink) {
+    // For hash links, navigate to home page first if not already there
+    const handleHashClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (location.pathname !== '/') {
+        // Navigate to home first, then scroll to section
+        window.location.href = `/${href}`;
+      } else {
+        // Already on home page, just scroll to section
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+
+    return (
+      <a href={`/${href}`} onClick={handleHashClick} {...linkProps}>
+        {scrambleText}
+      </a>
+    );
+  } else {
+    return (
+      <a href={href} {...linkProps}>
+        {scrambleText}
+      </a>
+    );
+  }
 };
 
 const Navbar = () => {
@@ -103,7 +142,7 @@ const Navbar = () => {
       {/* Right side links */}
       <div className="d-flex justify-content-start" style={{ gap: '2rem' }}>
         <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" />
-        <NavItem href="#appointments" label="MEETINGS" minWidth={120} direction="right-to-left" />
+        <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" />
       </div>
     </div>
   );
