@@ -1,6 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import User, { IUser } from '../models/User';
+import User from '../models/User';
 import { generateToken, verifyToken } from '../lib/jwt';
 import { getGoogleAuthURL, getGoogleUserInfo } from '../lib/googleAuth';
 
@@ -102,7 +102,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Google OAuth - Get auth URL
-router.get('/google', (req, res) => {
+router.get('/google', (_req, res) => {
   try {
     const authURL = getGoogleAuthURL();
     res.json({ authURL });
@@ -204,7 +204,7 @@ router.get('/verify', async (req, res) => {
 });
 
 // Logout (client-side token removal)
-router.post('/logout', (req, res) => {
+router.post('/logout', (_req, res) => {
   res.json({ message: 'Logout successful' });
 });
 
