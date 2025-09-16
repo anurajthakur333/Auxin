@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import '../styles/fonts.css';
 import '../styles/Main.css';
 
@@ -54,13 +52,13 @@ const Login: React.FC = () => {
       position: "relative",
       zIndex: 1
     }}>
-      <Navbar />
+
       
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{
           background: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(20px)',
-          borderRadius: '20px',
+          borderRadius: '0px',
           padding: '3rem',
           width: '100%',
           maxWidth: '450px',
@@ -69,14 +67,6 @@ const Login: React.FC = () => {
         }}>
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 className="aeonik-regular" style={{ 
-              color: '#39FF14', 
-              fontSize: '2rem', 
-              fontWeight: '600',
-              margin: 0
-            }}>
-              AUXIN
-            </h1>
           </div>
 
           {/* Login Form */}
@@ -84,7 +74,6 @@ const Login: React.FC = () => {
             <h2 className="aeonik-regular" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
-              fontWeight: '400',
               marginBottom: '0.5rem',
               textAlign: 'center'
             }}>
@@ -97,14 +86,14 @@ const Login: React.FC = () => {
               textAlign: 'center',
               marginBottom: '2rem'
             }}>
-              Welcome back to Auxin Media
+              Welcome Back To Auxin
             </p>
 
             {error && (
-              <div style={{
+              <div className="aeonik-regular" style={{
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
-                borderRadius: '8px',
+                borderRadius: '0px',
                 padding: '0.75rem',
                 marginBottom: '1rem',
                 color: '#ff6b6b',
@@ -120,10 +109,11 @@ const Login: React.FC = () => {
               type="button"
               onClick={googleLogin}
               disabled={isLoading}
+              className="aeonik-regular"
               style={{
                 width: '100%',
                 padding: '0.75rem',
-                borderRadius: '8px',
+                borderRadius: '0px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 background: 'rgba(255, 255, 255, 0.05)',
                 color: 'white',
@@ -168,7 +158,7 @@ const Login: React.FC = () => {
                 height: '1px',
                 background: 'rgba(255, 255, 255, 0.2)'
               }} />
-              <span style={{
+              <span className="aeonik-regular" style={{
                 padding: '0 1rem',
                 color: '#888',
                 fontSize: '0.9rem'
@@ -198,10 +188,11 @@ const Login: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 required
+                className="aeonik-regular"
                 style={{
                   width: '100%',
                   padding: '0.75rem',
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   background: 'rgba(255, 255, 255, 0.05)',
                   color: 'white',
@@ -234,10 +225,11 @@ const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                className="aeonik-regular"
                 style={{
                   width: '100%',
                   padding: '0.75rem',
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   background: 'rgba(255, 255, 255, 0.05)',
                   color: 'white',
@@ -285,25 +277,22 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
+              className="aeonik-regular"
               style={{
                 width: '100%',
                 padding: '0.75rem',
-                borderRadius: '8px',
+                borderRadius: '0px',
                 border: 'none',
                 background: 'linear-gradient(135deg, #39FF14, #00cc00)',
                 color: '#000',
                 fontSize: '1rem',
-                fontWeight: '600',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
                 transition: 'all 0.3s ease',
                 opacity: isLoading ? 0.7 : 1,
                 marginBottom: '1rem'
               }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 10px 20px rgba(57, 255, 20, 0.3)';
-                }
+              onMouseEnter={() => {
+           
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
@@ -361,7 +350,7 @@ const Login: React.FC = () => {
         </div>
       </div>
       
-      <Footer />
+
     </div>
   );
 };
