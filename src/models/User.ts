@@ -22,7 +22,6 @@ const UserSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
-    unique: true,
     lowercase: true,
     trim: true,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
@@ -34,7 +33,6 @@ const UserSchema = new Schema<IUser>({
   },
   googleId: {
     type: String,
-    unique: true,
     sparse: true // Allows multiple null values
   },
   avatar: {
@@ -48,7 +46,7 @@ const UserSchema = new Schema<IUser>({
 }, {
   timestamps: true,
   toJSON: {
-    transform: function(doc, ret) {
+    transform: function(_doc, ret: any) {
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;
