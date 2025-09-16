@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import ScrambleText from '../components/Scramble';
 import '../styles/fonts.css';
 import '../styles/Main.css';
 
@@ -10,6 +11,8 @@ const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   
   const { login, googleLogin, user } = useAuth();
   const navigate = useNavigate();
@@ -52,6 +55,36 @@ const Login: React.FC = () => {
       position: "relative",
       zIndex: 1
     }}>
+      {/* Custom styles for input animations and autofill */}
+      <style>
+        {`
+          .login-input {
+            -webkit-text-fill-color: #39FF14 !important;
+            caret-color: #39FF14;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+            box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+            transition: background-color 9999s ease-in-out 0s;
+            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+          }
+          .login-input:-webkit-autofill,
+          .login-input:-webkit-autofill:hover,
+          .login-input:-webkit-autofill:focus,
+          .login-input:-webkit-autofill:active {
+            -webkit-text-fill-color: #39FF14 !important;
+            caret-color: #39FF14;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+            box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+            transition: background-color 9999s ease-in-out 0s;
+            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+          }
+          .login-input:autofill {
+            -webkit-text-fill-color: #39FF14 !important;
+            caret-color: #39FF14;
+            box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+          }
+        `}
+      </style>
 
       
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
@@ -182,31 +215,58 @@ const Login: React.FC = () => {
               }}>
                 Email
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@email.com"
-                required
-                className="aeonik-regular"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '0px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  color: 'white',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                  transition: 'border-color 0.3s ease'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#39FF14';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder=""
+                  required
+                  className="aeonik-regular login-input"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    borderRadius: '0px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    color: isEmailFocused ? '#39FF14' : 'white',
+                    fontSize: '0.9rem',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                    caretColor: '#39FF14'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#39FF14';
+                    setIsEmailFocused(true);
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    setIsEmailFocused(false);
+                  }}
+                />
+                {(!isEmailFocused && email.length === 0) && (
+                  <div className="aeonik-regular" style={{
+                    position: 'absolute',
+                    left: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#888',
+                    pointerEvents: 'none',
+                    whiteSpace: 'nowrap',
+                    fontSize: '0.9rem'
+                  }}>
+                    <ScrambleText
+                      trigger="visible"
+                      scrambleColor="#888"
+                      speed="slow"
+                      revealSpeed={0.3}
+                      matchWidth
+                    >
+                      example@email.com
+                    </ScrambleText>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Password Field */}
@@ -219,31 +279,58 @@ const Login: React.FC = () => {
               }}>
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                className="aeonik-regular"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '0px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  color: 'white',
-                  fontSize: '0.9rem',
-                  outline: 'none',
-                  transition: 'border-color 0.3s ease'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#39FF14';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder=""
+                  required
+                  className="aeonik-regular login-input"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    borderRadius: '0px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    color: isPasswordFocused ? '#39FF14' : 'white',
+                    fontSize: '0.9rem',
+                    outline: 'none',
+                    transition: 'all 0.3s ease',
+                    caretColor: '#39FF14'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#39FF14';
+                    setIsPasswordFocused(true);
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    setIsPasswordFocused(false);
+                  }}
+                />
+                {(!isPasswordFocused && password.length === 0) && (
+                  <div className="aeonik-regular" style={{
+                    position: 'absolute',
+                    left: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#888',
+                    pointerEvents: 'none',
+                    whiteSpace: 'nowrap',
+                    fontSize: '0.9rem'
+                  }}>
+                    <ScrambleText
+                      trigger="visible"
+                      scrambleColor="#888"
+                      speed="slow"
+                      revealSpeed={0.3}
+                      matchWidth
+                    >
+                      Enter your password
+                    </ScrambleText>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Remember Me */}
