@@ -9,10 +9,12 @@ const router = express.Router();
 // Register
 router.post('/register', async (req, res) => {
   try {
+    console.log('Register request received:', { name: req.body.name, email: req.body.email, password: '***' });
     const { name, email, password } = req.body;
 
     // Validation
     if (!name || !email || !password) {
+      console.log('Validation failed: missing fields');
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -56,6 +58,7 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

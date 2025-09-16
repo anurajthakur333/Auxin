@@ -54,7 +54,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        let data;
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          console.error('Failed to parse JSON response:', jsonError);
+          localStorage.removeItem('token');
+          return;
+        }
         setUser(data.user);
         localStorage.setItem('token', token);
       } else {
@@ -80,7 +87,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse JSON response:', jsonError);
+        console.error('Response status:', response.status);
+        console.error('Response text:', await response.text());
+        return false;
+      }
 
       if (response.ok) {
         setUser(data.user);
@@ -110,7 +125,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse JSON response:', jsonError);
+        console.error('Response status:', response.status);
+        console.error('Response text:', await response.text());
+        return false;
+      }
 
       if (response.ok) {
         setUser(data.user);
@@ -134,7 +157,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Get Google auth URL from backend
       const response = await fetch('/api/auth/google');
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse JSON response:', jsonError);
+        setLoading(false);
+        return;
+      }
       
       if (response.ok) {
         // Open Google OAuth in popup
