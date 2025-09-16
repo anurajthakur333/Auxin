@@ -98,18 +98,18 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div 
-      className="navbar navbar-expand-xxl fixed-bottom" 
-      style={{ 
-        height: '50px',
-        display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
-        alignItems: 'center',
-        padding: '0 20px',
-        transform: `translateY(${isVisible ? '0' : '100%'})`,
-        transition: 'transform 0.3s ease-in-out'
-      }}
-    >
+      <div 
+        className="navbar navbar-expand-xxl fixed-bottom" 
+        style={{ 
+          height: '50px',
+          display: 'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems: 'center',
+          padding: '0 20px',
+          transform: `translateY(${isVisible ? '0' : '100%'})`,
+          transition: 'transform 0.3s ease-in-out'
+        }}
+      >
       {/* Left side links */}
       <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
         <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" />
@@ -140,9 +140,46 @@ const Navbar = () => {
       </Link>
 
       {/* Right side links */}
-      <div className="d-flex justify-content-start" style={{ gap: '2rem' }}>
+      <div className="d-flex justify-content-start align-items-center" style={{ gap: '2rem' }}>
         <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" />
         <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" />
+        
+        {/* User Icon */}
+        <a 
+          href="#" 
+          className="nav-link text-white"
+          style={{ 
+            textDecoration: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "32px",
+            height: "32px",
+            marginLeft: "19rem",
+            transition: "color 0.2s ease"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "#39FF14";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "white";
+          }}
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            strokeWidth={1.5} 
+            stroke="currentColor" 
+            style={{ width: "24px", height: "24px" }}
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" 
+            />
+          </svg>
+        </a>
       </div>
     </div>
   );
