@@ -50,6 +50,7 @@ const Signup: React.FC = () => {
     setIsLoading(true);
 
     try {
+      console.log('Attempting to signup with:', { name, email, password: '***' });
       const success = await signup(name, email, password);
       if (success) {
         const from = location.state?.from?.pathname || '/';
@@ -58,6 +59,7 @@ const Signup: React.FC = () => {
         setError('Failed to create account. Please try again.');
       }
     } catch (err) {
+      console.error('Signup error in component:', err);
       setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
