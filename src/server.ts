@@ -31,11 +31,16 @@ app.get('/api/health', (_req, res) => {
 
 // Error handling middleware
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Something went wrong!',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-  });
+  console.error('Unhandled error:', err);
+  console.error('Error stack:', err.stack);
+  
+  // Ensure we always return valid JSON
+  if (!res.headersSent) {
+    res.status(500).json({ 
+      error: 'Something went wrong!',
+      message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+    });
+  }
 });
 
 // 404 handler

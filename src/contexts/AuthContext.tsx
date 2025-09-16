@@ -10,8 +10,8 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (name: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   googleLogin: () => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -54,11 +54,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (response.ok) {
+        const responseText = await response.text();
         let data;
         try {
-          data = await response.json();
+          data = JSON.parse(responseText);
         } catch (jsonError) {
           console.error('Failed to parse JSON response:', jsonError);
+          console.error('Response text:', responseText);
           localStorage.removeItem('token');
           return;
         }
@@ -75,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
       
@@ -88,32 +90,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       let data;
+      const responseText = await response.text();
+      
       try {
-        data = await response.json();
+        data = JSON.parse(responseText);
       } catch (jsonError) {
         console.error('Failed to parse JSON response:', jsonError);
         console.error('Response status:', response.status);
-        console.error('Response text:', await response.text());
-        return false;
+        console.error('Response text:', responseText);
+        return { success: false, error: 'Server error. Please try again.' };
       }
 
       if (response.ok) {
         setUser(data.user);
         localStorage.setItem('token', data.token);
-        return true;
+        return { success: true };
       } else {
         console.error('Login failed:', data.error);
-        return false;
+        return { success: false, error: data.error || 'Login failed' };
       }
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      return { success: false, error: 'Network error. Please try again.' };
     } finally {
       setLoading(false);
     }
   };
 
-  const signup = async (name: string, email: string, password: string): Promise<boolean> => {
+  const signup = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
       
@@ -126,26 +130,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       let data;
+      const responseText = await response.text();
+      
       try {
-        data = await response.json();
+        data = JSON.parse(responseText);
       } catch (jsonError) {
         console.error('Failed to parse JSON response:', jsonError);
         console.error('Response status:', response.status);
-        console.error('Response text:', await response.text());
-        return false;
+        console.error('Response text:', responseText);
+        return { success: false, error: 'Server error. Please try again.' };
       }
 
       if (response.ok) {
         setUser(data.user);
         localStorage.setItem('token', data.token);
-        return true;
+        return { success: true };
       } else {
         console.error('Signup failed:', data.error);
-        return false;
+        return { success: false, error: data.error || 'Failed to create account' };
       }
     } catch (error) {
       console.error('Signup error:', error);
-      return false;
+      return { success: false, error: 'Network error. Please try again.' };
     } finally {
       setLoading(false);
     }
@@ -157,11 +163,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Get Google auth URL from backend
       const response = await fetch('/api/auth/google');
+      const responseText = await response.text();
       let data;
       try {
-        data = await response.json();
+        data = JSON.parse(responseText);
       } catch (jsonError) {
         console.error('Failed to parse JSON response:', jsonError);
+        console.error('Response text:', responseText);
         setLoading(false);
         return;
       }
