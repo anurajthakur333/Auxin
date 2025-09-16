@@ -58,8 +58,14 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    console.error('Error stack:', error.stack);
-    res.status(500).json({ error: 'Internal server error' });
+    if (error instanceof Error) {
+      console.error('Error stack:', error.stack);
+    }
+    
+    // Ensure we always return valid JSON
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
 
@@ -100,7 +106,11 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    
+    // Ensure we always return valid JSON
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
 

@@ -51,12 +51,12 @@ const Signup: React.FC = () => {
 
     try {
       console.log('Attempting to signup with:', { name, email, password: '***' });
-      const success = await signup(name, email, password);
-      if (success) {
+      const result = await signup(name, email, password);
+      if (result.success) {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
       } else {
-        setError('Failed to create account. Please try again.');
+        setError(result.error || 'Failed to create account. Please try again.');
       }
     } catch (err) {
       console.error('Signup error in component:', err);
