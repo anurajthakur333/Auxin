@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import '../styles/fonts.css';
 import '../styles/Main.css';
 
@@ -75,7 +73,7 @@ const Signup: React.FC = () => {
       position: "relative",
       zIndex: 1
     }}>
-      <Navbar />
+
       
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{
@@ -442,7 +440,7 @@ const Signup: React.FC = () => {
         </div>
       </div>
       
-      <Footer />
+
     </div>
   );
 };
