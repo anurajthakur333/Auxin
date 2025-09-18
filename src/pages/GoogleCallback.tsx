@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { API_BASE_URL } from '../lib/apiConfig';
 
 const GoogleCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -25,7 +26,7 @@ const GoogleCallback: React.FC = () => {
         }
 
         // Send code to backend
-        const response = await fetch('/api/auth/google/callback', {
+        const response = await fetch(`${API_BASE_URL}/api/auth/google/callback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

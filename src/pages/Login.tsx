@@ -19,25 +19,27 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Throttle function to prevent excessive state updates
-  const throttle = (func: Function, delay: number) => {
-    let timeoutId: NodeJS.Timeout | null = null;
-    let lastExecTime = 0;
-    return (...args: any[]) => {
-      const currentTime = Date.now();
-      
-      if (currentTime - lastExecTime > delay) {
-        func(...args);
-        lastExecTime = currentTime;
-      } else {
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          func(...args);
-          lastExecTime = Date.now();
-        }, delay - (currentTime - lastExecTime));
-      }
+  // Add global error handler
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Global error in Login component:', event.error);
+      // Optionally set a user-friendly error message
     };
-  };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection in Login component:', event.reason);
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
+  // Removed throttle function as it was causing production issues
 
   // Redirect if already logged in
   useEffect(() => {
@@ -50,22 +52,34 @@ const Login: React.FC = () => {
   // Simplified autofill detection (less performance impact)
   useEffect(() => {
     const handleAutofillCheck = () => {
-      const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-      if (emailInput && emailInput.value.length > 0) {
-        emailInput.classList.add('autofill-override');
+      try {
+        const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+        if (emailInput && emailInput.value.length > 0) {
+          emailInput.classList.add('autofill-override');
+        }
+      } catch (error) {
+        console.error('Autofill check error:', error);
       }
     };
 
     // Only run check on focus/blur events instead of continuous monitoring
-    const emailInput = document.querySelector('input[type="email"]');
-    if (emailInput) {
-      emailInput.addEventListener('blur', handleAutofillCheck);
-      emailInput.addEventListener('focus', handleAutofillCheck);
-      
-      return () => {
-        emailInput.removeEventListener('blur', handleAutofillCheck);
-        emailInput.removeEventListener('focus', handleAutofillCheck);
-      };
+    try {
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) {
+        emailInput.addEventListener('blur', handleAutofillCheck);
+        emailInput.addEventListener('focus', handleAutofillCheck);
+        
+        return () => {
+          try {
+            emailInput.removeEventListener('blur', handleAutofillCheck);
+            emailInput.removeEventListener('focus', handleAutofillCheck);
+          } catch (error) {
+            console.error('Cleanup error:', error);
+          }
+        };
+      }
+    } catch (error) {
+      console.error('Setup error:', error);
     }
   }, []);
 
@@ -347,7 +361,13 @@ const Login: React.FC = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    try {
+                      setEmail(e.target.value);
+                    } catch (error) {
+                      console.error('Email input error:', error);
+                    }
+                  }}
                   placeholder=""
                   required
                   className="aeonik-regular login-input"
@@ -363,14 +383,22 @@ const Login: React.FC = () => {
                     transition: 'all 0.3s ease',
                     caretColor: '#39FF14'
                   }}
-                  onFocus={throttle((e: React.FocusEvent<HTMLInputElement>) => {
-                    e.target.style.borderColor = '#39FF14';
-                    setIsEmailFocused(true);
-                  }, 100)}
-                  onBlur={throttle((e: React.FocusEvent<HTMLInputElement>) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    setIsEmailFocused(false);
-                  }, 100)}
+                  onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+                    try {
+                      e.target.style.borderColor = '#39FF14';
+                      setIsEmailFocused(true);
+                    } catch (error) {
+                      console.error('Focus error:', error);
+                    }
+                  }}
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                    try {
+                      e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                      setIsEmailFocused(false);
+                    } catch (error) {
+                      console.error('Blur error:', error);
+                    }
+                  }}
                 />
                 {(!isEmailFocused && email.length === 0) && (
                   <div className="aeonik-regular" style={{
@@ -383,7 +411,17 @@ const Login: React.FC = () => {
                     whiteSpace: 'nowrap',
                     fontSize: '0.9rem'
                   }}>
-                    example@email.com
+                    <ScrambleText
+                      trigger="load"
+                      scrambleColor="#888"
+                      speed="slow"
+                      revealSpeed={0.5}
+                      matchWidth
+                      fps={30}
+                      duration={1000}
+                    >
+                      example@email.com
+                    </ScrambleText>
                   </div>
                 )}
               </div>
@@ -403,7 +441,13 @@ const Login: React.FC = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    try {
+                      setPassword(e.target.value);
+                    } catch (error) {
+                      console.error('Password input error:', error);
+                    }
+                  }}
                   placeholder=""
                   required
                   className="aeonik-regular login-input"
@@ -420,14 +464,22 @@ const Login: React.FC = () => {
                     transition: 'all 0.3s ease',
                     caretColor: '#39FF14'
                   }}
-                  onFocus={throttle((e: React.FocusEvent<HTMLInputElement>) => {
-                    e.target.style.borderColor = '#39FF14';
-                    setIsPasswordFocused(true);
-                  }, 100)}
-                  onBlur={throttle((e: React.FocusEvent<HTMLInputElement>) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    setIsPasswordFocused(false);
-                  }, 100)}
+                  onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+                    try {
+                      e.target.style.borderColor = '#39FF14';
+                      setIsPasswordFocused(true);
+                    } catch (error) {
+                      console.error('Focus error:', error);
+                    }
+                  }}
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                    try {
+                      e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                      setIsPasswordFocused(false);
+                    } catch (error) {
+                      console.error('Blur error:', error);
+                    }
+                  }}
                 />
                 {(!isPasswordFocused && password.length === 0) && (
                   <div className="aeonik-regular" style={{
@@ -440,7 +492,17 @@ const Login: React.FC = () => {
                     whiteSpace: 'nowrap',
                     fontSize: '0.9rem'
                   }}>
-                    Enter your password
+                    <ScrambleText
+                      trigger="load"
+                      scrambleColor="#888"
+                      speed="slow"
+                      revealSpeed={0.5}
+                      matchWidth
+                      fps={30}
+                      duration={1200}
+                    >
+                      Enter your password
+                    </ScrambleText>
                   </div>
                 )}
                 {/* Show/Hide Password Button */}
@@ -545,7 +607,21 @@ const Login: React.FC = () => {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              {isLoading ? 'Logging in...' : 'L O G I N'}
+              {isLoading ? (
+                'Logging in...'
+              ) : (
+                <ScrambleText
+                  trigger="hover"
+                  scrambleColor="#000"
+                  speed="medium"
+                  revealSpeed={0.4}
+                  matchWidth
+                  fps={30}
+                  duration={800}
+                >
+                  L O G I N
+                </ScrambleText>
+              )}
             </button>
 
             {/* Forgot Password */}
