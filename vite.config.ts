@@ -17,6 +17,7 @@ export default defineConfig({
   build: {
     assetsDir: 'assets',
     rollupOptions: {
+      external: [],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.ttf') || assetInfo.name?.endsWith('.otf')) {
@@ -26,5 +27,8 @@ export default defineConfig({
         },
       },
     },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom']
   },
 })
