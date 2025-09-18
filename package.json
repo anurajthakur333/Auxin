@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:ts": "npx tsc --noEmit && vite build",
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "build:ts": "npx tsc --noEmit && npx vite build",
     "build:script": "./build.sh",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "npx vite preview"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
