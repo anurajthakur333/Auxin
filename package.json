@@ -1,12 +1,13 @@
 {
   "name": "auxin",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx tsc --noEmit && vite build",
-    "build:vite-only": "vite build",
+    "build": "vite build",
+    "build:ts": "npx tsc --noEmit && vite build",
+    "build:script": "./build.sh",
     "lint": "eslint .",
     "preview": "vite preview"
   },
