@@ -2,8 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "npm ci --include=dev",
   "framework": "vite",
+  "env": {
+    "NPM_CONFIG_INCLUDE": "dev"
+  },
   "rewrites": [
     {
       "source": "/(.*)",
