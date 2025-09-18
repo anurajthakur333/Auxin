@@ -12,8 +12,10 @@ dist
 dist-ssr
 *.local
 
-# Backend folder (deployed separately)
+# Backend folders (deployed separately)
 backend/
+Auxin backend/
+
 
 # Editor directories and files
 .vscode/*
