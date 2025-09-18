@@ -24,6 +24,25 @@ const Signup: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Add global error handler
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Global error in Signup component:', event.error);
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection in Signup component:', event.reason);
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
@@ -32,52 +51,39 @@ const Signup: React.FC = () => {
     }
   }, [user, navigate, location]);
 
-  // Detect and handle autofill
+  // Simplified autofill detection (less performance impact)
   useEffect(() => {
-    const checkAutofill = () => {
-      const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-      if (emailInput) {
-        // Check if the input has been autofilled by checking if it has a value but no recent user input
-        const hasValue = emailInput.value.length > 0;
-        const isAutofilled = hasValue && !isEmailFocused;
-        
-        if (isAutofilled) {
-          // Force the styling by adding a class
+    const handleAutofillCheck = () => {
+      try {
+        const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+        if (emailInput && emailInput.value.length > 0) {
           emailInput.classList.add('autofill-override');
         }
+      } catch (error) {
+        console.error('Autofill check error:', error);
       }
     };
 
-    // Check immediately and after a delay
-    checkAutofill();
-    const timer = setTimeout(checkAutofill, 100);
-    
-    // Use MutationObserver to detect when browser applies autofill styles
-    const observer = new MutationObserver(() => {
-      const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-      if (emailInput && emailInput.value.length > 0) {
-        // Force our styles
-        emailInput.style.setProperty('-webkit-text-fill-color', '#39FF14', 'important');
-        emailInput.style.setProperty('-webkit-box-shadow', '0 0 0px 1000px rgba(255, 255, 255, 0.05) inset', 'important');
-        emailInput.style.setProperty('background-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        emailInput.style.setProperty('color', '#39FF14', 'important');
-        emailInput.classList.add('autofill-override');
+    // Only run check on focus/blur events instead of continuous monitoring
+    try {
+      const emailInput = document.querySelector('input[type="email"]');
+      if (emailInput) {
+        emailInput.addEventListener('blur', handleAutofillCheck);
+        emailInput.addEventListener('focus', handleAutofillCheck);
+        
+        return () => {
+          try {
+            emailInput.removeEventListener('blur', handleAutofillCheck);
+            emailInput.removeEventListener('focus', handleAutofillCheck);
+          } catch (error) {
+            console.error('Cleanup error:', error);
+          }
+        };
       }
-    });
-
-    const emailInput = document.querySelector('input[type="email"]');
-    if (emailInput) {
-      observer.observe(emailInput, { 
-        attributes: true, 
-        attributeFilter: ['style', 'class'] 
-      });
+    } catch (error) {
+      console.error('Setup error:', error);
     }
-    
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [email, isEmailFocused]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -373,7 +379,13 @@ const Signup: React.FC = () => {
                 <input
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    try {
+                      setName(e.target.value);
+                    } catch (error) {
+                      console.error('Name input error:', error);
+                    }
+                  }}
                   placeholder=""
                   required
                   className="aeonik-regular signup-input"
@@ -410,11 +422,13 @@ const Signup: React.FC = () => {
                     fontSize: '0.9rem'
                   }}>
                     <ScrambleText
-                      trigger="visible"
+                      trigger="load"
                       scrambleColor="#888"
                       speed="slow"
-                      revealSpeed={0.3}
+                      revealSpeed={0.5}
                       matchWidth
+                      fps={30}
+                      duration={1000}
                     >
                       Enter your full name
                     </ScrambleText>
@@ -437,7 +451,13 @@ const Signup: React.FC = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    try {
+                      setEmail(e.target.value);
+                    } catch (error) {
+                      console.error('Email input error:', error);
+                    }
+                  }}
                   placeholder=""
                   required
                   className="aeonik-regular signup-input"
@@ -474,11 +494,13 @@ const Signup: React.FC = () => {
                     fontSize: '0.9rem'
                   }}>
                     <ScrambleText
-                      trigger="visible"
+                      trigger="load"
                       scrambleColor="#888"
                       speed="slow"
-                      revealSpeed={0.3}
+                      revealSpeed={0.5}
                       matchWidth
+                      fps={30}
+                      duration={1100}
                     >
                       example@email.com
                     </ScrambleText>
@@ -501,7 +523,13 @@ const Signup: React.FC = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    try {
+                      setPassword(e.target.value);
+                    } catch (error) {
+                      console.error('Password input error:', error);
+                    }
+                  }}
                   placeholder=""
                   required
                   className="aeonik-regular signup-input"
@@ -519,12 +547,20 @@ const Signup: React.FC = () => {
                     caretColor: '#39FF14'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#39FF14';
-                    setIsPasswordFocused(true);
+                    try {
+                      e.target.style.borderColor = '#39FF14';
+                      setIsPasswordFocused(true);
+                    } catch (error) {
+                      console.error('Focus error:', error);
+                    }
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    setIsPasswordFocused(false);
+                    try {
+                      e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                      setIsPasswordFocused(false);
+                    } catch (error) {
+                      console.error('Blur error:', error);
+                    }
                   }}
                 />
                 {(!isPasswordFocused && password.length === 0) && (
@@ -539,11 +575,13 @@ const Signup: React.FC = () => {
                     fontSize: '0.9rem'
                   }}>
                     <ScrambleText
-                      trigger="visible"
+                      trigger="load"
                       scrambleColor="#888"
                       speed="slow"
-                      revealSpeed={0.3}
+                      revealSpeed={0.5}
                       matchWidth
+                      fps={30}
+                      duration={1200}
                     >
                       Create a password
                     </ScrambleText>
@@ -606,7 +644,13 @@ const Signup: React.FC = () => {
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => {
+                    try {
+                      setConfirmPassword(e.target.value);
+                    } catch (error) {
+                      console.error('Confirm password input error:', error);
+                    }
+                  }}
                   placeholder=""
                   required
                   className="aeonik-regular signup-input"
@@ -624,12 +668,20 @@ const Signup: React.FC = () => {
                     caretColor: '#39FF14'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#39FF14';
-                    setIsConfirmPasswordFocused(true);
+                    try {
+                      e.target.style.borderColor = '#39FF14';
+                      setIsConfirmPasswordFocused(true);
+                    } catch (error) {
+                      console.error('Focus error:', error);
+                    }
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                    setIsConfirmPasswordFocused(false);
+                    try {
+                      e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                      setIsConfirmPasswordFocused(false);
+                    } catch (error) {
+                      console.error('Blur error:', error);
+                    }
                   }}
                 />
                 {(!isConfirmPasswordFocused && confirmPassword.length === 0) && (
@@ -644,11 +696,13 @@ const Signup: React.FC = () => {
                     fontSize: '0.9rem'
                   }}>
                     <ScrambleText
-                      trigger="visible"
+                      trigger="load"
                       scrambleColor="#888"
                       speed="slow"
-                      revealSpeed={0.3}
+                      revealSpeed={0.5}
                       matchWidth
+                      fps={30}
+                      duration={1300}
                     >
                       Confirm your password
                     </ScrambleText>
@@ -771,9 +825,11 @@ const Signup: React.FC = () => {
                 <ScrambleText
                   trigger="hover"
                   scrambleColor="#000"
-                  speed="slow"
-                  revealSpeed={0.3}
+                  speed="medium"
+                  revealSpeed={0.4}
                   matchWidth
+                  fps={30}
+                  duration={800}
                 >
                   C  R  E  A  T  E     A  C  C  O  U  N  T
                 </ScrambleText>
