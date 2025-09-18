@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "tsx src/server.ts",
+    "dev:server": "tsx backend/src/server.ts",
     "dev:full": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "tsc -b && vite build",
-    "build:server": "tsc src/server.ts --outDir dist --target es2020 --module commonjs --moduleResolution node",
-    "start": "node dist/server.js",
+    "build:server": "cd backend && tsc",
+    "start": "node backend/dist/server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

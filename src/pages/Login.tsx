@@ -19,6 +19,26 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Throttle function to prevent excessive state updates
+  const throttle = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout | null = null;
+    let lastExecTime = 0;
+    return (...args: any[]) => {
+      const currentTime = Date.now();
+      
+      if (currentTime - lastExecTime > delay) {
+        func(...args);
+        lastExecTime = currentTime;
+      } else {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          func(...args);
+          lastExecTime = Date.now();
+        }, delay - (currentTime - lastExecTime));
+      }
+    };
+  };
+
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
@@ -27,52 +47,27 @@ const Login: React.FC = () => {
     }
   }, [user, navigate, location]);
 
-  // Detect and handle autofill
+  // Simplified autofill detection (less performance impact)
   useEffect(() => {
-    const checkAutofill = () => {
-      const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-      if (emailInput) {
-        // Check if the input has been autofilled by checking if it has a value but no recent user input
-        const hasValue = emailInput.value.length > 0;
-        const isAutofilled = hasValue && !isEmailFocused;
-        
-        if (isAutofilled) {
-          // Force the styling by adding a class
-          emailInput.classList.add('autofill-override');
-        }
-      }
-    };
-
-    // Check immediately and after a delay
-    checkAutofill();
-    const timer = setTimeout(checkAutofill, 100);
-    
-    // Use MutationObserver to detect when browser applies autofill styles
-    const observer = new MutationObserver(() => {
+    const handleAutofillCheck = () => {
       const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
       if (emailInput && emailInput.value.length > 0) {
-        // Force our styles
-        emailInput.style.setProperty('-webkit-text-fill-color', '#39FF14', 'important');
-        emailInput.style.setProperty('-webkit-box-shadow', '0 0 0px 1000px rgba(255, 255, 255, 0.05) inset', 'important');
-        emailInput.style.setProperty('background-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        emailInput.style.setProperty('color', '#39FF14', 'important');
         emailInput.classList.add('autofill-override');
       }
-    });
+    };
 
+    // Only run check on focus/blur events instead of continuous monitoring
     const emailInput = document.querySelector('input[type="email"]');
     if (emailInput) {
-      observer.observe(emailInput, { 
-        attributes: true, 
-        attributeFilter: ['style', 'class'] 
-      });
+      emailInput.addEventListener('blur', handleAutofillCheck);
+      emailInput.addEventListener('focus', handleAutofillCheck);
+      
+      return () => {
+        emailInput.removeEventListener('blur', handleAutofillCheck);
+        emailInput.removeEventListener('focus', handleAutofillCheck);
+      };
     }
-    
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [email, isEmailFocused]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -368,14 +363,14 @@ const Login: React.FC = () => {
                     transition: 'all 0.3s ease',
                     caretColor: '#39FF14'
                   }}
-                  onFocus={(e) => {
+                  onFocus={throttle((e: React.FocusEvent<HTMLInputElement>) => {
                     e.target.style.borderColor = '#39FF14';
                     setIsEmailFocused(true);
-                  }}
-                  onBlur={(e) => {
+                  }, 100)}
+                  onBlur={throttle((e: React.FocusEvent<HTMLInputElement>) => {
                     e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                     setIsEmailFocused(false);
-                  }}
+                  }, 100)}
                 />
                 {(!isEmailFocused && email.length === 0) && (
                   <div className="aeonik-regular" style={{
@@ -388,15 +383,7 @@ const Login: React.FC = () => {
                     whiteSpace: 'nowrap',
                     fontSize: '0.9rem'
                   }}>
-                    <ScrambleText
-                      trigger="visible"
-                      scrambleColor="#888"
-                      speed="slow"
-                      revealSpeed={0.3}
-                      matchWidth
-                    >
-                      example@email.com
-                    </ScrambleText>
+                    example@email.com
                   </div>
                 )}
               </div>
@@ -433,14 +420,14 @@ const Login: React.FC = () => {
                     transition: 'all 0.3s ease',
                     caretColor: '#39FF14'
                   }}
-                  onFocus={(e) => {
+                  onFocus={throttle((e: React.FocusEvent<HTMLInputElement>) => {
                     e.target.style.borderColor = '#39FF14';
                     setIsPasswordFocused(true);
-                  }}
-                  onBlur={(e) => {
+                  }, 100)}
+                  onBlur={throttle((e: React.FocusEvent<HTMLInputElement>) => {
                     e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
                     setIsPasswordFocused(false);
-                  }}
+                  }, 100)}
                 />
                 {(!isPasswordFocused && password.length === 0) && (
                   <div className="aeonik-regular" style={{
@@ -453,15 +440,7 @@ const Login: React.FC = () => {
                     whiteSpace: 'nowrap',
                     fontSize: '0.9rem'
                   }}>
-                    <ScrambleText
-                      trigger="visible"
-                      scrambleColor="#888"
-                      speed="slow"
-                      revealSpeed={0.3}
-                      matchWidth
-                    >
-                      Enter your password
-                    </ScrambleText>
+                    Enter your password
                   </div>
                 )}
                 {/* Show/Hide Password Button */}
@@ -566,19 +545,7 @@ const Login: React.FC = () => {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              {isLoading ? (
-                'Logging in...'
-              ) : (
-                <ScrambleText
-                  trigger="hover"
-                  scrambleColor="#000"
-                  speed="slow"
-                  revealSpeed={0.3}
-                  matchWidth
-                >
-                  L  O  G  I  N
-                </ScrambleText>
-              )}
+              {isLoading ? 'Logging in...' : 'L O G I N'}
             </button>
 
             {/* Forgot Password */}
