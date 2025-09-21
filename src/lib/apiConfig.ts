@@ -11,8 +11,15 @@ export const getApiBaseUrl = (): string => {
     return '';
   } else {
     // In production, use your Railway backend URL
-    // This should be set in your environment variables
-    return import.meta.env.VITE_API_BASE_URL || 'https://your-railway-backend.railway.app';
+    // Make sure the environment variable includes the full URL with protocol
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    
+    // If the URL doesn't include protocol, add https://
+    if (apiUrl && !apiUrl.startsWith('http')) {
+      return `https://${apiUrl}`;
+    }
+    
+    return apiUrl || 'https://auxin-backend.railway.internal';
   }
 };
 
