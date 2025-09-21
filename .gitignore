@@ -15,7 +15,7 @@ dist-ssr
 # Backend folders (deployed separately)
 backend/
 Auxin backend/
-
+Auxin-backend/
 
 # Editor directories and files
 .vscode/*
