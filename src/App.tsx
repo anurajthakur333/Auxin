@@ -9,6 +9,7 @@ import Meeting from './pages/Meeting';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import GoogleCallback from './pages/GoogleCallback';
+import SplinePage from './pages/Spline';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import "./styles/fonts.css";
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/spline" element={<SplinePage />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route 
             path="/meeting" 
