@@ -146,9 +146,12 @@ const Navbar = () => {
         <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" />
         <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" />
         
+        {/* Spacer to push auth section to the right */}
+        <div style={{ flex: 1 }}></div>
+        
         {/* User Icon / Auth Section */}
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '19rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span className="aeonik-regular" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
               {user.name}
             </span>
@@ -178,8 +181,8 @@ const Navbar = () => {
                 src="/UserProfile.svg" 
                 alt="User Profile" 
                 style={{ 
-                  width: "24px", 
-                  height: "24px",
+                  width: "30px", 
+                  height: "30px",
                   filter: "brightness(0) invert(1)" // Makes the SVG white by default
                 }}
               />
@@ -196,7 +199,6 @@ const Navbar = () => {
               justifyContent: "center",
               width: "32px",
               height: "32px",
-              marginLeft: "19rem",
               transition: "color 0.2s ease"
             }}
             onMouseEnter={(e) => {
@@ -210,8 +212,8 @@ const Navbar = () => {
               src="/UserProfile.svg" 
               alt="User Profile" 
               style={{ 
-                width: "24px", 
-                height: "24px",
+                width: "30px", 
+                height: "30px",
                 filter: "brightness(0) invert(1)" // Makes the SVG white by default
               }}
             />
