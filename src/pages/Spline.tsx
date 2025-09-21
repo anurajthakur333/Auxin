@@ -64,7 +64,7 @@ const SplinePage: React.FC = () => {
       }}>
         {!hasError ? (
           <Spline 
-            scene="https://prod.spline.design/lf96BBMaGS3wGGe5/scene.splinecode"
+            scene="https://prod.spline.design/kJm8YfXpG1HHJzzX/scene.splinecode"
             onLoad={handleSplineLoad}
             onError={handleSplineError}
             style={{
