@@ -6,7 +6,9 @@
   NODE_VERSION = "20"
   NPM_CONFIG_FUND = "false"
   NPM_CONFIG_AUDIT = "false"
-  VITE_API_BASE_URL = "https://backend-production-a538.up.railway.app"
+  # VITE_API_BASE_URL should be set in Netlify environment variables
+  # Go to: Site settings > Environment variables > Add variable
+  # VITE_API_BASE_URL = "your-backend-url-here"
 
 # Redirect all routes to index.html for SPA
 [[redirects]]
