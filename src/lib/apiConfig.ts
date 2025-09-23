@@ -19,7 +19,7 @@ export const getApiBaseUrl = (): string => {
       return `https://${apiUrl}`;
     }
     
-    return apiUrl || 'https://auxin-backend-production.up.railway.app';
+    return apiUrl || 'https://backend-production-a538.up.railway.app';
   }
 };
 

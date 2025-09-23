@@ -6,6 +6,7 @@
   NODE_VERSION = "20"
   NPM_CONFIG_FUND = "false"
   NPM_CONFIG_AUDIT = "false"
+  VITE_API_BASE_URL = "https://backend-production-a538.up.railway.app"
 
 # Redirect all routes to index.html for SPA
 [[redirects]]
