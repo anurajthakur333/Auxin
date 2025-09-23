@@ -1,26 +1,22 @@
 // API Configuration for local and production environments
 export const getApiBaseUrl = (): string => {
-  // Check if we're in development (localhost or local dev server)
-  const isDevelopment = window.location.hostname === 'localhost' || 
-                       window.location.hostname === '127.0.0.1' ||
-                       window.location.port === '5173' ||
-                       process.env.NODE_ENV === 'development';
+  // Get API URL from environment variables
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
   
-  if (isDevelopment) {
-    // In development, use relative URLs (handled by Vite proxy)
-    return '';
-  } else {
-    // In production, use your Railway backend URL
-    // Make sure the environment variable includes the full URL with protocol
-    const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    
-    // If the URL doesn't include protocol, add https://
-    if (apiUrl && !apiUrl.startsWith('http')) {
-      return `https://${apiUrl}`;
-    }
-    
-    return apiUrl || 'https://backend-production-a538.up.railway.app';
+  // Throw error if no API URL is configured
+  if (!apiUrl) {
+    throw new Error(
+      'VITE_API_BASE_URL environment variable is not configured. ' +
+      'Please set this variable in your .env file or deployment environment.'
+    );
   }
+  
+  // Ensure the URL has proper protocol
+  if (!apiUrl.startsWith('http://') && !apiUrl.startsWith('https://')) {
+    return `https://${apiUrl}`;
+  }
+  
+  return apiUrl;
 };
 
 export const API_BASE_URL = getApiBaseUrl();
