@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+env
+.env
 
 # Backend folders (deployed separately)
 backend/
