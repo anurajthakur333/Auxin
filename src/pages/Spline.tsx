@@ -7,7 +7,7 @@ export default function SplinePage() {
       {/* Faster Spline load */}
       <Suspense fallback={<div className="loader">Loading 3D...</div>}>
         <Spline
-          scene="https://prod.spline.design/y8mYpLOQ2QbylASi/scene.splinecode"
+          scene="https://prod.spline.design/lyuybD4hrW5LYOzH/scene.splinecode"
           style={{
             position: 'absolute',
             inset: 0,
