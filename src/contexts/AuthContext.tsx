@@ -162,56 +162,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       
-      // Get Google auth URL from backend
-      const response = await fetch(`${API_BASE_URL}/api/auth/google`);
-      const responseText = await response.text();
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error('Failed to parse JSON response:', jsonError);
-        console.error('Response text:', responseText);
-        setLoading(false);
-        return;
-      }
+      // Redirect to backend OAuth endpoint instead of getting URL from backend
+      // The backend will handle the redirect to Google and the callback
+      const backendOAuthUrl = `${API_BASE_URL}/auth/google`;
       
-      if (response.ok) {
-        // Open Google OAuth in popup
-        const popup = window.open(
-          data.authURL,
-          'google-auth',
-          'width=500,height=600,scrollbars=yes,resizable=yes'
-        );
+      // Open backend OAuth endpoint in popup
+      const popup = window.open(
+        backendOAuthUrl,
+        'google-auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
 
-        // Listen for the popup to close and get the auth code
-        const checkClosed = setInterval(async () => {
-          if (popup?.closed) {
-            clearInterval(checkClosed);
-            setLoading(false);
-            // The popup will handle the callback and redirect
-          }
-        }, 1000);
+      // Listen for the popup to close
+      const checkClosed = setInterval(async () => {
+        if (popup?.closed) {
+          clearInterval(checkClosed);
+          setLoading(false);
+        }
+      }, 1000);
 
-        // Listen for message from popup
-        const messageListener = (event: MessageEvent) => {
-          if (event.origin !== window.location.origin) return;
-          
-          if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-            setUser(event.data.user);
-            localStorage.setItem('token', event.data.token);
-            setLoading(false);
-            window.removeEventListener('message', messageListener);
-          } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
-            console.error('Google auth error:', event.data.error);
-            setLoading(false);
-            window.removeEventListener('message', messageListener);
-          }
-        };
+      // Listen for message from popup (sent by GoogleCallback component)
+      const messageListener = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return;
+        
+        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+          setUser(event.data.user);
+          localStorage.setItem('token', event.data.token);
+          setLoading(false);
+          clearInterval(checkClosed);
+          window.removeEventListener('message', messageListener);
+        } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
+          console.error('Google auth error:', event.data.error);
+          setLoading(false);
+          clearInterval(checkClosed);
+          window.removeEventListener('message', messageListener);
+        }
+      };
 
-        window.addEventListener('message', messageListener);
-      } else {
-        console.error('Failed to get Google auth URL:', data.error);
+      window.addEventListener('message', messageListener);
+      
+      // Cleanup if popup is blocked or fails to open
+      if (!popup) {
         setLoading(false);
+        console.error('Popup blocked or failed to open');
       }
     } catch (error) {
       console.error('Google login error:', error);
