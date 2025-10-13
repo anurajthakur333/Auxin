@@ -10,55 +10,98 @@ const GoogleCallback: React.FC = () => {
   useEffect(() => {
     const handleGoogleCallback = async () => {
       try {
-        const code = searchParams.get('code');
+        // Check if we have user data and token in URL params (from backend redirect)
+        const token = searchParams.get('token');
+        const userData = searchParams.get('user');
         const error = searchParams.get('error');
 
         if (error) {
-          setError('Google authentication was cancelled or failed');
+          setError(decodeURIComponent(error));
           setStatus('error');
-          return;
-        }
-
-        if (!code) {
-          setError('No authorization code received from Google');
-          setStatus('error');
-          return;
-        }
-
-        // Send code to backend
-        const response = await fetch(`${API_BASE_URL}/api/auth/google/callback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          // Send success message to parent window
-          window.opener?.postMessage({
-            type: 'GOOGLE_AUTH_SUCCESS',
-            user: data.user,
-            token: data.token
-          }, window.location.origin);
           
-          setStatus('success');
-          
-          // Close popup after a short delay
-          setTimeout(() => {
-            window.close();
-          }, 1000);
-        } else {
           // Send error message to parent window
           window.opener?.postMessage({
             type: 'GOOGLE_AUTH_ERROR',
-            error: data.error
+            error: decodeURIComponent(error)
           }, window.location.origin);
-          
-          setError(data.error || 'Google authentication failed');
+          return;
+        }
+
+        if (token && userData) {
+          // Backend has already processed the OAuth and sent us the results
+          try {
+            const user = JSON.parse(decodeURIComponent(userData));
+            
+            // Send success message to parent window
+            window.opener?.postMessage({
+              type: 'GOOGLE_AUTH_SUCCESS',
+              user: user,
+              token: token
+            }, window.location.origin);
+            
+            setStatus('success');
+            
+            // Close popup after a short delay
+            setTimeout(() => {
+              window.close();
+            }, 1000);
+            return;
+          } catch (parseError) {
+            console.error('Failed to parse user data:', parseError);
+            setError('Failed to parse authentication data');
+            setStatus('error');
+            return;
+          }
+        }
+
+        // Fallback: Check for OAuth code (old flow)
+        const code = searchParams.get('code');
+        
+        if (code) {
+          // Send code to backend for processing
+          const response = await fetch(`${API_BASE_URL}/auth/google/callback`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Send success message to parent window
+            window.opener?.postMessage({
+              type: 'GOOGLE_AUTH_SUCCESS',
+              user: data.user,
+              token: data.token
+            }, window.location.origin);
+            
+            setStatus('success');
+            
+            // Close popup after a short delay
+            setTimeout(() => {
+              window.close();
+            }, 1000);
+          } else {
+            // Send error message to parent window
+            window.opener?.postMessage({
+              type: 'GOOGLE_AUTH_ERROR',
+              error: data.error || 'Authentication failed'
+            }, window.location.origin);
+            
+            setError(data.error || 'Google authentication failed');
+            setStatus('error');
+          }
+        } else {
+          setError('No authentication data received');
           setStatus('error');
+          
+          // Send error message to parent window
+          window.opener?.postMessage({
+            type: 'GOOGLE_AUTH_ERROR',
+            error: 'No authentication data received'
+          }, window.location.origin);
         }
       } catch (err) {
         console.error('Google callback error:', err);
