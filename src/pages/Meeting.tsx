@@ -1,18 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ShinyText from "../components/ShinyText";
 import Calendar from "../components/Calendar";
 import MyAppointments from "../components/MyAppointments";
-import { useAuth } from "../contexts/AuthContext";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
 
 const Meeting = () => {
   const lenisRef = useRef<Lenis | null>(null);
-  const { user } = useAuth();
-  const [showWelcome, setShowWelcome] = useState(true);
 
   useEffect(() => {
     // Initialize Lenis for smooth scrolling
@@ -83,65 +80,6 @@ const Meeting = () => {
             />
           </div>
 
-          {/* User Welcome Section */}
-          {user && showWelcome && (
-            <div 
-              style={{
-                background: "linear-gradient(135deg, #39FF14 0%, #2ecc11 100%)",
-                color: "#000",
-                padding: "2rem",
-                borderRadius: "12px",
-                marginBottom: "3rem",
-                maxWidth: "900px",
-                marginLeft: "10px"
-              }}
-            >
-              <h2 
-                className="aeonik-regular"
-                style={{
-                  fontSize: "clamp(24px, 4vw, 48px)",
-                  fontWeight: 600,
-                  marginBottom: "1rem"
-                }}
-              >
-                Welcome back, {user.name}!
-              </h2>
-              <p 
-                className="aeonik-regular"
-                style={{
-                  fontSize: "1.2rem",
-                  marginBottom: "1.5rem",
-                  opacity: 0.8
-                }}
-              >
-                Ready to schedule your next meeting? Choose a date and time that works best for you.
-              </p>
-              <button
-                onClick={() => setShowWelcome(false)}
-                style={{
-                  background: "#000",
-                  color: "#39FF14",
-                  border: "2px solid #000",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  fontFamily: "Aeonik, sans-serif",
-                  fontWeight: 600,
-                  transition: "all 0.3s ease"
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "#000";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = "#000";
-                  e.currentTarget.style.color = "#39FF14";
-                }}
-              >
-                Let's Schedule →
-              </button>
-            </div>
-          )}
 
           {/* Calendar Component */}
           <div style={{ marginBottom: "2rem", paddingLeft: "10px" }}>

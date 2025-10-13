@@ -387,7 +387,12 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
       `}</style>
 
       <div className="calendar-header">
-        <h2 className="calendar-title">Book Your Meeting</h2>
+        <h2 className="calendar-title">
+          {currentMonth.toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+          })}
+        </h2>
         <div className="calendar-nav">
           <button
             className="nav-button"
