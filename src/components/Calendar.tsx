@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../lib/apiConfig';
 interface TimeSlot {
   id: string;
   time: string;
+  time12: string;
   available: boolean;
 }
 
@@ -21,6 +22,15 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [userTimezone, setUserTimezone] = useState<string>('');
+  const [timeFormat, setTimeFormat] = useState<'12hr' | '24hr'>('24hr');
+
+  // Detect user's timezone
+  useEffect(() => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setUserTimezone(timezone);
+    console.log('User timezone detected:', timezone);
+  }, []);
 
   // Generate time slots (9 AM to 6 PM, 30-minute intervals)
   const generateTimeSlots = (): TimeSlot[] => {
@@ -28,9 +38,15 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
     for (let hour = 9; hour < 18; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        const time12 = new Date(`2000-01-01T${time}:00`).toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
         slots.push({
           id: `${time}`,
           time: time,
+          time12: time12,
           available: true // Will be updated from backend
         });
       }
@@ -51,7 +67,16 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
 
       if (response.ok) {
         const data = await response.json();
-        setAvailableSlots(data.slots || generateTimeSlots());
+        // Ensure all slots have time12 property
+        const slotsWith12hr = (data.slots || generateTimeSlots()).map((slot: any) => ({
+          ...slot,
+          time12: slot.time12 || new Date(`2000-01-01T${slot.time}:00`).toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          })
+        }));
+        setAvailableSlots(slotsWith12hr);
       } else {
         // Fallback to all slots available if backend doesn't have this endpoint yet
         setAvailableSlots(generateTimeSlots());
@@ -84,7 +109,8 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
           date: selectedDate.toISOString().split('T')[0],
           time: selectedTime,
           userEmail: user.email,
-          userName: user.name
+          userName: user.name,
+          timezone: userTimezone
         })
       });
 
@@ -263,10 +289,47 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
           margin-bottom: 2rem;
         }
 
+        .time-slots-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
         .time-slots-title {
           font-size: 1.2rem;
-          margin-bottom: 1rem;
           color: #39FF14;
+          margin: 0;
+        }
+
+        .time-format-toggle {
+          display: flex;
+          background: #222;
+          border-radius: 6px;
+          padding: 2px;
+          gap: 2px;
+        }
+
+        .toggle-btn {
+          background: transparent;
+          border: none;
+          color: #888;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: 'Aeonik', sans-serif;
+          font-size: 0.9rem;
+        }
+
+        .toggle-btn.active {
+          background: #39FF14;
+          color: #000;
+          font-weight: 600;
+        }
+
+        .toggle-btn:hover:not(.active) {
+          color: #fff;
         }
 
         .time-slots-grid {
@@ -284,6 +347,9 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
           border-radius: 6px;
           cursor: pointer;
           transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .time-slot:hover {
@@ -300,6 +366,11 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
           opacity: 0.3;
           cursor: not-allowed;
           background: #333;
+        }
+
+        .time-display {
+          font-size: 1rem;
+          font-weight: 600;
         }
 
         .booking-section {
@@ -380,8 +451,27 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
             gap: 1rem;
           }
           
+          .time-slots-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+          }
+          
           .time-slots-grid {
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+          }
+          
+          .time-slot {
+            padding: 0.5rem;
+          }
+          
+          .time-display {
+            font-size: 0.9rem;
+          }
+          
+          .toggle-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
           }
         }
       `}</style>
@@ -427,7 +517,23 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
       </div>
 
       <div className="time-slots-container">
-        <h3 className="time-slots-title">Available Time Slots</h3>
+        <div className="time-slots-header">
+          <h3 className="time-slots-title">Available Time Slots</h3>
+          <div className="time-format-toggle">
+            <button
+              className={`toggle-btn ${timeFormat === '24hr' ? 'active' : ''}`}
+              onClick={() => setTimeFormat('24hr')}
+            >
+              24hr
+            </button>
+            <button
+              className={`toggle-btn ${timeFormat === '12hr' ? 'active' : ''}`}
+              onClick={() => setTimeFormat('12hr')}
+            >
+              12hr
+            </button>
+          </div>
+        </div>
         {loading ? (
           <div className="loading">Loading available slots...</div>
         ) : (
@@ -438,7 +544,11 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
                 className={`time-slot ${selectedTime === slot.time ? 'selected' : ''} ${!slot.available ? 'unavailable' : ''}`}
                 onClick={() => slot.available && setSelectedTime(slot.time)}
               >
-                {slot.time}
+                {timeFormat === '24hr' ? (
+                  <div className="time-display">{slot.time}</div>
+                ) : (
+                  <div className="time-display">{slot.time12}</div>
+                )}
               </div>
             ))}
           </div>
@@ -452,12 +562,39 @@ const Calendar: React.FC<CalendarProps> = ({ onBookingSuccess }) => {
       )}
 
       <div className="booking-section">
+        {userTimezone && (
+          <div style={{ 
+            fontSize: '0.9rem', 
+            color: '#888', 
+            marginBottom: '0.5rem',
+            textAlign: 'center'
+          }}>
+            Your timezone: {userTimezone}
+          </div>
+        )}
         <button
           className="book-button"
           onClick={bookAppointment}
           disabled={!selectedTime || bookingLoading}
         >
-          {bookingLoading ? 'Booking...' : `Book Meeting for ${selectedTime || 'Select Time'}`}
+          {bookingLoading ? 'Booking...' : (() => {
+            if (!selectedTime) return 'Select Time';
+            const selectedSlot = availableSlots.find(slot => slot.time === selectedTime);
+            if (selectedSlot) {
+              const displayTime = timeFormat === '24hr' ? selectedSlot.time : selectedSlot.time12;
+              const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+              });
+              return `Confirm Meeting - ${formattedDate} · ${displayTime}`;
+            }
+            return `Confirm Meeting - ${selectedDate.toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            })} · ${selectedTime}`;
+          })()}
         </button>
       </div>
     </div>
