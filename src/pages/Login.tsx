@@ -626,8 +626,8 @@ const Login: React.FC = () => {
 
             {/* Forgot Password */}
             <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-              <a 
-                href="#" 
+              <Link 
+                to="/forgot-password" 
                 className="aeonik-regular"
                 style={{ 
                   color: '#39FF14', 
@@ -642,7 +642,7 @@ const Login: React.FC = () => {
                 }}
               >
                 Forgot Password?
-              </a>
+              </Link>
             </div>
 
             {/* Sign Up Link */}
