@@ -71,8 +71,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
       <style>{`
         .calendar-container {
           background: #111;
-          border-radius: 12px;
-          padding: 2rem;
+          padding: 1rem;
           color: #fff;
           font-family: 'Aeonik', sans-serif;
           height: 100%;
@@ -103,7 +102,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           border: 1px solid #39FF14;
           color: #39FF14;
           padding: 0.75rem 1.5rem;
-          border-radius: 8px;
           cursor: pointer;
           transition: all 0.3s ease;
           font-family: 'Aeonik', sans-serif;
@@ -121,7 +119,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           grid-template-columns: repeat(7, 1fr);
           gap: 1px;
           background: #333;
-          border-radius: 8px;
           overflow: hidden;
           flex: 1;
         }
@@ -183,8 +180,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
         .selected-date-info {
           background: #222;
           padding: 1.5rem;
-          border-radius: 8px;
-          margin-top: 2rem;
           border-left: 4px solid #39FF14;
         }
 
@@ -290,15 +285,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
         {renderCalendarDays()}
       </div>
 
-      <div className="selected-date-info">
-        <h3>Selected Date</h3>
-        <p>{selectedDate.toLocaleDateString('en-US', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}</p>
-      </div>
     </div>
   );
 };
