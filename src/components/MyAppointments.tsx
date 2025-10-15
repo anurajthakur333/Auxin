@@ -106,8 +106,9 @@ const MyAppointments: React.FC = () => {
           padding: 2rem;
           color: #fff;
           font-family: 'Aeonik', sans-serif;
-          max-width: 800px;
-          margin: 2rem auto 0;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
 
         .appointments-header {
@@ -118,7 +119,7 @@ const MyAppointments: React.FC = () => {
         }
 
         .appointments-title {
-          font-size: 1.5rem;
+          font-size: 1.3rem;
           font-weight: 600;
           color: #39FF14;
         }
@@ -143,14 +144,17 @@ const MyAppointments: React.FC = () => {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          flex: 1;
+          overflow-y: auto;
         }
 
         .appointment-card {
           background: #222;
           border-radius: 8px;
-          padding: 1.5rem;
+          padding: 1.2rem;
           border-left: 4px solid #39FF14;
           transition: all 0.3s ease;
+          margin-bottom: 1rem;
         }
 
         .appointment-card:hover {
@@ -247,8 +251,7 @@ const MyAppointments: React.FC = () => {
 
         @media (max-width: 768px) {
           .appointments-container {
-            padding: 1rem;
-            margin: 1rem auto 0;
+            padding: 1.5rem;
           }
           
           .appointment-header {
@@ -258,6 +261,24 @@ const MyAppointments: React.FC = () => {
           
           .appointment-actions {
             justify-content: flex-start;
+          }
+          
+          .appointment-card {
+            padding: 1rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .appointments-container {
+            padding: 1rem;
+          }
+          
+          .appointments-title {
+            font-size: 1.1rem;
+          }
+          
+          .appointment-card {
+            padding: 0.8rem;
           }
         }
       `}</style>
