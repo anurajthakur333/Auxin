@@ -102,7 +102,7 @@ const MyAppointments: React.FC = () => {
       <style>{`
         .appointments-container {
           background: #111;
-          border-radius: 12px;
+     
           padding: 2rem;
           color: #fff;
           font-family: 'Aeonik', sans-serif;
@@ -129,7 +129,6 @@ const MyAppointments: React.FC = () => {
           border: 1px solid #39FF14;
           color: #39FF14;
           padding: 0.5rem 1rem;
-          border-radius: 6px;
           cursor: pointer;
           transition: all 0.3s ease;
           font-family: 'Aeonik', sans-serif;
@@ -150,7 +149,6 @@ const MyAppointments: React.FC = () => {
 
         .appointment-card {
           background: #222;
-          border-radius: 8px;
           padding: 1.2rem;
           border-left: 4px solid #39FF14;
           transition: all 0.3s ease;
@@ -192,7 +190,6 @@ const MyAppointments: React.FC = () => {
 
         .status-badge {
           padding: 0.25rem 0.75rem;
-          border-radius: 20px;
           font-size: 0.85rem;
           font-weight: 600;
           text-transform: uppercase;
@@ -209,7 +206,6 @@ const MyAppointments: React.FC = () => {
           border: 1px solid #ff6b6b;
           color: #ff6b6b;
           padding: 0.5rem 1rem;
-          border-radius: 4px;
           cursor: pointer;
           transition: all 0.3s ease;
           font-family: 'Aeonik', sans-serif;
