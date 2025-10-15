@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ShinyText from "../components/ShinyText";
 import Calendar from "../components/Calendar";
+import TimeSlots from "../components/TimeSlots";
 import MyAppointments from "../components/MyAppointments";
 import "../styles/fonts.css";
 import "../styles/Main.css";
@@ -10,6 +11,9 @@ import Lenis from "lenis";
 
 const Meeting = () => {
   const lenisRef = useRef<Lenis | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [refreshAppointments, setRefreshAppointments] = useState(0);
 
   useEffect(() => {
     // Initialize Lenis for smooth scrolling
@@ -46,7 +50,7 @@ const Meeting = () => {
     }}>
       <Navbar />
       
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" ,marginBottom:'100px'}}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <div className="container-fluid" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           <h1
             className="aeonik-regular text-white"
@@ -57,7 +61,7 @@ const Meeting = () => {
               fontWeight: 600,
               textAlign: "left",
               marginTop: "12px",
-              marginBottom: "400px",
+              marginBottom: "100px",
             }}
           >
             MEETINGS
@@ -68,7 +72,6 @@ const Meeting = () => {
             style={{
               maxWidth: "900px",
               paddingLeft: "10px",
-              marginTop: "auto",
               marginBottom: "60px",
             }}
           >
@@ -80,20 +83,27 @@ const Meeting = () => {
             />
           </div>
 
-
-          {/* Calendar Component */}
-          <div style={{ marginBottom: "2rem", paddingLeft: "10px" }}>
+          {/* 3-Tile Responsive Layout */}
+          <div className="meeting-layout">
+            {/* Tile 1: Calendar (left side, full height) */}
             <Calendar 
+              selectedDate={selectedDate}
+              onDateSelect={setSelectedDate}
+            />
+            
+            {/* Tile 2: Time Slots (top right) */}
+            <TimeSlots 
+              selectedDate={selectedDate}
+              selectedTime={selectedTime}
+              onTimeSelect={setSelectedTime}
               onBookingSuccess={() => {
-                // Optional: Add success handling
-                console.log('Booking successful!');
+                setRefreshAppointments(prev => prev + 1);
+                setSelectedTime('');
               }}
             />
-          </div>
-
-          {/* My Appointments Component */}
-          <div style={{ marginBottom: "4rem", paddingLeft: "10px" }}>
-            <MyAppointments />
+            
+            {/* Tile 3: My Appointments (bottom right) */}
+            <MyAppointments key={refreshAppointments} />
           </div>
         </div>
       </div>

@@ -21,3 +21,75 @@ html, body {
 .green-text {
   color: #39FF14;
 }
+
+/* Meeting Calendar 3-Tile Layout - Wireframe Correct */
+.meeting-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  margin-bottom: 100px;
+  height: 80vh;
+  min-height: 600px;
+}
+
+/* Tile 1: Calendar (left side, full height) */
+.meeting-layout > div:first-child {
+  grid-column: 1;
+  grid-row: 1 / -1;
+}
+
+/* Tile 2: Time Slots (top right) */
+.meeting-layout > div:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* Tile 3: My Appointments (bottom right) */
+.meeting-layout > div:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+  .meeting-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .meeting-layout > div:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  .meeting-layout > div:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  .meeting-layout > div:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .meeting-layout {
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .meeting-layout {
+    padding: 0 0.5rem;
+  }
+}

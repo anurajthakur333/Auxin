@@ -32,11 +32,7 @@ export default function App() {
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route 
             path="/meeting" 
-            element={
-              <ProtectedRoute>
-                <Meeting />
-              </ProtectedRoute>
-            } 
+            element={<Meeting />}
           />
         </Routes>
       </Router>
