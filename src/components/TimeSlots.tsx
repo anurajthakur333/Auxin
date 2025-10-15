@@ -139,8 +139,7 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       <style>{`
         .time-slots-container {
           background: #111;
-          border-radius: 12px;
-          padding: 2rem;
+          padding: 1rem;
           color: #fff;
           font-family: 'Aeonik', sans-serif;
           height: 100%;
@@ -167,7 +166,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         .time-format-toggle {
           display: flex;
           background: #222;
-          border-radius: 6px;
           padding: 2px;
           gap: 2px;
         }
@@ -177,7 +175,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           border: none;
           color: #888;
           padding: 0.5rem 1rem;
-          border-radius: 4px;
           cursor: pointer;
           transition: all 0.3s ease;
           font-family: 'Aeonik', sans-serif;
@@ -197,7 +194,7 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         .time-slots-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-          gap: 0.75rem;
+          gap: 0.3rem;
           margin-bottom: 2rem;
           flex: 1;
           overflow-y: auto;
@@ -208,7 +205,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           text-align: center;
           background: #222;
           border: 1px solid #333;
-          border-radius: 8px;
           cursor: pointer;
           transition: all 0.3s ease;
           display: flex;
@@ -251,7 +247,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           color: #000;
           border: none;
           padding: 1rem 2rem;
-          border-radius: 8px;
           font-size: 1rem;
           font-weight: 600;
           cursor: pointer;
@@ -274,7 +269,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
 
         .message {
           padding: 1rem;
-          border-radius: 8px;
           margin-bottom: 1rem;
           text-align: center;
           font-size: 0.9rem;
@@ -302,7 +296,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         .selected-date-info {
           background: #222;
           padding: 1rem;
-          border-radius: 8px;
           margin-bottom: 1.5rem;
           border-left: 4px solid #39FF14;
         }
