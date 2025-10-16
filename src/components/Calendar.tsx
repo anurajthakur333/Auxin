@@ -146,7 +146,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           font-weight: 500;
         }
 
-        .calendar-day:not(.empty):not(.past):hover {
+        .calendar-day:not(.empty):not(.past):not(.selected):hover {
           background: #333;
         }
 
