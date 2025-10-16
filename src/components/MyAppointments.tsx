@@ -103,7 +103,7 @@ const MyAppointments: React.FC = () => {
         .appointments-container {
           background: #111;
      
-          padding: 2rem;
+          padding: 1rem;
           color: #fff;
           font-family: 'Aeonik', sans-serif;
           height: 100%;
