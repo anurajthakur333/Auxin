@@ -145,6 +145,26 @@ const MyAppointments: React.FC = () => {
           gap: 1rem;
           flex: 1;
           overflow-y: auto;
+          max-height: 400px;
+          padding-right: 8px;
+        }
+
+        /* Custom scrollbar styling */
+        .appointments-list::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .appointments-list::-webkit-scrollbar-track {
+          background: #222;
+          border-radius: 3px;
+        }
+
+        .appointments-list::-webkit-scrollbar-thumb {
+          background: #39FF14;
+        }
+
+        .appointments-list::-webkit-scrollbar-thumb:hover {
+          background: #2ecc11;
         }
 
         .appointment-card {
