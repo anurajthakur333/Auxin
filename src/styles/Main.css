@@ -33,6 +33,7 @@ html, body {
   row-gap: 0.5rem;
   height: 80vh;
   min-height: 600px;
+  margin-bottom: 287px;
 }
 
 /* Tile 1: Calendar (left side, full height) */
@@ -62,6 +63,7 @@ html, body {
     padding: 0 1.5rem;
     height: auto;
     min-height: auto;
+
   }
   
   .meeting-layout > div:first-child {
@@ -84,11 +86,13 @@ html, body {
   .meeting-layout {
     gap: 1rem;
     padding: 0 1rem;
+
   }
 }
 
 @media (max-width: 480px) {
   .meeting-layout {
     padding: 0 0.5rem;
+
   }
 }

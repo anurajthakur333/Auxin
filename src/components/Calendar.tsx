@@ -111,7 +111,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
         .nav-button:hover {
           background: #39FF14;
           color: #000;
-          transform: translateY(-2px);
         }
 
         .calendar-grid {
@@ -149,14 +148,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
 
         .calendar-day:not(.empty):not(.past):hover {
           background: #333;
-          transform: scale(1.05);
         }
 
         .calendar-day.selected {
           background: #39FF14;
           color: #000;
           font-weight: 700;
-          transform: scale(1.1);
           box-shadow: 0 4px 12px rgba(57, 255, 20, 0.3);
         }
 
