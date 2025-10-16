@@ -11,6 +11,7 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import GoogleCallback from './pages/GoogleCallback';
 import SplinePage from './pages/Spline';
+import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import "./styles/fonts.css";
 import "./styles/Main.css";
@@ -31,7 +32,11 @@ export default function App() {
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route 
             path="/meeting" 
-            element={<Meeting />}
+            element={
+              <ProtectedRoute>
+                <Meeting />
+              </ProtectedRoute>
+            } 
           />
         </Routes>
       </Router>
