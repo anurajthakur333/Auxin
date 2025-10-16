@@ -108,8 +108,10 @@ const Meeting = () => {
         </div>
       </div>
       
-      <Footer />
+  <Footer />
     </div>
+  
+      
   );
 };
 
