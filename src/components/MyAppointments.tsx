@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../lib/apiConfig';
 
@@ -15,6 +15,7 @@ const MyAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const appointmentsListRef = useRef<HTMLDivElement>(null);
 
   const fetchAppointments = async () => {
     try {
@@ -65,6 +66,15 @@ const MyAppointments: React.FC = () => {
       fetchAppointments();
     }
   }, [user]);
+
+  // Handle wheel scrolling on appointments list
+  const handleWheel = (e: React.WheelEvent) => {
+    if (appointmentsListRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      appointmentsListRef.current.scrollTop += e.deltaY;
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -147,6 +157,15 @@ const MyAppointments: React.FC = () => {
           overflow-y: auto;
           max-height: 400px;
           padding-right: 8px;
+          scrollbar-width: 10px;
+          scrollbar-color: #39FF14 #222;
+          overscroll-behavior: contain;
+          border-radius: 0px;
+        }
+
+        /* Ensure scroll works on hover */
+        .appointments-list:hover {
+          overflow-y: auto;
         }
 
         /* Custom scrollbar styling */
@@ -156,7 +175,7 @@ const MyAppointments: React.FC = () => {
 
         .appointments-list::-webkit-scrollbar-track {
           background: #222;
-          border-radius: 3px;
+          border-radius: 0px;
         }
 
         .appointments-list::-webkit-scrollbar-thumb {
@@ -312,7 +331,11 @@ const MyAppointments: React.FC = () => {
           <p>Book your first meeting using the calendar above!</p>
         </div>
       ) : (
-        <div className="appointments-list">
+        <div 
+          className="appointments-list" 
+          ref={appointmentsListRef}
+          onWheel={handleWheel}
+        >
           {appointments.map(appointment => (
             <div key={appointment.id} className="appointment-card">
               <div className="appointment-header">
