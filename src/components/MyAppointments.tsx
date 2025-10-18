@@ -17,6 +17,9 @@ const MyAppointments: React.FC = () => {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const appointmentsListRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragStartScrollTop, setDragStartScrollTop] = useState(0);
 
   const fetchAppointments = async () => {
     try {
@@ -85,6 +88,62 @@ const MyAppointments: React.FC = () => {
       setScrollProgress(progress);
     }
   };
+
+  // Handle scrollbar track click
+  const handleScrollbarTrackClick = (e: React.MouseEvent) => {
+    if (appointmentsListRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickY = e.clientY - rect.top;
+      const trackHeight = rect.height;
+      const scrollHeight = appointmentsListRef.current.scrollHeight;
+      const clientHeight = appointmentsListRef.current.clientHeight;
+      const maxScroll = scrollHeight - clientHeight;
+      
+      const newScrollTop = (clickY / trackHeight) * maxScroll;
+      appointmentsListRef.current.scrollTop = newScrollTop;
+    }
+  };
+
+  // Handle scrollbar thumb drag start
+  const handleThumbMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStartY(e.clientY);
+    if (appointmentsListRef.current) {
+      setDragStartScrollTop(appointmentsListRef.current.scrollTop);
+    }
+  };
+
+  // Handle mouse move for dragging
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging && appointmentsListRef.current) {
+      const deltaY = e.clientY - dragStartY;
+      const trackHeight = appointmentsListRef.current.clientHeight;
+      const scrollHeight = appointmentsListRef.current.scrollHeight;
+      const maxScroll = scrollHeight - appointmentsListRef.current.clientHeight;
+      
+      const scrollDelta = (deltaY / trackHeight) * maxScroll;
+      const newScrollTop = Math.max(0, Math.min(maxScroll, dragStartScrollTop + scrollDelta));
+      appointmentsListRef.current.scrollTop = newScrollTop;
+    }
+  };
+
+  // Handle mouse up to stop dragging
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Add/remove global mouse events for dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, dragStartY, dragStartScrollTop]);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -165,7 +224,7 @@ const MyAppointments: React.FC = () => {
           gap: 1rem;
           flex: 1;
           overflow-y: auto;
-          max-height: 400px;
+          max-height: 500px;
           padding-right: 8px;
           overscroll-behavior: contain;
         }
@@ -207,10 +266,16 @@ const MyAppointments: React.FC = () => {
           background: #39FF14;
           border-radius: 0;
           transition: background 0.2s ease;
+          cursor: pointer;
+          user-select: none;
         }
 
         .custom-scrollbar-thumb:hover {
           background: #2ecc11;
+        }
+
+        .custom-scrollbar {
+          cursor: pointer;
         }
 
         .appointment-card {
@@ -380,7 +445,7 @@ const MyAppointments: React.FC = () => {
                     className="status-badge"
                     style={{ 
                       backgroundColor: getStatusColor(appointment.status),
-                      color: appointment.status === 'pending' ? '#000' : '#fff'
+                      color: appointment.status === 'pending' ? '#000' : '#000'
                     }}
                   >
                     {appointment.status}
@@ -408,18 +473,22 @@ const MyAppointments: React.FC = () => {
         </div>
       )}
       
-      {/* Custom scrollbar - only show when there are appointments */}
-      {appointments.length > 0 && (
-        <div className="custom-scrollbar">
-          <div 
-            className="custom-scrollbar-thumb"
-            style={{
-              height: `${Math.max(0, 100 * (1 - scrollProgress))}px`,
-              top: `${scrollProgress * 100}%`
-            }}
-          />
-        </div>
-      )}
+       {/* Custom scrollbar - only show when there are appointments */}
+       {appointments.length > 0 && (
+         <div 
+           className="custom-scrollbar"
+           onClick={handleScrollbarTrackClick}
+         >
+           <div 
+             className="custom-scrollbar-thumb"
+             style={{
+               height: `${Math.max(0, 100 * (1 - scrollProgress))}px`,
+               top: `${scrollProgress * 100}%`
+             }}
+             onMouseDown={handleThumbMouseDown}
+           />
+         </div>
+       )}
     </div>
   );
 };
