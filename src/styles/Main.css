@@ -31,9 +31,7 @@ html, body {
   grid-template-rows: 1fr 1fr;
   column-gap: 0.5rem;
   row-gap: 0.5rem;
-  height: 80vh;
-  min-height: 600px;
-  margin-bottom: 287px;
+  margin-bottom: 10px;
 }
 
 /* Tile 1: Calendar (left side, full height) */
