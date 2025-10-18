@@ -16,6 +16,7 @@ const MyAppointments: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const appointmentsListRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const fetchAppointments = async () => {
     try {
@@ -73,6 +74,15 @@ const MyAppointments: React.FC = () => {
       e.preventDefault();
       e.stopPropagation();
       appointmentsListRef.current.scrollTop += e.deltaY;
+    }
+  };
+
+  // Handle scroll to update custom scrollbar
+  const handleScroll = () => {
+    if (appointmentsListRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = appointmentsListRef.current;
+      const progress = scrollTop / (scrollHeight - clientHeight);
+      setScrollProgress(progress);
     }
   };
 
@@ -157,10 +167,7 @@ const MyAppointments: React.FC = () => {
           overflow-y: auto;
           max-height: 400px;
           padding-right: 8px;
-          scrollbar-width: 10px;
-          scrollbar-color: #39FF14 #222;
           overscroll-behavior: contain;
-          border-radius: 0px;
         }
 
         /* Ensure scroll works on hover */
@@ -168,21 +175,41 @@ const MyAppointments: React.FC = () => {
           overflow-y: auto;
         }
 
-        /* Custom scrollbar styling */
+        /* Hide default scrollbar and create custom one */
+        .appointments-list {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE/Edge */
+        }
+
         .appointments-list::-webkit-scrollbar {
+          display: none; /* Chrome/Safari */
+        }
+
+        /* Custom scrollbar container */
+        .appointments-container {
+          position: relative;
+        }
+
+        .custom-scrollbar {
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
           width: 6px;
-        }
-
-        .appointments-list::-webkit-scrollbar-track {
           background: #222;
-          border-radius: 0px;
+          z-index: 10;
         }
 
-        .appointments-list::-webkit-scrollbar-thumb {
+        .custom-scrollbar-thumb {
+          position: absolute;
+          right: 0;
+          width: 6px;
           background: #39FF14;
+          border-radius: 0;
+          transition: background 0.2s ease;
         }
 
-        .appointments-list::-webkit-scrollbar-thumb:hover {
+        .custom-scrollbar-thumb:hover {
           background: #2ecc11;
         }
 
@@ -335,6 +362,7 @@ const MyAppointments: React.FC = () => {
           className="appointments-list" 
           ref={appointmentsListRef}
           onWheel={handleWheel}
+          onScroll={handleScroll}
         >
           {appointments.map(appointment => (
             <div key={appointment.id} className="appointment-card">
@@ -377,6 +405,19 @@ const MyAppointments: React.FC = () => {
               )}
             </div>
           ))}
+        </div>
+      )}
+      
+      {/* Custom scrollbar - only show when there are appointments */}
+      {appointments.length > 0 && (
+        <div className="custom-scrollbar">
+          <div 
+            className="custom-scrollbar-thumb"
+            style={{
+              height: `${Math.max(0, 100 * (1 - scrollProgress))}px`,
+              top: `${scrollProgress * 100}%`
+            }}
+          />
         </div>
       )}
     </div>
