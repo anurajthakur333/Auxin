@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 interface CalendarProps {
   onDateSelect: (date: Date) => void;
@@ -32,7 +32,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
     return date < today;
   };
 
-  const renderCalendarDays = () => {
+  const renderCalendarDays = useMemo(() => {
     const daysInMonth = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
     const days = [];
@@ -62,9 +62,18 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
     }
 
     return days;
-  };
+  }, [currentMonth, selectedDate]);
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const handlePrevMonth = useCallback(() => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  }, [currentMonth]);
+
+  const handleNextMonth = useCallback(() => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  }, [currentMonth]);
+
 
   return (
     <div className="calendar-container">
@@ -77,7 +86,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           height: 100%;
           display: flex;
           flex-direction: column;
+          position: relative;
         }
+
 
         .calendar-header {
           display: flex;
@@ -137,17 +148,19 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           padding: 1.5rem 1rem;
           text-align: center;
           background: #222;
-          transition: all 0.3s ease;
+          transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s 
           min-height: 60px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 1rem;
           font-weight: 500;
+          position: relative;
+          overflow: hidden;
         }
 
         .calendar-day:not(.empty):not(.past):not(.selected):hover {
-          background: #333;
+          background: #333
         }
 
         .calendar-day.selected {
@@ -155,6 +168,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           color: #000;
           font-weight: 700;
           box-shadow: 0 4px 12px rgba(57, 255, 20, 0.3);
+          z-index: 1;
         }
 
         .calendar-day.today {
@@ -172,6 +186,14 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
 
         .calendar-day.empty {
           background: transparent;
+        }
+
+        .calendar-day:not(.empty):not(.past):active {
+          transform: scale(0.98);
+        }
+
+        .calendar-day.selected:active {
+          transform: scale(1.0);
         }
 
         .selected-date-info {
@@ -262,13 +284,13 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
         <div className="calendar-nav">
           <button
             className="nav-button"
-            onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
+            onClick={handlePrevMonth}
           >
             ← Prev
           </button>
           <button
             className="nav-button"
-            onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
+            onClick={handleNextMonth}
           >
             Next →
           </button>
@@ -279,11 +301,11 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
         {weekDays.map(day => (
           <div key={day} className="calendar-weekday">{day}</div>
         ))}
-        {renderCalendarDays()}
+        {renderCalendarDays}
       </div>
 
     </div>
   );
 };
 
-export default Calendar;
+export default React.memo(Calendar);

@@ -25,6 +25,7 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
   const { user } = useAuth();
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchingNewDate, setFetchingNewDate] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [userTimezone, setUserTimezone] = useState<string>('');
@@ -61,7 +62,14 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
   // Get available slots for selected date
   const fetchAvailableSlots = async (date: Date) => {
     try {
-      setLoading(true);
+      // Only show loading for initial load, not for date changes
+      if (availableSlots.length === 0) {
+        setLoading(true);
+      } else {
+        // Show subtle loading indicator for date changes
+        setFetchingNewDate(true);
+      }
+      
       const dateStr = date.toISOString().split('T')[0];
       const response = await fetch(`${API_BASE_URL}/api/appointments/available?date=${dateStr}`, {
         headers: {
@@ -88,6 +96,7 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       setAvailableSlots(generateTimeSlots());
     } finally {
       setLoading(false);
+      setFetchingNewDate(false);
     }
   };
 
@@ -293,6 +302,27 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           font-size: 0.9rem;
         }
 
+        .time-slots-container {
+          position: relative;
+        }
+
+        .loading-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(17, 17, 17, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10;
+          color: #39FF14;
+          font-size: 0.9rem;
+        }
+
+ 
+
         .selected-date-info {
           background: #222;
           padding: 1rem;
@@ -391,23 +421,47 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         </div>
       </div>
 
-      {loading ? (
-        <div className="loading">Loading available slots...</div>
-      ) : (
-        <div className="time-slots-grid">
-          {availableSlots.map(slot => (
-            <div
-              key={slot.id}
-              className={`time-slot ${selectedTime === slot.time ? 'selected' : ''} ${!slot.available ? 'unavailable' : ''}`}
-              onClick={() => slot.available && onTimeSelect(slot.time)}
-            >
-              {timeFormat === '24hr' ? (
-                <div className="time-display">{slot.time}</div>
-              ) : (
-                <div className="time-display">{slot.time12}</div>
-              )}
-            </div>
-          ))}
+      <div className="time-slots-grid">
+        {availableSlots.map(slot => (
+          <div
+            key={slot.id}
+            className={`time-slot ${selectedTime === slot.time ? 'selected' : ''} ${!slot.available ? 'unavailable' : ''}`}
+            onClick={() => slot.available && onTimeSelect(slot.time)}
+          >
+            {timeFormat === '24hr' ? (
+              <div className="time-display">{slot.time}</div>
+            ) : (
+              <div className="time-display">{slot.time12}</div>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      {loading && (
+        <div className="loading-overlay">
+          Loading available slots...
+        </div>
+      )}
+      
+      {fetchingNewDate && (
+        <div className="loading-overlay" style={{ background: 'rgba(17, 17, 17, 0.3)' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem',
+            fontSize: '0.8rem',
+            color: '#39FF14'
+          }}>
+            <div style={{
+              width: '12px',
+              height: '12px',
+              border: '2px solid #39FF14',
+              borderTop: '2px solid transparent',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            Updating slots...
+          </div>
         </div>
       )}
 
