@@ -23,6 +23,7 @@ const MyAppointments: React.FC = () => {
 
   const fetchAppointments = async () => {
     try {
+      console.log('🔄 Fetching appointments...');
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/api/appointments/my-appointments`, {
         headers: {
@@ -32,12 +33,14 @@ const MyAppointments: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('📋 Fetched appointments:', data.appointments?.length || 0, 'appointments');
+        console.log('📋 Appointments data:', data.appointments);
         setAppointments(data.appointments || []);
       } else {
-        console.error('Failed to fetch appointments');
+        console.error('❌ Failed to fetch appointments, status:', response.status);
       }
     } catch (error) {
-      console.error('Error fetching appointments:', error);
+      console.error('💥 Error fetching appointments:', error);
     } finally {
       setLoading(false);
     }
@@ -45,21 +48,63 @@ const MyAppointments: React.FC = () => {
 
   const cancelAppointment = async (appointmentId: string) => {
     try {
+      console.log('🚀 Starting cancellation for appointment:', appointmentId);
+      console.log('🌐 API Base URL:', API_BASE_URL);
+      console.log('🔍 Appointment ID type:', typeof appointmentId);
+      console.log('🔍 Appointment ID length:', appointmentId.length);
+      console.log('🔍 Appointment ID value:', appointmentId);
       setCancellingId(appointmentId);
-      const response = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}/cancel`, {
+      
+      // First, test if backend is reachable
+      try {
+        const healthResponse = await fetch(`${API_BASE_URL}/api/health`);
+        console.log('🏥 Health check status:', healthResponse.status);
+      } catch (healthError) {
+        console.error('💥 Backend not reachable:', healthError);
+        console.error('💥 Make sure backend is running on:', API_BASE_URL);
+        return;
+      }
+      
+      const url = `${API_BASE_URL}/api/appointments/${appointmentId}/cancel`;
+      console.log('📡 Making request to:', url);
+      
+      const token = localStorage.getItem('token');
+      console.log('🔑 Token exists:', !!token);
+      console.log('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'null');
+      
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
 
+      console.log('📊 Response status:', response.status);
+      console.log('📊 Response ok:', response.ok);
+
       if (response.ok) {
-        fetchAppointments(); // Refresh the list
+        const data = await response.json();
+        console.log('✅ Appointment cancelled successfully:', data);
+        // Force refresh the appointments list
+        await fetchAppointments();
+        console.log('🔄 Appointments list refreshed');
       } else {
-        console.error('Failed to cancel appointment');
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (parseError) {
+          const errorText = await response.text();
+          console.error('❌ Failed to parse error response:', errorText);
+          errorData = { error: 'Unknown error occurred' };
+        }
+        console.error('❌ Failed to cancel appointment:', errorData);
+        console.error('❌ Response status:', response.status);
+        console.error('❌ Response headers:', Object.fromEntries(response.headers.entries()));
       }
     } catch (error) {
-      console.error('Error cancelling appointment:', error);
+      console.error('💥 Error cancelling appointment:', error);
+      console.error('💥 Error details:', error);
     } finally {
       setCancellingId(null);
     }
