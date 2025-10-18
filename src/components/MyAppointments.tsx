@@ -3,7 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL } from '../lib/apiConfig';
 
 interface Appointment {
-  id: string;
+  _id?: string;
+  id?: string;
   date: string;
   time: string;
   status: 'confirmed' | 'pending' | 'cancelled';
@@ -21,6 +22,11 @@ const MyAppointments: React.FC = () => {
   const [dragStartY, setDragStartY] = useState(0);
   const [dragStartScrollTop, setDragStartScrollTop] = useState(0);
 
+  // Helper function to get appointment ID safely
+  const getAppointmentId = (appointment: Appointment): string | null => {
+    return appointment._id || appointment.id || null;
+  };
+
   const fetchAppointments = async () => {
     try {
       console.log('🔄 Fetching appointments...');
@@ -35,6 +41,7 @@ const MyAppointments: React.FC = () => {
         const data = await response.json();
         console.log('📋 Fetched appointments:', data.appointments?.length || 0, 'appointments');
         console.log('📋 Appointments data:', data.appointments);
+        console.log('📋 First appointment structure:', data.appointments?.[0]);
         setAppointments(data.appointments || []);
       } else {
         console.error('❌ Failed to fetch appointments, status:', response.status);
@@ -53,6 +60,7 @@ const MyAppointments: React.FC = () => {
       console.log('🔍 Appointment ID type:', typeof appointmentId);
       console.log('🔍 Appointment ID length:', appointmentId.length);
       console.log('🔍 Appointment ID value:', appointmentId);
+      console.log('🔍 Full appointment object:', appointments.find(apt => getAppointmentId(apt) === appointmentId));
       setCancellingId(appointmentId);
       
       // First, test if backend is reachable
@@ -72,13 +80,29 @@ const MyAppointments: React.FC = () => {
       console.log('🔑 Token exists:', !!token);
       console.log('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'null');
       
-      const response = await fetch(url, {
+      // Try PUT method first
+      let response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
+
+      // If PUT fails, try DELETE method
+      if (!response.ok) {
+        console.log('🔄 PUT method failed, trying DELETE method...');
+        const deleteUrl = `${API_BASE_URL}/api/appointments/${appointmentId}`;
+        console.log('📡 Making DELETE request to:', deleteUrl);
+        
+        response = await fetch(deleteUrl, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
 
       console.log('📊 Response status:', response.status);
       console.log('📊 Response ok:', response.ok);
@@ -506,10 +530,17 @@ const MyAppointments: React.FC = () => {
                 <div className="appointment-actions">
                   <button
                     className="cancel-button"
-                    onClick={() => cancelAppointment(appointment.id)}
-                    disabled={cancellingId === appointment.id}
+                    onClick={() => {
+                      const appointmentId = getAppointmentId(appointment);
+                      if (appointmentId) {
+                        cancelAppointment(appointmentId);
+                      } else {
+                        console.error('❌ No valid appointment ID found');
+                      }
+                    }}
+                    disabled={cancellingId === getAppointmentId(appointment)}
                   >
-                    {cancellingId === appointment.id ? 'Cancelling...' : 'Cancel'}
+                    {cancellingId === getAppointmentId(appointment) ? 'Cancelling...' : 'Cancel'}
                   </button>
                 </div>
               )}
