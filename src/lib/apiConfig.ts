@@ -3,12 +3,11 @@ export const getApiBaseUrl = (): string => {
   // Get API URL from environment variables
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   
-  // Throw error if no API URL is configured
+  // Fallback URLs for development
   if (!apiUrl) {
-    throw new Error(
-      'VITE_API_BASE_URL environment variable is not configured. ' +
-      'Please set this variable in your .env file or deployment environment.'
-    );
+    console.warn('⚠️ VITE_API_BASE_URL not set, using fallback URL');
+    // Try Railway URL first, then localhost
+    return 'https://web-production-df81.up.railway.app';
   }
   
   // Ensure the URL has proper protocol
@@ -19,7 +18,19 @@ export const getApiBaseUrl = (): string => {
   return apiUrl;
 };
 
-export const API_BASE_URL = getApiBaseUrl();
+export const API_BASE_URL = (() => {
+  try {
+    const url = getApiBaseUrl();
+    console.log('🌐 API Base URL configured:', url);
+    return url;
+  } catch (error) {
+    console.error('Failed to get API base URL:', error);
+    // Fallback to Railway URL
+    const fallbackUrl = 'https://web-production-df81.up.railway.app';
+    console.log('🔄 Using fallback API URL:', fallbackUrl);
+    return fallbackUrl;
+  }
+})();
 
 // Helper function to make API calls with proper error handling
 export const apiCall = async (endpoint: string, options?: RequestInit) => {
