@@ -8,8 +8,12 @@ interface ProfileMenuProps {
   onLogout?: () => void;
 }
 
+// Animation duration constant (in milliseconds)
+const ANIMATION_DURATION = 1000;
+
 const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) => {
   const [isClosing, setIsClosing] = useState(false);
+  
   // Handle escape key to close menu
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -38,7 +42,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
     setTimeout(() => {
       onClose();
       setIsClosing(false);
-    }, 400); // Match animation duration
+    }, ANIMATION_DURATION); // ✅ Matches animation duration
   };
 
   // Handle click outside to close menu
@@ -57,6 +61,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
     { label: 'MY PROJECTS', href: '/projects' },
     { label: 'MESSAGES', href: '/messages' },
     { label: 'SUPPORT', href: '/support' },
+    { label: 'Logout', href: '/support' },
   ];
 
   const handleLogout = () => {
@@ -74,7 +79,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
       style={{ 
         backgroundColor: '#39FF14', 
         zIndex: 9999,
-        animation: isClosing ? 'slideOutToBottom 0.4s ease-in forwards' : 'slideInFromBottom 0.4s ease-out'
+        animation: isClosing 
+          ? `slideOutToBottom ${ANIMATION_DURATION}ms ease-in forwards` 
+          : `slideInFromBottom ${ANIMATION_DURATION}ms ease-out`
       }}
       onClick={handleOverlayClick}
     >
@@ -91,13 +98,13 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
             textDecoration: 'none',
             transition: 'all 0.3s ease'
           }}
-   >
-          LOGOUT
+        >
+          
         </button>
       </div>
 
       {/* Main Content Container */}
-      <div className="container-fluid h-100 d-flex flex-column justify-content-start align-items-start">
+      <div className="container-fluid h-100 d-flex-end flex-column justify-content-end align-items-end">
         {/* Menu Items */}
         <nav className="d-flex flex-column align-items-start w-100" style={{ maxWidth: '800px' }}>
           {menuItems.map((item, index) => (
@@ -112,7 +119,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
                 fontFamily: 'Aeonik',
                 padding: 'clamp(8px, 2vw, 15px) 0',
                 transition: 'all 0.3s ease',
-                lineHeight: '0'
+                lineHeight: '0.5'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateX(20px)';
@@ -142,7 +149,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
             textDecoration: 'none',
             transition: 'all 0.3s ease'
           }}
-        
         >
           BACK
         </button>
