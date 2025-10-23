@@ -53,15 +53,14 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
   };
 
   const menuItems = [
-    { label: 'DASHBOARD', href: '/dashboard' },
-    { label: 'EDIT PROFILE', href: '/profile/edit' },
-    { label: 'ACCOUNT SETTINGS', href: '/settings' },
-    { label: 'NOTIFICATIONS', href: '/notifications' },
-    { label: 'BILLING', href: '/billing' },
-    { label: 'MY PROJECTS', href: '/projects' },
-    { label: 'MESSAGES', href: '/messages' },
-    { label: 'SUPPORT', href: '/support' },
-    { label: 'Logout', href: '/support' },
+    { label: 'SUPPORT', href: '/support' },                    // 7 ▂
+    { label: 'MESSAGES', href: '/messages' },                  // 8 ▃
+    { label: 'DASHBOARD', href: '/dashboard' },                // 9 ▄
+    { label: 'MY PROJECTS', href: '/projects' },               // 11 ▅
+    { label: 'NOTIFICATIONS', href: '/notifications' },        // 13 ▇ ← PEAK
+    { label: 'MY PROJECTS', href: '/projects' },               // 11 ▅
+    { label: 'MESSAGES', href: '/messages' },                  // 8 ▃
+    { label: 'BILLING', href: '/billing' },                    // 7 ▂
   ];
 
   const handleLogout = () => {
@@ -85,28 +84,37 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
       }}
       onClick={handleOverlayClick}
     >
-      {/* Logout Button - Top Right */}
-      <div className="position-absolute top-0 end-0 p-3 p-md-4">
-        <button 
-          className="btn btn-link text-dark fw-bold text-uppercase border-0"
-          onClick={handleLogout}
-          aria-label="Logout"
-          style={{ 
-            fontSize: 'clamp(16px, 4vw, 20px)',
-            letterSpacing: '2px',
-            fontFamily: 'Aeonik, sans-serif',
-            textDecoration: 'none',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          
-        </button>
-      </div>
+      {/* Main Content Container - Right Aligned */}
+      <div className="container-fluid h-100 d-flex flex-column justify-content-center align-items-end px-4 py-5">
+        {/* Menu Items - Right Aligned */}
+        <nav className="d-flex flex-column align-items-end w-100" style={{ maxWidth: '800px' }}>
+          {/* Logout Button - First Item */}
+          <button 
+            className="text-dark text-decoration-none fw-bold text-uppercase border-0 bg-transparent"
+            onClick={handleLogout}
+            aria-label="Logout"
+            style={{ 
+              fontSize: 'clamp(18px, 5vw, 24px)',
+              letterSpacing: '0px',
+              fontFamily: 'Aeonik',
+              padding: 'clamp(8px, 2vw, 15px) 0',
+              transition: 'all 0.3s ease',
+              lineHeight: '0.5',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateX(-20px)';
+              e.currentTarget.style.textShadow = '3px 3px 6px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateX(0)';
+              e.currentTarget.style.textShadow = 'none';
+            }}
+          >
+            LOGOUT
+          </button>
 
-      {/* Main Content Container */}
-      <div className="container-fluid h-100 d-flex-end flex-column justify-content-end align-items-end">
-        {/* Menu Items */}
-        <nav className="d-flex flex-column align-items-start w-100" style={{ maxWidth: '800px' }}>
+          {/* Regular Menu Items */}
           {menuItems.map((item, index) => (
             <Link
               key={index}
@@ -122,7 +130,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
                 lineHeight: '0.5'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateX(20px)';
+                e.currentTarget.style.transform = 'translateX(-20px)';
                 e.currentTarget.style.textShadow = '3px 3px 6px rgba(0, 0, 0, 0.2)';
               }}
               onMouseLeave={(e) => {
@@ -133,25 +141,33 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
               {item.label}
             </Link>
           ))}
-        </nav>
-      </div>
 
-      {/* Back Button - Bottom Left */}
-      <div className="position-absolute bottom-0 start-0 p-3 p-md-4">
-        <button 
-          className="btn btn-link text-dark fw-bold text-uppercase border-0"
-          onClick={handleClose}
-          aria-label="Close menu"
-          style={{ 
-            fontSize: 'clamp(16px, 4vw, 20px)',
-            letterSpacing: '2px',
-            fontFamily: 'Aeonik, sans-serif',
-            textDecoration: 'none',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          BACK
-        </button>
+          {/* Back Button - Last Item */}
+          <button 
+            className="text-dark text-decoration-none fw-bold text-uppercase border-0 bg-transparent"
+            onClick={handleClose}
+            aria-label="Close menu"
+            style={{ 
+              fontSize: 'clamp(18px, 5vw, 24px)',
+              letterSpacing: '0px',
+              fontFamily: 'Aeonik',
+              padding: 'clamp(8px, 2vw, 15px) 0',
+              transition: 'all 0.3s ease',
+              lineHeight: '0.5',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateX(-20px)';
+              e.currentTarget.style.textShadow = '3px 3px 6px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateX(0)';
+              e.currentTarget.style.textShadow = 'none';
+            }}
+          >
+            BACK
+          </button>
+        </nav>
       </div>
     </div>
   );
