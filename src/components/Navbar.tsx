@@ -2,6 +2,7 @@ import "../styles/fonts.css";
 import "../styles/Navbar.css";
 import ScrambleText from "./Scramble";
 import { useAuth } from "../contexts/AuthContext";
+import { useProfileMenu } from "../contexts/ProfileMenuContext";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -80,7 +81,8 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: {
 const Navbar = () => {
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(true);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const { openProfileMenu } = useProfileMenu();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,7 +158,7 @@ const Navbar = () => {
               {user.name}
             </span>
             <button
-              onClick={logout}
+              onClick={openProfileMenu}
               className="nav-link text-white"
               style={{ 
                 textDecoration: "none",
@@ -189,35 +191,7 @@ const Navbar = () => {
             </button>
           </div>
         ) : (
-          <Link 
-            to="/login" 
-            className="nav-link text-white"
-            style={{ 
-              textDecoration: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "32px",
-              height: "32px",
-              transition: "color 0.2s ease"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#39FF14";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "white";
-            }}
-          >
-            <img 
-              src="/UserProfile.svg" 
-              alt="User Profile" 
-              style={{ 
-                width: "30px", 
-                height: "30px",
-                filter: "brightness(0) invert(1)" // Makes the SVG white by default
-              }}
-            />
-          </Link>
+          <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" />
         )}
       </div>
     </div>
