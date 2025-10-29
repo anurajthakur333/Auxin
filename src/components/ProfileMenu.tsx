@@ -104,7 +104,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateX(-20px)';
-              e.currentTarget.style.textShadow = '3px 3px 6px rgba(0, 0, 0, 0.2)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateX(0)';
@@ -131,7 +130,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateX(-20px)';
-                e.currentTarget.style.textShadow = '3px 3px 6px rgba(0, 0, 0, 0.2)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateX(0)';
