@@ -239,8 +239,6 @@ const Login: React.FC = () => {
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
         }}>
           {/* Logo */}
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          </div>
 
           {/* Login Form */}
           <form onSubmit={handleSubmit}>
