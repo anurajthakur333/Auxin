@@ -281,7 +281,7 @@ const Login: React.FC = () => {
             <button
               type="button"
               onClick={googleLogin}
-              disabled={isLoading}
+              disabled={true}
               className="aeonik-regular"
               style={{
                 width: '100%',
@@ -289,26 +289,16 @@ const Login: React.FC = () => {
                 borderRadius: '0px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 background: 'rgba(255, 255, 255, 0.05)',
-                color: 'white',
+                color: 'rgba(255, 255, 255, 0.5)',
                 fontSize: '0.9rem',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
+                cursor: 'not-allowed',
                 transition: 'all 0.3s ease',
-                opacity: isLoading ? 0.7 : 1,
+                opacity: 0.5,
                 marginBottom: '1.5rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.borderColor = '#39FF14';
-                  e.currentTarget.style.background = 'rgba(57, 255, 20, 0.1)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
               }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24">
@@ -328,18 +318,6 @@ const Login: React.FC = () => {
               alignItems: 'center',
               marginBottom: '1.5rem'
             }}>
-              <div style={{
-                flex: 1,
-                height: '1px',
-                background: 'rgba(255, 255, 255, 0.2)'
-              }} />
-              <span className="aeonik-regular" style={{
-                padding: '0 1rem',
-                color: '#888',
-                fontSize: '0.9rem'
-              }}>
-                or
-              </span>
               <div style={{
                 flex: 1,
                 height: '1px',
