@@ -43,9 +43,9 @@ const Signup: React.FC = () => {
     };
   }, []);
 
-  // Redirect if already logged in
+  // Redirect if already logged in (but not if we just signed up)
   useEffect(() => {
-    if (user) {
+    if (user && user.isEmailVerified) {
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
@@ -111,8 +111,8 @@ const Signup: React.FC = () => {
       console.log('Attempting to signup with:', { name, email, password: '***' });
       const result = await signup(name, email, password);
       if (result.success) {
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, { replace: true });
+        // Navigate to verify email screen with email param
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`, { replace: true });
       } else {
         setError(result.error || 'Failed to create account. Please try again.');
       }

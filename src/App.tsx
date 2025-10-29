@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ProfileMenuProvider, useProfileMenu } from './contexts/ProfileMenuContext';
 import ProfileMenu from './components/ProfileMenu';
 import Home from './pages/Home';
+import VerifyEmail from './pages/VerifyEmail';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Meeting from './pages/Meeting';
@@ -41,6 +42,7 @@ export default function App() {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/login" element={<Login />} />

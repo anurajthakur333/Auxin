@@ -143,9 +143,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (response.ok) {
-        setUser(data.user);
-        localStorage.setItem('token', data.token);
-        return { success: true };
+        // Don't set user or token on signup - user needs to verify email first
+        // Only store email temporarily for verification
+        if (data.user && !data.user.isEmailVerified) {
+          // Don't set user state or token - wait for email verification
+          return { success: true };
+        } else {
+          // If somehow email is already verified, set user normally
+          setUser(data.user);
+          localStorage.setItem('token', data.token);
+          return { success: true };
+        }
       } else {
         console.error('Signup failed:', data.error);
         return { success: false, error: data.error || 'Failed to create account' };
