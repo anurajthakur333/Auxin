@@ -6,7 +6,10 @@ export const getApiBaseUrl = (): string => {
   // Fallback URLs for development
   if (!apiUrl) {
     console.warn('⚠️ VITE_API_BASE_URL not set, using fallback URL');
-    // Try Railway URL first, then localhost
+    // Use localhost for development, Railway for production
+    if (import.meta.env.DEV) {
+      return 'http://localhost:3001';
+    }
     return 'https://web-production-df81.up.railway.app';
   }
   
@@ -25,8 +28,10 @@ export const API_BASE_URL = (() => {
     return url;
   } catch (error) {
     console.error('Failed to get API base URL:', error);
-    // Fallback to Railway URL
-    const fallbackUrl = 'https://web-production-df81.up.railway.app';
+    // Fallback based on environment
+    const fallbackUrl = import.meta.env.DEV 
+      ? 'http://localhost:3001' 
+      : 'https://web-production-df81.up.railway.app';
     console.log('🔄 Using fallback API URL:', fallbackUrl);
     return fallbackUrl;
   }
