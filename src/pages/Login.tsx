@@ -43,10 +43,14 @@ const Login: React.FC = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
-      const from = location.state?.from?.pathname || '/';
-      navigate(from, { replace: true });
+    if (!user) return;
+    // If logged-in but unverified, go to verify screen
+    if (!user.isEmailVerified) {
+      navigate(`/verify-email?email=${encodeURIComponent(user.email)}`, { replace: true });
+      return;
     }
+    const from = location.state?.from?.pathname || '/';
+    navigate(from, { replace: true });
   }, [user, navigate, location]);
 
   // Simplified autofill detection (less performance impact)
@@ -94,6 +98,12 @@ const Login: React.FC = () => {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
       } else {
+        // If backend signals unverified email, redirect to verification screen
+        if (result.error && result.error.toLowerCase().includes('email not verified')) {
+          const normalized = email.trim().toLowerCase();
+          navigate(`/verify-email?email=${encodeURIComponent(normalized)}`, { replace: true });
+          return;
+        }
         setError(result.error || 'Invalid email or password');
       }
     } catch (err) {

@@ -49,16 +49,26 @@ export const apiCall = async (endpoint: string, options?: RequestInit) => {
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const text = await response.text();
+
+    // Try to parse JSON body (whether success or error)
+    let parsed: any = null;
+    try {
+      parsed = text ? JSON.parse(text) : null;
+    } catch (_e) {
+      // Non-JSON response
     }
 
-    const text = await response.text();
-    try {
-      return JSON.parse(text);
-    } catch {
-      return text;
+    if (!response.ok) {
+      // Prefer backend-provided error message if available
+      const backendError = parsed?.error || parsed?.message || text || `HTTP error! status: ${response.status}`;
+      const error = new Error(backendError) as Error & { status?: number; details?: unknown };
+      (error as any).status = response.status;
+      (error as any).details = parsed;
+      throw error;
     }
+
+    return parsed ?? text;
   } catch (error) {
     console.error('API call failed:', error);
     throw error;

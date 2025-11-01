@@ -31,6 +31,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // If logged in but email not verified, force verification flow
+  if (user && !user.isEmailVerified) {
+    return <Navigate to={`/verify-email?email=${encodeURIComponent(user.email)}`} replace />;
+  }
+
   return <>{children}</>;
 };
 

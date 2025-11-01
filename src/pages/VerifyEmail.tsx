@@ -15,25 +15,35 @@ const VerifyEmail: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { email } = useMemo(() => parseQuery(location.search), [location.search]);
+  const emailNormalized = useMemo(() => email.trim().toLowerCase(), [email]);
 
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  // Reserved for future use if we re-enable auto-send; keep logic simple now.
+  // const autoSentRef = useRef(false);
 
   useEffect(() => {
-    // Auto-send OTP if user just arrived from signup
-    if (email) {
-      console.log('📧 Auto-sending OTP to:', email);
-      handleResend();
-    } else {
-      console.warn('⚠️ No email found in URL, cannot auto-send OTP');
+    if (!emailNormalized) {
+      console.warn('⚠️ No email found in URL, cannot send OTP');
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email]);
+    // Auto-send on mount with a short-lived, in-memory debounce to prevent
+    // React StrictMode double-invocation from sending twice in dev.
+    const winAny: any = window as any;
+    if (!winAny.__auxinOtpAutoSend) winAny.__auxinOtpAutoSend = {};
+    const lastSentAt = winAny.__auxinOtpAutoSend[emailNormalized] as number | undefined;
+    const now = Date.now();
+    if (!lastSentAt || (now - lastSentAt) > 2000) {
+      winAny.__auxinOtpAutoSend[emailNormalized] = now;
+      console.log('📧 Auto-sending OTP to:', emailNormalized);
+      handleResend();
+    }
+  }, [emailNormalized]);
 
   const handleResend = async () => {
-    if (!email) {
+    if (!emailNormalized) {
       setError('Email is required to send verification code.');
       return;
     }
@@ -42,12 +52,22 @@ const VerifyEmail: React.FC = () => {
       setError('');
       setMessage('');
       setIsLoading(true);
-      console.log('📤 Sending OTP request for:', email);
+      console.log('📤 Sending OTP request for:', emailNormalized);
       
-      const res = await apiCall('/auth/send-otp', {
-        method: 'POST',
-        body: JSON.stringify({ email }),
-      });
+      // Try API-prefixed route first, then fallback to non-prefixed
+      let res: any;
+      try {
+        res = await apiCall('/api/auth/send-otp', {
+          method: 'POST',
+          body: JSON.stringify({ email: emailNormalized }),
+        });
+      } catch (primaryErr: any) {
+        // Fallback for backends without /api prefix
+        res = await apiCall('/auth/send-otp', {
+          method: 'POST',
+          body: JSON.stringify({ email: emailNormalized }),
+        });
+      }
       
       if (res?.success) {
         console.log('✅ OTP sent successfully');
@@ -66,7 +86,7 @@ const VerifyEmail: React.FC = () => {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code || !email) {
+    if (!code || !emailNormalized) {
       setError('Please enter the code.');
       return;
     }
@@ -74,11 +94,21 @@ const VerifyEmail: React.FC = () => {
       setIsLoading(true);
       setError('');
       
-      // First verify the OTP
-      const res = await apiCall('/auth/verify-otp', {
-        method: 'POST',
-        body: JSON.stringify({ email, code }),
-      });
+      // First verify the OTP. Prefer /api/ prefixed route, fallback to non-prefixed.
+      // Send both `code` and `otp` to be compatible with different backends.
+      const payload = { email: emailNormalized, code, otp: code };
+      let res: any;
+      try {
+        res = await apiCall('/api/auth/verify-otp', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      } catch (primaryErr: any) {
+        res = await apiCall('/auth/verify-otp', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      }
       
       if (res?.success) {
         // Backend returns token and user on successful verification
