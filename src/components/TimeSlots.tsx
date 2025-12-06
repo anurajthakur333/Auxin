@@ -13,14 +13,12 @@ interface TimeSlotsProps {
   selectedDate: Date;
   onTimeSelect: (time: string) => void;
   selectedTime: string;
-  onBookingSuccess?: () => void;
 }
 
 const TimeSlots: React.FC<TimeSlotsProps> = ({ 
   selectedDate, 
   onTimeSelect, 
-  selectedTime, 
-  onBookingSuccess 
+  selectedTime
 }) => {
   const { user } = useAuth();
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
@@ -104,13 +102,16 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
     fetchAvailableSlots(selectedDate);
   }, [selectedDate]);
 
-  // Book appointment
+  // Book appointment - Create PayPal order and redirect to PayPal
   const bookAppointment = async () => {
     if (!selectedTime || !user) return;
 
     try {
       setBookingLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/appointments/book`, {
+      setMessage(null);
+      
+      // Create PayPal order
+      const response = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,13 +128,18 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
 
       const data = await response.json();
 
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'Appointment booked successfully!' });
-        onTimeSelect('');
-        fetchAvailableSlots(selectedDate);
-        onBookingSuccess?.();
+      if (response.ok && data.approvalUrl) {
+        // Show processing message
+        setMessage({ type: 'success', text: 'Redirecting to PayPal...' });
+        
+        // Store appointment ID for later use
+        localStorage.setItem('pendingAppointmentId', data.appointmentId);
+        localStorage.setItem('pendingOrderId', data.orderId);
+        
+        // Redirect to PayPal for payment
+        window.location.href = data.approvalUrl;
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to book appointment' });
+        setMessage({ type: 'error', text: data.error || 'Failed to initiate payment' });
       }
     } catch (error) {
       console.error('Booking error:', error);
@@ -487,16 +493,24 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           onClick={bookAppointment}
           disabled={!selectedTime || bookingLoading}
         >
-          {bookingLoading ? 'Booking...' : (() => {
+          {bookingLoading ? 'Processing...' : (() => {
             if (!selectedTime) return 'Select Time First';
             const selectedSlot = availableSlots.find(slot => slot.time === selectedTime);
             if (selectedSlot) {
               const displayTime = timeFormat === '24hr' ? selectedSlot.time : selectedSlot.time12;
-              return `Book Meeting - ${displayTime}`;
+              return `Book & Pay $50 - ${displayTime}`;
             }
-            return `Book Meeting - ${selectedTime}`;
+            return `Book & Pay $50 - ${selectedTime}`;
           })()}
         </button>
+        <div style={{ 
+          fontSize: '0.75rem', 
+          color: '#666', 
+          marginTop: '0.5rem',
+          textAlign: 'center'
+        }}>
+          Secure payment via PayPal
+        </div>
       </div>
     </div>
   );

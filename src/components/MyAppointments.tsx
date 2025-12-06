@@ -8,6 +8,7 @@ interface Appointment {
   date: string;
   time: string;
   status: 'confirmed' | 'pending' | 'cancelled';
+  paymentStatus?: 'pending' | 'completed' | 'failed' | 'refunded';
   createdAt: string;
 }
 
@@ -223,7 +224,11 @@ const MyAppointments: React.FC = () => {
     });
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string, paymentStatus?: string) => {
+    // If payment is pending, show orange regardless of appointment status
+    if (paymentStatus === 'pending') return '#FFA500';
+    if (paymentStatus === 'failed') return '#ff6b6b';
+    
     switch (status) {
       case 'confirmed': return '#39FF14';
       case 'pending': return '#FFA500';
@@ -231,6 +236,22 @@ const MyAppointments: React.FC = () => {
       default: return '#666';
     }
   };
+  
+  const getStatusText = (status: string, paymentStatus?: string) => {
+    if (paymentStatus === 'pending') return 'AWAITING PAYMENT';
+    if (paymentStatus === 'failed') return 'PAYMENT FAILED';
+    return status.toUpperCase();
+  };
+  
+  // Filter out pending appointments that are awaiting payment (older than 15 mins)
+  const displayAppointments = appointments.filter(apt => {
+    if (apt.status === 'pending' && apt.paymentStatus === 'pending') {
+      const createdAt = new Date(apt.createdAt);
+      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+      return createdAt > fifteenMinutesAgo; // Only show if created within last 15 mins
+    }
+    return true;
+  });
 
   const isUpcoming = (date: string, time: string) => {
     const appointmentDateTime = new Date(`${date}T${time}`);
@@ -486,7 +507,7 @@ const MyAppointments: React.FC = () => {
         </button>
       </div>
 
-      {appointments.length === 0 ? (
+      {displayAppointments.length === 0 ? (
         <div className="no-appointments">
           <h3>No appointments yet</h3>
           <p>Book your first meeting using the calendar above!</p>
@@ -498,7 +519,7 @@ const MyAppointments: React.FC = () => {
           onWheel={handleWheel}
           onScroll={handleScroll}
         >
-          {appointments.map(appointment => (
+          {displayAppointments.map(appointment => (
             <div key={appointment.id} className="appointment-card">
               <div className="appointment-header">
                 <div className="appointment-date-time">
@@ -513,11 +534,11 @@ const MyAppointments: React.FC = () => {
                   <span 
                     className="status-badge"
                     style={{ 
-                      backgroundColor: getStatusColor(appointment.status),
-                      color: appointment.status === 'pending' ? '#000' : '#000'
+                      backgroundColor: getStatusColor(appointment.status, appointment.paymentStatus),
+                      color: '#000'
                     }}
                   >
-                    {appointment.status}
+                    {getStatusText(appointment.status, appointment.paymentStatus)}
                   </span>
                 </div>
               </div>
@@ -550,7 +571,7 @@ const MyAppointments: React.FC = () => {
       )}
       
        {/* Custom scrollbar - only show when there are appointments */}
-       {appointments.length > 0 && (
+       {displayAppointments.length > 0 && (
          <div 
            className="custom-scrollbar"
            onClick={handleScrollbarTrackClick}

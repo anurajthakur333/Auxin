@@ -14,6 +14,8 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import GoogleCallback from './pages/GoogleCallback';
 import SplinePage from './pages/Spline';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import { useAuth } from './contexts/AuthContext';
@@ -55,6 +57,22 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Meeting />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/payment/success" 
+              element={
+                <ProtectedRoute>
+                  <PaymentSuccess />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/payment/cancel" 
+              element={
+                <ProtectedRoute>
+                  <PaymentCancel />
                 </ProtectedRoute>
               } 
             />

@@ -13,7 +13,6 @@ const Meeting = () => {
   const lenisRef = useRef<Lenis | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [refreshAppointments, setRefreshAppointments] = useState(0);
 
   useEffect(() => {
     // Initialize Lenis for smooth scrolling
@@ -96,14 +95,10 @@ const Meeting = () => {
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               onTimeSelect={setSelectedTime}
-              onBookingSuccess={() => {
-                setRefreshAppointments(prev => prev + 1);
-                setSelectedTime('');
-              }}
             />
             
             {/* Tile 3: My Appointments (bottom right) */}
-            <MyAppointments key={refreshAppointments} />
+            <MyAppointments />
           </div>
         </div>
       </div>
