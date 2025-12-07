@@ -272,7 +272,6 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
 
         .book-button:hover {
           background: #2ecc11;
-          transform: translateY(-2px);
         }
 
         .book-button:disabled {
@@ -400,17 +399,17 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       `}</style>
 
       <div className="selected-date-info">
-        <h3>Selected Date</h3>
+        <h3>SELECTED DATE</h3>
         <p>{selectedDate.toLocaleDateString('en-US', { 
           weekday: 'long', 
           year: 'numeric', 
           month: 'long', 
           day: 'numeric' 
-        })}</p>
+        }).toUpperCase()}</p>
       </div>
 
       <div className="time-slots-header">
-        <h3 className="time-slots-title">Available Time Slots</h3>
+        <h3 className="time-slots-title">AVAILABLE TIME SLOTS</h3>
         <div className="time-format-toggle">
           <button
             className={`toggle-btn ${timeFormat === '24hr' ? 'active' : ''}`}
@@ -483,7 +482,8 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
             fontSize: '0.8rem', 
             color: '#888', 
             marginBottom: '0.5rem',
-            textAlign: 'center'
+            textAlign: 'center',
+            textTransform: 'uppercase'
           }}>
             Your timezone: {userTimezone}
           </div>
@@ -493,14 +493,14 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           onClick={bookAppointment}
           disabled={!selectedTime || bookingLoading}
         >
-          {bookingLoading ? 'Processing...' : (() => {
-            if (!selectedTime) return 'Select Time First';
+          {bookingLoading ? 'PROCESSING...' : (() => {
+            if (!selectedTime) return 'SELECT TIME FIRST';
             const selectedSlot = availableSlots.find(slot => slot.time === selectedTime);
             if (selectedSlot) {
               const displayTime = timeFormat === '24hr' ? selectedSlot.time : selectedSlot.time12;
-              return `Book & Pay $150 - ${displayTime}`;
+              return `BOOK & PAY $150 - ${displayTime}`;
             }
-            return `Book & Pay $150 - ${selectedTime}`;
+            return `BOOK & PAY $150 - ${selectedTime}`;
           })()}
         </button>
         <div style={{ 
@@ -509,7 +509,7 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           marginTop: '0.5rem',
           textAlign: 'center'
         }}>
-          Secure payment via PayPal
+          SECURE PAYMENT VIA PAYPAL
         </div>
       </div>
     </div>

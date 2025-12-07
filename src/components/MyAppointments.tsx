@@ -501,15 +501,15 @@ const MyAppointments: React.FC = () => {
       `}</style>
 
       <div className="appointments-header">
-        <h2 className="appointments-title">My Appointments</h2>
+        <h2 className="appointments-title">MY APPOINTMENTS</h2>
         <button className="refresh-button" onClick={fetchAppointments}>
-          Refresh
+          REFRESH
         </button>
       </div>
 
       {displayAppointments.length === 0 ? (
         <div className="no-appointments">
-          <h3>No appointments yet</h3>
+          <h3>NO APPOINTMENTS YET</h3>
           <p>Book your first meeting using the calendar above!</p>
         </div>
       ) : (

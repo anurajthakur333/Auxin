@@ -74,7 +74,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
     return days;
   }, [currentMonth, selectedDate]);
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   const handlePrevMonth = useCallback(() => {
     if (canGoPrevMonth) {
@@ -298,7 +298,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           {currentMonth.toLocaleDateString('en-US', { 
             month: 'long', 
             year: 'numeric' 
-          })}
+          }).toUpperCase()}
         </h2>
         <div className="calendar-nav">
           <button
@@ -306,13 +306,13 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
             onClick={handlePrevMonth}
             disabled={!canGoPrevMonth}
           >
-            ← Prev
+            ← PREV
           </button>
           <button
             className="nav-button"
             onClick={handleNextMonth}
           >
-            Next →
+            NEXT →
           </button>
         </div>
       </div>
