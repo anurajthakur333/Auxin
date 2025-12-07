@@ -29,13 +29,17 @@ const PaymentSuccess = () => {
       try {
         // Get appointment ID from URL or localStorage
         const appointmentId = searchParams.get('appointmentId') || localStorage.getItem('pendingAppointmentId');
-        const orderId = localStorage.getItem('pendingOrderId');
+        // PayPal returns orderId as 'token' in the URL
+        const orderId = searchParams.get('token') || localStorage.getItem('pendingOrderId');
 
         if (!appointmentId || !orderId) {
+          console.error('Missing payment info:', { appointmentId, orderId, url: window.location.href });
           setStatus('error');
           setMessage('Missing payment information. Please try booking again.');
           return;
         }
+        
+        console.log('Capturing payment:', { appointmentId, orderId });
 
         // Capture the payment
         const response = await fetch(`${API_BASE_URL}/api/paypal/capture-order`, {
