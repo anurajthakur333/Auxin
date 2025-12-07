@@ -498,9 +498,9 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
             const selectedSlot = availableSlots.find(slot => slot.time === selectedTime);
             if (selectedSlot) {
               const displayTime = timeFormat === '24hr' ? selectedSlot.time : selectedSlot.time12;
-              return `Book & Pay $50 - ${displayTime}`;
+              return `Book & Pay $150 - ${displayTime}`;
             }
-            return `Book & Pay $50 - ${selectedTime}`;
+            return `Book & Pay $150 - ${selectedTime}`;
           })()}
         </button>
         <div style={{ 

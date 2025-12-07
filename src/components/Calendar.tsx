@@ -32,6 +32,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
     return date < today;
   };
 
+  // Check if we can go to previous month (prevent going before current month)
+  const canGoPrevMonth = useMemo(() => {
+    const today = new Date();
+    return (
+      currentMonth.getFullYear() > today.getFullYear() ||
+      (currentMonth.getFullYear() === today.getFullYear() &&
+        currentMonth.getMonth() > today.getMonth())
+    );
+  }, [currentMonth]);
+
   const renderCalendarDays = useMemo(() => {
     const daysInMonth = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
@@ -67,8 +77,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const handlePrevMonth = useCallback(() => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-  }, [currentMonth]);
+    if (canGoPrevMonth) {
+      setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+    }
+  }, [currentMonth, canGoPrevMonth]);
 
   const handleNextMonth = useCallback(() => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
@@ -119,9 +131,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           font-weight: 500;
         }
 
-        .nav-button:hover {
+        .nav-button:hover:not(:disabled) {
           background: #39FF14;
           color: #000;
+        }
+
+        .nav-button:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+          border-color: #444;
+          color: #444;
         }
 
         .calendar-grid {
@@ -285,6 +304,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, selectedDate }) => {
           <button
             className="nav-button"
             onClick={handlePrevMonth}
+            disabled={!canGoPrevMonth}
           >
             ← Prev
           </button>
