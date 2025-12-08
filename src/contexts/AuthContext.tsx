@@ -11,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; error?: string }>;
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   googleLogin: () => Promise<void>;
   logout: () => void;
@@ -38,7 +38,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check for existing session on app load
-    const token = localStorage.getItem('token');
+    // First check localStorage (Remember Me was checked), then sessionStorage
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) {
       verifyToken(token);
     } else {
@@ -63,22 +64,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.error('Failed to parse JSON response:', jsonError);
           console.error('Response text:', responseText);
           localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
           return;
         }
         setUser(data.user);
-        localStorage.setItem('token', token);
+        // Token is already stored in the correct storage, no need to re-store
       } else {
         localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
       }
     } catch (error) {
       console.error('Token verification failed:', error);
       localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const login = async (email: string, password: string, rememberMe: boolean = false): Promise<{ success: boolean; error?: string }> => {
     try {
       setLoading(true);
       
@@ -104,7 +108,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (response.ok) {
         setUser(data.user);
-        localStorage.setItem('token', data.token);
+        // Store token based on Remember Me preference
+        if (rememberMe) {
+          localStorage.setItem('token', data.token);
+          sessionStorage.removeItem('token'); // Clear the other storage
+        } else {
+          sessionStorage.setItem('token', data.token);
+          localStorage.removeItem('token'); // Clear the other storage
+        }
         return { success: true };
       } else {
         console.error('Login failed:', data.error);
@@ -223,6 +234,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
   };
 
   const value: AuthContextType = {

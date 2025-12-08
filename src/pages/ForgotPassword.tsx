@@ -116,8 +116,7 @@ const ForgotPassword: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess('Password reset instructions have been sent to your email address.');
-        setEmail('');
+        setSuccess('Password reset instructions have been sent to your email address. Please check your inbox (and spam folder).');
       } else {
         setError(data.error || 'Failed to send reset instructions. Please try again.');
       }
@@ -364,19 +363,19 @@ const ForgotPassword: React.FC = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !!success}
               className="aeonik-regular"
               style={{
                 width: '100%',
                 padding: '0.75rem',
                 borderRadius: '0',
                 border: 'none',
-                background: 'linear-gradient(135deg, #39FF14, #00cc00)',
-                color: '#000',
+                background: success ? 'rgba(57, 255, 20, 0.3)' : 'linear-gradient(135deg, #39FF14, #00cc00)',
+                color: success ? '#39FF14' : '#000',
                 fontSize: '1rem',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
+                cursor: (isLoading || success) ? 'not-allowed' : 'pointer',
                 transition: 'all 0.3s ease',
-                opacity: isLoading ? 0.7 : 1,
+                opacity: (isLoading || success) ? 0.7 : 1,
                 marginBottom: '1rem'
               }}
               onMouseEnter={() => {
@@ -390,6 +389,8 @@ const ForgotPassword: React.FC = () => {
             >
               {isLoading ? (
                 'Sending Instructions...'
+              ) : success ? (
+                '✓  E M A I L    S E N T'
               ) : (
                 <ScrambleText
                   trigger="hover"

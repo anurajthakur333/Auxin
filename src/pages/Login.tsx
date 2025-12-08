@@ -93,7 +93,7 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await login(email, password, rememberMe);
       if (result.success) {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
