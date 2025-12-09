@@ -529,7 +529,7 @@ const Footer = () => {
       style={{paddingRight:'110px',paddingLeft:'110px',marginTop:'96px'}
       }>
           <div className="green-text">© Auxin Media 2025</div>
-          <div className="green-text">Auxinmedia@gmail.com</div>
+          <a href="mailto:Auxinmedia@gmail.com" className="green-text" style={{ textDecoration: 'none' }}>Auxinmedia@gmail.com</a>
           <div className="green-text">Connect with Team</div>
         </div>
 
