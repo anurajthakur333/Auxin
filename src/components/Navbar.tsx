@@ -5,9 +5,11 @@ import { useAuth } from "../contexts/AuthContext";
 import { useProfileMenu } from "../contexts/ProfileMenuContext";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useSound } from "../hooks/useSound";
+import clickSound from "../assets/Sound/Click1.mp3";
 
 // Reusable nav link with scramble on hover in/out
-const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random" }) => {
+const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onClickSound }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random"; onClickSound?: () => void }) => {
   const [hovered, setHovered] = useState(false);
   const location = useLocation();
 
@@ -44,7 +46,7 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: {
 
   if (isInternalRoute) {
     return (
-      <Link to={href} {...linkProps}>
+      <Link to={href} {...linkProps} onClick={onClickSound}>
         {scrambleText}
       </Link>
     );
@@ -52,6 +54,7 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: {
     // For hash links, navigate to home page first if not already there
     const handleHashClick = (e: React.MouseEvent) => {
       e.preventDefault();
+      onClickSound?.();
       if (location.pathname !== '/') {
         // Navigate to home first, then scroll to section
         window.location.href = `/${href}`;
@@ -71,7 +74,7 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right" }: {
     );
   } else {
     return (
-      <a href={href} {...linkProps}>
+      <a href={href} {...linkProps} onClick={onClickSound}>
         {scrambleText}
       </a>
     );
@@ -83,6 +86,7 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const { user } = useAuth();
   const { openProfileMenu } = useProfileMenu();
+  const playClickSound = useSound(clickSound, { volume: 0.5 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,8 +120,8 @@ const Navbar = () => {
       >
       {/* Left side links */}
       <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
-        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" />
-        <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" />
+        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" onClickSound={playClickSound} />
+        <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" onClickSound={playClickSound} />
       </div>
 
 
@@ -127,6 +131,7 @@ const Navbar = () => {
         style={{ display: 'inline-block' }}
         aria-label="Go to home"
         onClick={(e) => {
+          playClickSound();
           if (location.pathname === "/") {
             e.preventDefault();
             if (location.hash) {
@@ -145,8 +150,8 @@ const Navbar = () => {
 
       {/* Right side links */}
       <div className="d-flex justify-content-start align-items-center" style={{ gap: '2rem' }}>
-        <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" />
-        <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" />
+        <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" onClickSound={playClickSound} />
+        <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" onClickSound={playClickSound} />
         
         {/* Spacer to push auth section to the right */}
         <div style={{ flex: 1 }}></div>
@@ -158,7 +163,7 @@ const Navbar = () => {
               {user.name}
             </span>
             <button
-              onClick={openProfileMenu}
+              onClick={() => { playClickSound(); openProfileMenu(); }}
               className="nav-link text-white"
               style={{ 
                 textDecoration: "none",
@@ -191,7 +196,7 @@ const Navbar = () => {
             </button>
           </div>
         ) : (
-          <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" />
+          <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" onClickSound={playClickSound} />
         )}
       </div>
     </div>
