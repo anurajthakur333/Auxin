@@ -10,9 +10,20 @@ import { useSound } from "../hooks/useSound";
 import clickSound from "../assets/Sound/Click1.wav";
 
 // Reusable nav link with scramble on hover in/out
-const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onClickSound }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random"; onClickSound?: () => void }) => {
+const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onClickSound, loadDelay = 0 }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random"; onClickSound?: () => void; loadDelay?: number }) => {
   const [hovered, setHovered] = useState(false);
+  const [phase, setPhase] = useState<'initial' | 'loading' | 'ready'>('initial');
   const location = useLocation();
+
+  // Handle the load animation phase
+  useEffect(() => {
+    // Start with initial phase, then transition to loading after delay
+    const loadTimer = setTimeout(() => {
+      setPhase('loading');
+    }, loadDelay);
+
+    return () => clearTimeout(loadTimer);
+  }, [loadDelay]);
 
   // Check if it's an internal route (starts with /) or a hash link (starts with #)
   const isInternalRoute = href.startsWith('/') && !href.startsWith('#');
@@ -25,24 +36,47 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onC
     onMouseLeave: () => setHovered(false)
   };
 
-  const scrambleText = (
-    <ScrambleText
-      trigger="hover"
-      speed="slow"
-      direction={direction}
-      randomReveal={true}
-      revealSpeed={0.3}
-      style={{
-        color: hovered ? "#39FF14" : "white",
-        whiteSpace: "nowrap",
-        display: "inline-block",
+  // Don't render until loading phase
+  if (phase === 'initial') {
+    return (
+      <span style={{ 
+        display: 'inline-block', 
         minWidth: `${minWidth}px`,
-        textAlign: "center",
-      }}
-      delay={0}
-    >
-      {label}
-    </ScrambleText>
+        textAlign: 'center',
+        opacity: 0 
+      }}>
+        {label}
+      </span>
+    );
+  }
+
+  // Use a wrapper with transition to prevent flash when switching phases
+  const scrambleText = (
+    <span style={{ display: 'inline-block', transition: 'opacity 0.1s ease' }}>
+      <ScrambleText
+        trigger={phase === 'ready' ? "hover" : "load"}
+        speed="slow"
+        direction={direction}
+        randomReveal={true}
+        revealSpeed={0.3}
+        style={{
+          color: hovered ? "#39FF14" : "white",
+          whiteSpace: "nowrap",
+          display: "inline-block",
+          minWidth: `${minWidth}px`,
+          textAlign: "center",
+        }}
+        delay={0}
+        onComplete={() => {
+          if (phase === 'loading') {
+            // Small delay before switching to ready phase to prevent flash
+            setTimeout(() => setPhase('ready'), 50);
+          }
+        }}
+      >
+        {label}
+      </ScrambleText>
+    </span>
   );
 
   if (isInternalRoute) {
@@ -164,8 +198,8 @@ const Navbar = () => {
       >
       {/* Left side links */}
       <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
-        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" onClickSound={playClickSound} />
-        <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" onClickSound={playClickSound} />
+        <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" onClickSound={playClickSound} loadDelay={200} />
+        <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" onClickSound={playClickSound} loadDelay={350} />
       </div>
 
 
@@ -194,8 +228,8 @@ const Navbar = () => {
 
       {/* Right side links */}
       <div className="d-flex justify-content-start align-items-center" style={{ gap: '2rem' }}>
-        <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" onClickSound={playClickSound} />
-        <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" onClickSound={playClickSound} />
+        <NavItem href="#about" label="ABOUT US" minWidth={100} direction="right-to-left" onClickSound={playClickSound} loadDelay={500} />
+        <NavItem href="/meeting" label="MEETINGS" minWidth={120} direction="right-to-left" onClickSound={playClickSound} loadDelay={650} />
         
         {/* Spacer to push auth section to the right */}
         <div style={{ flex: 1 }}></div>
@@ -240,7 +274,7 @@ const Navbar = () => {
             </button>
           </div>
         ) : (
-          <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" onClickSound={playClickSound} />
+          <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" onClickSound={playClickSound} loadDelay={800} />
         )}
       </div>
       </div>
@@ -248,4 +282,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

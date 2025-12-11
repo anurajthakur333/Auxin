@@ -392,21 +392,40 @@ export default function ScrambleText({
   // Handle automatic triggers (load and visible)
   useEffect(() => {
     if (trigger === "load" && elementRef.current) {
-      // Use intersection observer for load trigger - scramble when element comes into view
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            triggerScramble();
-            observer.disconnect(); // Only trigger once
-          }
-        },
-        { 
-          threshold: 0.3, // Trigger when 30% of element is visible
-          rootMargin: '-50px 0px' // Start animation slightly before fully visible
+      // Check if element is in a fixed container (like navbar)
+      const isInFixedContainer = () => {
+        let el = elementRef.current?.parentElement;
+        while (el) {
+          const style = window.getComputedStyle(el);
+          if (style.position === 'fixed') return true;
+          el = el.parentElement;
         }
-      );
-      observer.observe(elementRef.current);
-      return () => observer.disconnect();
+        return false;
+      };
+
+      if (isInFixedContainer()) {
+        // For fixed elements, trigger immediately after a small delay
+        const timer = setTimeout(() => {
+          triggerScramble();
+        }, 100);
+        return () => clearTimeout(timer);
+      } else {
+        // Use intersection observer for normal elements
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              triggerScramble();
+              observer.disconnect();
+            }
+          },
+          { 
+            threshold: 0.1,
+            rootMargin: '0px'
+          }
+        );
+        observer.observe(elementRef.current);
+        return () => observer.disconnect();
+      }
     } else if (trigger === "visible" && elementRef.current) {
       // Start scrambling when element becomes visible
       const observer = new IntersectionObserver(
