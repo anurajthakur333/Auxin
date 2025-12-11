@@ -37,6 +37,15 @@
   font-display: swap;
 }
 
+/* Aeonik Mono Bold */
+@font-face {
+  font-family: 'Aeonik Mono';
+  src: url('../assets/fonts/AeonikMono-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ============================================
    Aeonik (Sans-Serif)
    ============================================ */
@@ -170,6 +179,12 @@
   font-style: normal;
 }
 
+.aeonik-mono-bold {
+  font-family: 'Aeonik Mono', monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* === AuxinNumbers Font Utility Class === */
 .auxin-numbers {
   font-family: 'AuxinNumbers', sans-serif;
@@ -188,6 +203,7 @@
 .aeonik-mono-thin,
 .aeonik-mono-regular,
 .aeonik-mono-medium,
+.aeonik-mono-bold,
 .auxin-numbers {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

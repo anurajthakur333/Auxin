@@ -3,6 +3,8 @@ import ScrambleText from './Scramble';
 import { Link, useLocation } from 'react-router-dom';
 import '../styles/fonts.css';
 import '../styles/Main.css';
+import { useSound } from '../hooks/useSound';
+import clickSound from '../assets/Sound/Click1.wav';
 
 const Footer = () => {
   const location = useLocation();
@@ -10,6 +12,7 @@ const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false);
+  const playClickSound = useSound(clickSound, { volume: 0.3 });
   const [headerAnimations, setHeaderAnimations] = useState({
     studio: [] as boolean[],
     workflow: [] as boolean[],
@@ -282,6 +285,8 @@ const Footer = () => {
   .icon-facebook { -webkit-mask-image: url('/Socials/facebook.svg'); mask-image: url('/Socials/facebook.svg'); }
   .icon-telegram { -webkit-mask-image: url('/Socials/telegram.svg'); mask-image: url('/Socials/telegram.svg'); }
   .icon-instagram { -webkit-mask-image: url('/Socials/instagram.svg'); mask-image: url('/Socials/instagram.svg'); }
+  .icon-medium { -webkit-mask-image: url('/Socials/medium.svg'); mask-image: url('/Socials/medium.svg'); }
+  .icon-behance { -webkit-mask-image: url('/Socials/behance.svg'); mask-image: url('/Socials/behance.svg'); }
   .icon-discord { -webkit-mask-image: url('/Socials/discord.svg'); mask-image: url('/Socials/discord.svg'); }
   /* Hover neon green */
   .social-link:hover .social-icon {
@@ -398,53 +403,53 @@ const Footer = () => {
   >
     {/* Column 1 (Left pinned) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
+      <h1 className="green-text mb-4 aeonik-mono-bold" style={{lineHeight:"40px",letterSpacing:"-0.05em",fontSize: "45px"}}>
         {renderAnimatedHeader('studio').slice(0, 3)} <br />
         {renderAnimatedHeader('studio').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-mono">About Us</a></li>
-        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-mono">Our Team</a></li>
-        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-mono">Careers</a></li>
+        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>About Us</a></li>
+        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Our Team</a></li>
+        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Careers</a></li>
       </ul>
     </div>
 
     {/* Column 2 (Middle) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
+      <h1 className="green-text mb-4 aeonik-mono-bold" style={{lineHeight:"40px",letterSpacing:"-0.05em",fontSize:"45px"}}>
         {renderAnimatedHeader('workflow').slice(0, 3)} <br />
         {renderAnimatedHeader('workflow').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-mono">Experience</a></li>
-        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-mono">Case Studies</a></li>
-        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-mono">Client Testimonials</a></li>
+        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Experience</a></li>
+        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Case Studies</a></li>
+        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Client Testimonials</a></li>
       </ul>
     </div>
 
     {/* Column 3 (Middle) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
+      <h1 className="green-text mb-4 aeonik-mono-bold" style={{lineHeight:"40px",letterSpacing:"-0.05em",fontSize:"45px"}}>
         {renderAnimatedHeader('playbook').slice(0, 3)} <br />
         {renderAnimatedHeader('playbook').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-mono">Growth Scripts</a></li>
-        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-mono">Insights</a></li>
-        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-mono">Trends</a></li>
+        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Growth Scripts</a></li>
+        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Insights</a></li>
+        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Trends</a></li>
       </ul>
     </div>
 
     {/* Column 4 (Right pinned) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
+      <h1 className="green-text mb-4 aeonik-mono-bold" style={{lineHeight:"40px",letterSpacing:"-0.05em",fontSize:"45px"}}>
         {renderAnimatedHeader('legal').slice(0, 7)} <br />
         {renderAnimatedHeader('legal').slice(8)}
       </h1>
       <ul className="list-unstyled">
-        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-mono">Privacy Policy</Link></li>
-        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-mono">Terms & Conditions</Link></li>
-        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-mono">Sitemap</a></li>
+        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Privacy Policy</Link></li>
+        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Terms & Conditions</Link></li>
+        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Sitemap</a></li>
       </ul>
     </div>
   </div>
@@ -458,22 +463,27 @@ const Footer = () => {
       }>
           {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
           <div className="d-flex align-items-center socials-row">
-          <a href="#" aria-label="Instagram" className="me-1 social-link">
+          <a href="#" aria-label="Instagram" className="me-1 social-link" onClick={playClickSound}>
               <span className="social-icon icon-instagram" aria-hidden="true" />
             </a>
-          <a href="#" aria-label="LinkedIn" className="me-1 social-link">
+          <a href="#" aria-label="LinkedIn" className="me-1 social-link" onClick={playClickSound}>
           <span className="social-icon icon-linkedin" aria-hidden="true" />
         </a>
-        <a href="#" aria-label="Facebook" className="me-1 social-link">
+        <a href="#" aria-label="Facebook" className="me-1 social-link" onClick={playClickSound}>
           <span className="social-icon icon-facebook" aria-hidden="true" />
         </a>
-        <a href="#" aria-label="Telegram" className="me-1 social-link">
+        <a href="#" aria-label="Telegram" className="me-1 social-link" onClick={playClickSound}>
           <span className="social-icon icon-telegram" aria-hidden="true" />
         </a>
-       
-            <a href="#" aria-label="Discord" className="social-link">
-              <span className="social-icon icon-discord" aria-hidden="true" />
-            </a>
+        <a href="#" aria-label="Medium" className="me-1 social-link" onClick={playClickSound}>
+          <span className="social-icon icon-medium" aria-hidden="true" />
+        </a>
+        <a href="#" aria-label="Behance" className="me-1 social-link" onClick={playClickSound}>
+          <span className="social-icon icon-behance" aria-hidden="true" />
+        </a>
+        <a href="#" aria-label="Discord" className="social-link" onClick={playClickSound}>
+          <span className="social-icon icon-discord" aria-hidden="true" />
+        </a>
 
                    
      
@@ -506,17 +516,23 @@ const Footer = () => {
                 </div>
               )}
             </div>
-            <ScrambleText
-              trigger="hover"
-              scrambleColor="#000"
-              speed="slow"
-              revealSpeed={0.3}
-              matchWidth
-              className="newsletter-subscribe aeonik-mono"
-              style={{ color: '#000' }}
+            <button 
+              type="button" 
+              onClick={playClickSound}
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
             >
-              CONNECT
-            </ScrambleText>
+              <ScrambleText
+                trigger="hover"
+                scrambleColor="#000"
+                speed="slow"
+                revealSpeed={0.3}
+                matchWidth
+                className="newsletter-subscribe aeonik-mono"
+                style={{ color: '#000' }}
+              >
+                CONNECT
+              </ScrambleText>
+            </button>
           </div>
         </div>
 
@@ -528,9 +544,9 @@ const Footer = () => {
       <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-mono"
       style={{paddingRight:'110px',paddingLeft:'110px',marginTop:'96px'}
       }>
-          <div className="green-text">© Auxin Media 2025</div>
-          <a href="mailto:Auxinmedia@gmail.com" className="green-text" style={{ textDecoration: 'none' }}>Auxinmedia@gmail.com</a>
-          <div className="green-text">Connect with Team</div>
+          <div className="green-text">© AUXIN 2025</div>
+          <a href="mailto:AUXINGMEDIAWORLD@GMAIL.COM" className="green-text" style={{ textDecoration: 'none' }} onClick={playClickSound}>AUXINGMEDIAWORLD@GMAIL.COM</a>
+          <div className="green-text">CONNECT WITH TEAM</div>
         </div>
 
       {/* Large AUXINMEDIA text - Flush with bottom */}
@@ -561,6 +577,7 @@ const Footer = () => {
             to="/"
             aria-label="Go to home"
             onClick={(e) => {
+              playClickSound();
               if (location.pathname === "/") {
                 e.preventDefault();
                 if (location.hash) {
