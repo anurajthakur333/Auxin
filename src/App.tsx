@@ -17,6 +17,7 @@ import GoogleCallback from './pages/GoogleCallback';
 import SplinePage from './pages/Spline';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import { useAuth } from './contexts/AuthContext';
@@ -78,6 +79,7 @@ export default function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <ProfileMenuWrapper />
         </Router>
