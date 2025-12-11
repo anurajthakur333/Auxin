@@ -1,9 +1,10 @@
 import "../styles/fonts.css";
 import "../styles/Navbar.css";
 import ScrambleText from "./Scramble";
+import LiquidGlass from "./LiquidGlass";
 import { useAuth } from "../contexts/AuthContext";
 import { useProfileMenu } from "../contexts/ProfileMenuContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSound } from "../hooks/useSound";
 import clickSound from "../assets/Sound/Click1.wav";
@@ -84,6 +85,8 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onC
 const Navbar = () => {
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(true);
+  const [navWidth, setNavWidth] = useState(1920);
+  const navRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { openProfileMenu } = useProfileMenu();
   const playClickSound = useSound(clickSound, { volume: 0.3});
@@ -105,17 +108,58 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Track navbar width for LiquidGlass
+  useEffect(() => {
+    const updateWidth = () => {
+      if (navRef.current) {
+        setNavWidth(navRef.current.offsetWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
   return (
       <div 
+        ref={navRef}
         className="navbar navbar-expand-xxl fixed-bottom" 
         style={{ 
           height: '50px',
+          transform: `translateY(${isVisible ? '0' : '100%'})`,
+          transition: 'transform 0.3s ease-in-out',
+          position: 'fixed',
+          overflow: 'hidden'
+        }}
+      >
+      {/* Liquid Glass Background */}
+      <LiquidGlass
+        width={navWidth}
+        height={50}
+        radius={0}
+        border={0.1}
+        lightness={50}
+        alpha={0.85}
+        blur={8}
+        scale={-120}
+        frost={0.08}
+        saturation={1.2}
+        chromatic={{ r: 0, g: 8, b: 16 }}
+        blend="difference"
+      />
+      
+      {/* Navbar Content */}
+      <div 
+        className="navbar-content"
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          width: '100%',
+          height: '100%',
           display: 'grid',
           gridTemplateColumns: '1fr auto 1fr',
           alignItems: 'center',
           padding: '0 20px',
-          transform: `translateY(${isVisible ? '0' : '100%'})`,
-          transition: 'transform 0.3s ease-in-out'
         }}
       >
       {/* Left side links */}
@@ -198,6 +242,7 @@ const Navbar = () => {
         ) : (
           <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" onClickSound={playClickSound} />
         )}
+      </div>
       </div>
     </div>
   );
