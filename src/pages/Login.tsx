@@ -10,6 +10,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
@@ -18,6 +19,25 @@ const Login: React.FC = () => {
   const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Check for email verification status in URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const verified = params.get('verified');
+    
+    if (verified === 'success') {
+      setSuccessMessage('Email verified successfully! You can now log in.');
+      // Clean up URL
+      window.history.replaceState({}, '', '/login');
+    } else if (verified === 'already') {
+      setSuccessMessage('Email already verified. Please log in.');
+      window.history.replaceState({}, '', '/login');
+    } else if (verified === 'failed') {
+      const errorMsg = params.get('error') || 'Verification failed';
+      setError(errorMsg);
+      window.history.replaceState({}, '', '/login');
+    }
+  }, [location.search]);
 
   // Add global error handler
   useEffect(() => {
@@ -90,6 +110,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setIsLoading(true);
 
     try {
@@ -269,6 +290,21 @@ const Login: React.FC = () => {
             }}>
               Welcome Back To Auxin
             </p>
+
+            {successMessage && (
+              <div className="aeonik-regular" style={{
+                background: 'rgba(57, 255, 20, 0.1)',
+                border: '1px solid rgba(57, 255, 20, 0.3)',
+                borderRadius: '0px',
+                padding: '0.75rem',
+                marginBottom: '1rem',
+                color: '#39FF14',
+                fontSize: '0.9rem',
+                textAlign: 'center'
+              }}>
+                {successMessage}
+              </div>
+            )}
 
             {error && (
               <div className="aeonik-regular" style={{
