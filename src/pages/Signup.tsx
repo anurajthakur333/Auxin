@@ -263,7 +263,7 @@ const Signup: React.FC = () => {
 
           {/* Signup Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-regular" style={{ 
+            <h2 className="aeonik-mono" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
               fontWeight: '400',
@@ -273,7 +273,7 @@ const Signup: React.FC = () => {
               Create Account
             </h2>
             
-            <p className="aeonik-regular" style={{ 
+            <p className="aeonik-mono" style={{ 
               color: '#888', 
               fontSize: '0.9rem', 
               textAlign: 'center',
@@ -283,7 +283,7 @@ const Signup: React.FC = () => {
             </p>
 
             {error && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
                 borderRadius: '0',
@@ -312,7 +312,7 @@ const Signup: React.FC = () => {
 
             {/* Name Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -333,7 +333,7 @@ const Signup: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular signup-input"
+                  className="aeonik-mono signup-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -356,7 +356,7 @@ const Signup: React.FC = () => {
                   }}
                 />
                 {(!isNameFocused && name.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -384,7 +384,7 @@ const Signup: React.FC = () => {
 
             {/* Email Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -405,7 +405,7 @@ const Signup: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular signup-input"
+                  className="aeonik-mono signup-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -428,7 +428,7 @@ const Signup: React.FC = () => {
                   }}
                 />
                 {(!isEmailFocused && email.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -456,7 +456,7 @@ const Signup: React.FC = () => {
 
             {/* Password Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -477,7 +477,7 @@ const Signup: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular signup-input"
+                  className="aeonik-mono signup-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -509,7 +509,7 @@ const Signup: React.FC = () => {
                   }}
                 />
                 {(!isPasswordFocused && password.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -536,7 +536,7 @@ const Signup: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="aeonik-regular"
+                  className="aeonik-mono"
                   style={{
                     position: 'absolute',
                     right: '0.75rem',
@@ -577,7 +577,7 @@ const Signup: React.FC = () => {
 
             {/* Confirm Password Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -598,7 +598,7 @@ const Signup: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular signup-input"
+                  className="aeonik-mono signup-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -630,7 +630,7 @@ const Signup: React.FC = () => {
                   }}
                 />
                 {(!isConfirmPasswordFocused && confirmPassword.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -657,7 +657,7 @@ const Signup: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="aeonik-regular"
+                  className="aeonik-mono"
                   style={{
                     position: 'absolute',
                     right: '0.75rem',
@@ -720,7 +720,7 @@ const Signup: React.FC = () => {
                   marginTop: '2px'
                 }}
               />
-              <label htmlFor="terms" className="aeonik-regular" style={{ 
+              <label htmlFor="terms" className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem',
                 cursor: 'pointer',
@@ -741,7 +741,7 @@ const Signup: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="aeonik-regular"
+              className="aeonik-mono"
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -783,12 +783,12 @@ const Signup: React.FC = () => {
 
             {/* Login Link */}
             <div style={{ textAlign: 'center' }}>
-              <span className="aeonik-regular" style={{ color: '#888', fontSize: '0.9rem' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
                 Already have an account?{' '}
               </span>
               <Link 
                 to="/login" 
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',

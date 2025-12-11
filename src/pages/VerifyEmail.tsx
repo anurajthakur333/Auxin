@@ -20,7 +20,6 @@ const VerifyEmail: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
 
   // Auto-send verification email on mount
   useEffect(() => {
@@ -69,7 +68,6 @@ const VerifyEmail: React.FC = () => {
       if (res?.success) {
         console.log('✅ Verification email sent');
         setMessage('Verification link sent! Please check your email and click the link to verify.');
-        setEmailSent(true);
       } else {
         throw new Error(res?.error || 'Failed to send verification email');
       }
@@ -97,11 +95,11 @@ const VerifyEmail: React.FC = () => {
           border: '1px solid rgba(255, 255, 255, 0.1)',
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
         }}>
-          <h2 className="aeonik-regular" style={{ color: 'white', fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>
+          <h2 className="aeonik-mono" style={{ color: 'white', fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>
             Verify Your Email
           </h2>
           
-          <p className="aeonik-regular" style={{ color: '#888', fontSize: '0.9rem', textAlign: 'center', marginBottom: '2rem' }}>
+          <p className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem', textAlign: 'center', marginBottom: '2rem' }}>
             {email ? (
               <>We've sent a verification link to <span style={{ color: '#39FF14' }}>{email}</span></>
             ) : (
@@ -110,7 +108,7 @@ const VerifyEmail: React.FC = () => {
           </p>
 
           {error && (
-            <div className="aeonik-regular" style={{
+            <div className="aeonik-mono" style={{
               background: 'rgba(255, 0, 0, 0.1)',
               border: '1px solid rgba(255, 0, 0, 0.3)',
               borderRadius: '0px',
@@ -125,7 +123,7 @@ const VerifyEmail: React.FC = () => {
           )}
 
           {message && (
-            <div className="aeonik-regular" style={{
+            <div className="aeonik-mono" style={{
               background: 'rgba(57,255,20,0.08)',
               border: '1px solid rgba(57,255,20,0.3)',
               borderRadius: '0px',
@@ -159,7 +157,7 @@ const VerifyEmail: React.FC = () => {
           </div>
 
           {/* Instructions */}
-          <div className="aeonik-regular" style={{ 
+          <div className="aeonik-mono" style={{ 
             color: '#888', 
             fontSize: '0.85rem', 
             textAlign: 'center',
@@ -176,7 +174,7 @@ const VerifyEmail: React.FC = () => {
             type="button"
             onClick={handleSendVerification}
             disabled={isLoading}
-            className="aeonik-regular"
+            className="aeonik-mono"
             style={{
               width: '100%',
               padding: '0.75rem',
@@ -200,7 +198,7 @@ const VerifyEmail: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="aeonik-regular"
+              className="aeonik-mono"
               style={{ 
                 color: '#888', 
                 background: 'transparent', 

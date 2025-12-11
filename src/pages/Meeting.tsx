@@ -52,7 +52,7 @@ const Meeting = () => {
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <div className="container-fluid" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           <h1
-            className="aeonik-regular text-white"
+            className="aeonik-mono text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
               lineHeight: "0.9",
@@ -67,7 +67,7 @@ const Meeting = () => {
           </h1>
           
           <div 
-            className="aeonik-regular text-white"
+            className="aeonik-mono text-white"
             style={{
               maxWidth: "900px",
               paddingLeft: "10px",
@@ -78,7 +78,7 @@ const Meeting = () => {
               text="Turn Organized Time Into Lasting Success." 
               disabled={false} 
               speed={3} 
-              className="aeonik-regular meeting-subtitle"
+              className="aeonik-mono meeting-subtitle"
             />
           </div>
 

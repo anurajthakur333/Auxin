@@ -6,7 +6,7 @@ import { useProfileMenu } from "../contexts/ProfileMenuContext";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSound } from "../hooks/useSound";
-import clickSound from "../assets/Sound/Click1.mp3";
+import clickSound from "../assets/Sound/Click1.wav";
 
 // Reusable nav link with scramble on hover in/out
 const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onClickSound }: { href: string; label: string; minWidth?: number; direction?: "left-to-right" | "right-to-left" | "center-out" | "random"; onClickSound?: () => void }) => {
@@ -18,7 +18,7 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onC
   const isHashLink = href.startsWith('#');
   
   const linkProps = {
-    className: "nav-link text-white aeonik-light",
+    className: "nav-link text-white aeonik-mono",
     style: { textDecoration: "none" },
     onMouseEnter: () => setHovered(true),
     onMouseLeave: () => setHovered(false)
@@ -86,7 +86,7 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const { user } = useAuth();
   const { openProfileMenu } = useProfileMenu();
-  const playClickSound = useSound(clickSound, { volume: 0.5 });
+  const playClickSound = useSound(clickSound, { volume: 0.3});
 
   useEffect(() => {
     const handleScroll = () => {
@@ -159,7 +159,7 @@ const Navbar = () => {
         {/* User Icon / Auth Section */}
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span className="aeonik-regular" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
+            <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
               {user.name}
             </span>
             <button

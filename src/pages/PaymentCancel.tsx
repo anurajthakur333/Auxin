@@ -84,7 +84,7 @@ const PaymentCancel = () => {
                 animation: 'spin 1s linear infinite',
                 margin: '0 auto 2rem'
               }} />
-              <h2 className="aeonik-regular" style={{ 
+              <h2 className="aeonik-mono" style={{ 
                 color: '#FFA500', 
                 marginBottom: '1rem',
                 fontSize: '1.5rem'
@@ -119,7 +119,7 @@ const PaymentCancel = () => {
                   <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
               </div>
-              <h2 className="aeonik-regular" style={{ 
+              <h2 className="aeonik-mono" style={{ 
                 color: '#FFA500', 
                 marginBottom: '1rem',
                 fontSize: '1.5rem'

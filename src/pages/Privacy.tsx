@@ -46,7 +46,7 @@ const Privacy = () => {
       <div style={{ flex: 1, }}>
         <div className="container-fluid">
           <h1
-            className="aeonik-regular text-white"
+            className="aeonik-mono text-white"
             style={{
               fontSize: "clamp(32px, 15vw, 770px)",
               letterSpacing: "-15px",
@@ -66,7 +66,7 @@ const Privacy = () => {
           </h1>
           
           <div 
-            className="aeonik-regular text-white"
+            className="aeonik-mono text-white"
             style={{
               fontSize: "clamp(16px, 2vw, 18px)",
               lineHeight: "1.6",

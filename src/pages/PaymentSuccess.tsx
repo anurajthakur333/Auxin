@@ -133,7 +133,7 @@ const PaymentSuccess = () => {
                 animation: 'spin 1s linear infinite',
                 margin: '0 auto 2rem'
               }} />
-              <h2 className="aeonik-regular" style={{ 
+              <h2 className="aeonik-mono" style={{ 
                 color: '#39FF14', 
                 marginBottom: '1rem',
                 fontSize: '1.5rem'
@@ -168,7 +168,7 @@ const PaymentSuccess = () => {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h2 className="aeonik-regular" style={{ 
+              <h2 className="aeonik-mono" style={{ 
                 color: '#39FF14', 
                 marginBottom: '1rem',
                 fontSize: '1.5rem'
@@ -252,7 +252,7 @@ const PaymentSuccess = () => {
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </div>
-              <h2 className="aeonik-regular" style={{ 
+              <h2 className="aeonik-mono" style={{ 
                 color: '#ff6b6b', 
                 marginBottom: '1rem',
                 fontSize: '1.5rem'

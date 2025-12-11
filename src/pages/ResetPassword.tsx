@@ -132,7 +132,7 @@ const ResetPassword: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <div className="aeonik-regular" style={{ color: '#39FF14', fontSize: '1.2rem' }}>
+        <div className="aeonik-mono" style={{ color: '#39FF14', fontSize: '1.2rem' }}>
           Validating reset link...
         </div>
       </div>
@@ -162,7 +162,7 @@ const ResetPassword: React.FC = () => {
             boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
             textAlign: 'center'
           }}>
-            <h2 className="aeonik-regular" style={{ 
+            <h2 className="aeonik-mono" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
               fontWeight: '400',
@@ -171,7 +171,7 @@ const ResetPassword: React.FC = () => {
               Invalid Reset Link
             </h2>
             
-            <div className="aeonik-regular" style={{
+            <div className="aeonik-mono" style={{
               background: 'rgba(255, 0, 0, 0.1)',
               border: '1px solid rgba(255, 0, 0, 0.3)',
               borderRadius: '0',
@@ -185,7 +185,7 @@ const ResetPassword: React.FC = () => {
 
             <Link 
               to="/forgot-password" 
-              className="aeonik-regular"
+              className="aeonik-mono"
               style={{ 
                 display: 'inline-block',
                 background: 'linear-gradient(135deg, #39FF14, #00cc00)',
@@ -202,7 +202,7 @@ const ResetPassword: React.FC = () => {
             <div style={{ marginTop: '1.5rem' }}>
               <Link 
                 to="/login" 
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',
@@ -273,7 +273,7 @@ const ResetPassword: React.FC = () => {
      
           {/* Reset Password Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-regular" style={{ 
+            <h2 className="aeonik-mono" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
               fontWeight: '400',
@@ -283,7 +283,7 @@ const ResetPassword: React.FC = () => {
               Create New Password
             </h2>
             
-            <p className="aeonik-regular" style={{ 
+            <p className="aeonik-mono" style={{ 
               color: '#888', 
               fontSize: '0.9rem', 
               textAlign: 'center',
@@ -293,7 +293,7 @@ const ResetPassword: React.FC = () => {
             </p>
 
             {error && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
                 borderRadius: '0',
@@ -308,7 +308,7 @@ const ResetPassword: React.FC = () => {
             )}
 
             {success && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(57, 255, 20, 0.1)',
                 border: '1px solid rgba(57, 255, 20, 0.3)',
                 borderRadius: '0',
@@ -324,7 +324,7 @@ const ResetPassword: React.FC = () => {
 
             {/* Password Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -351,7 +351,7 @@ const ResetPassword: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular reset-input"
+                  className="aeonik-mono reset-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -374,7 +374,7 @@ const ResetPassword: React.FC = () => {
                   }}
                 />
                 {(!isPasswordFocused && password.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -399,7 +399,7 @@ const ResetPassword: React.FC = () => {
                 )}
               </div>
               {passwordError && (
-                <div className="aeonik-regular" style={{
+                <div className="aeonik-mono" style={{
                   color: '#ff6b6b',
                   fontSize: '0.8rem',
                   marginTop: '0.25rem',
@@ -412,7 +412,7 @@ const ResetPassword: React.FC = () => {
 
             {/* Confirm Password Field */}
             <div style={{ marginBottom: '2rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -435,7 +435,7 @@ const ResetPassword: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular reset-input"
+                  className="aeonik-mono reset-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -458,7 +458,7 @@ const ResetPassword: React.FC = () => {
                   }}
                 />
                 {(!isConfirmFocused && confirmPassword.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -483,7 +483,7 @@ const ResetPassword: React.FC = () => {
                 )}
               </div>
               {confirmError && (
-                <div className="aeonik-regular" style={{
+                <div className="aeonik-mono" style={{
                   color: '#ff6b6b',
                   fontSize: '0.8rem',
                   marginTop: '0.25rem',
@@ -498,7 +498,7 @@ const ResetPassword: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading || !!success}
-              className="aeonik-regular"
+              className="aeonik-mono"
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -534,12 +534,12 @@ const ResetPassword: React.FC = () => {
 
             {/* Back to Login Link */}
             <div style={{ textAlign: 'center' }}>
-              <span className="aeonik-regular" style={{ color: '#888', fontSize: '0.9rem' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
                 Remember your password?{' '}
               </span>
               <Link 
                 to="/login" 
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',

@@ -222,7 +222,7 @@ const ForgotPassword: React.FC = () => {
      
           {/* Forgot Password Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-regular" style={{ 
+            <h2 className="aeonik-mono" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
               fontWeight: '400',
@@ -232,7 +232,7 @@ const ForgotPassword: React.FC = () => {
               Reset Password
             </h2>
             
-            <p className="aeonik-regular" style={{ 
+            <p className="aeonik-mono" style={{ 
               color: '#888', 
               fontSize: '0.9rem', 
               textAlign: 'center',
@@ -242,7 +242,7 @@ const ForgotPassword: React.FC = () => {
             </p>
 
             {error && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
                 borderRadius: '0',
@@ -257,7 +257,7 @@ const ForgotPassword: React.FC = () => {
             )}
 
             {success && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(57, 255, 20, 0.1)',
                 border: '1px solid rgba(57, 255, 20, 0.3)',
                 borderRadius: '0',
@@ -273,7 +273,7 @@ const ForgotPassword: React.FC = () => {
 
             {/* Email Field */}
             <div style={{ marginBottom: '2rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -301,7 +301,7 @@ const ForgotPassword: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular forgot-input"
+                  className="aeonik-mono forgot-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -324,7 +324,7 @@ const ForgotPassword: React.FC = () => {
                   }}
                 />
                 {(!isEmailFocused && email.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -349,7 +349,7 @@ const ForgotPassword: React.FC = () => {
                 )}
               </div>
               {emailError && (
-                <div className="aeonik-regular" style={{
+                <div className="aeonik-mono" style={{
                   color: '#ff6b6b',
                   fontSize: '0.8rem',
                   marginTop: '0.25rem',
@@ -364,7 +364,7 @@ const ForgotPassword: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading || !!success}
-              className="aeonik-regular"
+              className="aeonik-mono"
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -408,12 +408,12 @@ const ForgotPassword: React.FC = () => {
 
             {/* Back to Login Link */}
             <div style={{ textAlign: 'center' }}>
-              <span className="aeonik-regular" style={{ color: '#888', fontSize: '0.9rem' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
                 Remember your password?{' '}
               </span>
               <Link 
                 to="/login" 
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',

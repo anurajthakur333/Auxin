@@ -273,7 +273,7 @@ const Login: React.FC = () => {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-regular" style={{ 
+            <h2 className="aeonik-mono" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
               marginBottom: '0.5rem',
@@ -282,7 +282,7 @@ const Login: React.FC = () => {
               Login
             </h2>
             
-            <p className="aeonik-regular" style={{ 
+            <p className="aeonik-mono" style={{ 
               color: '#888', 
               fontSize: '0.9rem', 
               textAlign: 'center',
@@ -292,7 +292,7 @@ const Login: React.FC = () => {
             </p>
 
             {successMessage && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(57, 255, 20, 0.1)',
                 border: '1px solid rgba(57, 255, 20, 0.3)',
                 borderRadius: '0px',
@@ -307,7 +307,7 @@ const Login: React.FC = () => {
             )}
 
             {error && (
-              <div className="aeonik-regular" style={{
+              <div className="aeonik-mono" style={{
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
                 borderRadius: '0px',
@@ -336,7 +336,7 @@ const Login: React.FC = () => {
 
             {/* Email Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -357,7 +357,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular login-input"
+                  className="aeonik-mono login-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -388,7 +388,7 @@ const Login: React.FC = () => {
                   }}
                 />
                 {(!isEmailFocused && email.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -416,7 +416,7 @@ const Login: React.FC = () => {
 
             {/* Password Field */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-regular" style={{ 
+              <label className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem', 
                 marginBottom: '0.5rem',
@@ -437,7 +437,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder=""
                   required
-                  className="aeonik-regular login-input"
+                  className="aeonik-mono login-input"
                   style={{
                     width: '100%',
                     padding: '0.75rem',
@@ -469,7 +469,7 @@ const Login: React.FC = () => {
                   }}
                 />
                 {(!isPasswordFocused && password.length === 0) && (
-                  <div className="aeonik-regular" style={{
+                  <div className="aeonik-mono" style={{
                     position: 'absolute',
                     left: '0.75rem',
                     top: '50%',
@@ -496,7 +496,7 @@ const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="aeonik-regular"
+                  className="aeonik-mono"
                   style={{
                     position: 'absolute',
                     right: '0.75rem',
@@ -558,7 +558,7 @@ const Login: React.FC = () => {
                   MozAppearance: 'none'
                 }}
               />
-              <label htmlFor="remember" className="aeonik-regular" style={{ 
+              <label htmlFor="remember" className="aeonik-mono" style={{ 
                 color: 'white', 
                 fontSize: '0.9rem',
                 cursor: 'pointer'
@@ -571,7 +571,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="aeonik-regular"
+              className="aeonik-mono"
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -615,7 +615,7 @@ const Login: React.FC = () => {
             <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
               <Link 
                 to="/forgot-password" 
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',
@@ -634,12 +634,12 @@ const Login: React.FC = () => {
 
             {/* Sign Up Link */}
             <div style={{ textAlign: 'center' }}>
-              <span className="aeonik-regular" style={{ color: '#888', fontSize: '0.9rem' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
                 Don't have an account?{' '}
               </span>
               <Link 
                 to="/signup" 
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',

@@ -18,7 +18,7 @@ const Footer = () => {
   });
   const textRef = useRef<HTMLDivElement>(null);
   const headersRef = useRef<HTMLDivElement>(null);
-  const fullText = "Auxin Media";
+  const fullText = "Auxin";
   const letters = fullText.split('');
   
   const headerTexts = {
@@ -216,7 +216,7 @@ const Footer = () => {
     opacity: 1;
   }
 
-  /* === ENHANCED: Clamp-based responsive font-size for the large "Auxin Media" footer text === */
+  /* === ENHANCED: Clamp-based responsive font-size for the large "Auxin" footer text === */
   .footer-text {
     /* 
     clamp(minimum, preferred, maximum)
@@ -224,8 +224,8 @@ const Footer = () => {
     - preferred: 25vw for responsive scaling
     - max: 620px for ultra-wide screens
     */
-    font-size: clamp(8vw, 21vw, 620px) !important;
-    letter-spacing: -0.07em;
+    font-size: clamp(12vw, 36vw, 920px) !important;
+    letter-spacing: -0.05em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -398,53 +398,53 @@ const Footer = () => {
   >
     {/* Column 1 (Left pinned) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
         {renderAnimatedHeader('studio').slice(0, 3)} <br />
         {renderAnimatedHeader('studio').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-regular">About Us</a></li>
-        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-regular">Our Team</a></li>
-        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-regular">Careers</a></li>
+        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-mono">About Us</a></li>
+        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-mono">Our Team</a></li>
+        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-mono">Careers</a></li>
       </ul>
     </div>
 
     {/* Column 2 (Middle) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
         {renderAnimatedHeader('workflow').slice(0, 3)} <br />
         {renderAnimatedHeader('workflow').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-regular">Experience</a></li>
-        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-regular">Case Studies</a></li>
-        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-regular">Client Testimonials</a></li>
+        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-mono">Experience</a></li>
+        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-mono">Case Studies</a></li>
+        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-mono">Client Testimonials</a></li>
       </ul>
     </div>
 
     {/* Column 3 (Middle) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
         {renderAnimatedHeader('playbook').slice(0, 3)} <br />
         {renderAnimatedHeader('playbook').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-regular">Growth Scripts</a></li>
-        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-regular">Insights</a></li>
-        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-regular">Trends</a></li>
+        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-mono">Growth Scripts</a></li>
+        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-mono">Insights</a></li>
+        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-mono">Trends</a></li>
       </ul>
     </div>
 
     {/* Column 4 (Right pinned) */}
     <div>
-      <h1 className="green-text fw-bold mb-4 aeonik-regular" style={{lineHeight:"40px"}}>
+      <h1 className="green-text fw-bold mb-4 aeonik-mono" style={{lineHeight:"40px"}}>
         {renderAnimatedHeader('legal').slice(0, 7)} <br />
         {renderAnimatedHeader('legal').slice(8)}
       </h1>
       <ul className="list-unstyled">
-        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-regular">Privacy Policy</Link></li>
-        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-regular">Terms & Conditions</Link></li>
-        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-regular">Sitemap</a></li>
+        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-mono">Privacy Policy</Link></li>
+        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-mono">Terms & Conditions</Link></li>
+        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-mono">Sitemap</a></li>
       </ul>
     </div>
   </div>
@@ -481,11 +481,11 @@ const Footer = () => {
 
           {/* Static newsletter UI */}
           <div className="newsletter-container mt-4 mt-lg-0">
-            <div className="newsletter-input-wrapper aeonik-regular">
+            <div className="newsletter-input-wrapper aeonik-mono">
               <input
                 type="email"
                 aria-label="Email"
-                className="newsletter-input-box aeonik-regular green-text"
+                className="newsletter-input-box aeonik-mono green-text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => setIsEmailFocused(true)}
@@ -493,7 +493,7 @@ const Footer = () => {
                 placeholder=""
               />
               {(!isEmailFocused && email.length === 0) && (
-                <div className="newsletter-placeholder-overlay aeonik-regular">
+                <div className="newsletter-placeholder-overlay aeonik-mono">
                   <ScrambleText
                     trigger="visible"
                     scrambleColor="#fff"
@@ -512,7 +512,7 @@ const Footer = () => {
               speed="slow"
               revealSpeed={0.3}
               matchWidth
-              className="newsletter-subscribe aeonik-regular"
+              className="newsletter-subscribe aeonik-mono"
               style={{ color: '#000' }}
             >
               CONNECT
@@ -525,7 +525,7 @@ const Footer = () => {
 
 
 
-      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-regular"
+      <div className="footer-bottom d-flex flex-wrap justify-content-between align-items-center aeonik-mono"
       style={{paddingRight:'110px',paddingLeft:'110px',marginTop:'96px'}
       }>
           <div className="green-text">© Auxin Media 2025</div>
@@ -536,7 +536,7 @@ const Footer = () => {
       {/* Large AUXINMEDIA text - Flush with bottom */}
       <div 
         ref={textRef}
-        className="auxin-text aeonik-regular mb-3" 
+        className="auxin-text aeonik-mono mb-3" 
         style={{
           height: 'auto',
           alignItems: 'center',
@@ -547,7 +547,7 @@ const Footer = () => {
         }}
       >
         <span 
-          className="aeonik-regular footer-text"
+          className="aeonik-mono footer-text"
           style={{
             marginTop:'96px',
             letterSpacing: '-0.07em',

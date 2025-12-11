@@ -132,11 +132,11 @@ const Home = () => {
           {/* Text Content */}
           <div className="text-center px-4" style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
             <div
-              className="aeonik-regular text-white"
+              className="aeonik-mono text-white"
               style={{
-                fontSize: "clamp(32px, 6vw, 77px)",
+                fontSize: "clamp(15px, 6vw, 50px)",
                 letterSpacing: "-4px",
-                lineHeight: "70px",
+                lineHeight: "50px",
                 fontWeight: 400,
                 maxWidth: "800px",
                 margin: "0 auto",
@@ -144,41 +144,28 @@ const Home = () => {
             >
               <ScrambleText
                 trigger="load"
-                  speed="fast"
-              direction="left-to-right"
+                  speed="ultra-slow"
+              direction="center-out"
               matchWidth={true}
               revealSpeed={0.3}
                 scrambleIntensity={1}
                 delay={50}
                 style={{ color: "white" }}
               >
-                REDEFINING BUSINESS
+                REDEFINING BUSINESS WITH THE
               </ScrambleText>
-              <br />
-              <ScrambleText
-                trigger="load"
-                speed="fast"
-                direction="left-to-right"
-                matchWidth={true}
-                revealSpeed={0.3}
-                scrambleIntensity={1}
-                delay={100}
-                style={{ color: "white" }}
-              >
-                WITH THE INTELLIGENCE
-              </ScrambleText>
-              <br />
+             
               <ScrambleText
                       trigger="load"
-               speed="fast"
-                direction="left-to-right"
+               speed="ultra-slow"
+                direction="center-out"
                matchWidth={true}
                revealSpeed={0.3}
                 scrambleIntensity={1}
                 delay={300}
                 style={{ color: "white" }}
               >
-                YOU CAN TRUST.
+             INTELLIGENCE YOU CAN TRUST
               </ScrambleText>
             </div>
           </div>
@@ -189,9 +176,9 @@ const Home = () => {
        
           <div className="" style={{ position: "relative", zIndex: 1 }}>
             <div
-              className="aeonik-regular text-white"
+              className="aeonik-mono text-white"
               style={{
-                fontSize: "clamp(28px, 5vw, 65px)",
+                fontSize: "clamp(28px, 5vw, 50px)",
                 letterSpacing: "-3px",
                 lineHeight: "1.1",
                 fontWeight: 400,
@@ -289,9 +276,9 @@ const Home = () => {
         <div className="d-flex align-items-start justify-content-end" style={{ minHeight: "100vh", padding: "25px 25px 80px 0" }}>
           <div className="">
             <div
-              className="aeonik-regular text-white"
+              className="aeonik-mono text-white"
               style={{
-                fontSize: "clamp(28px, 5vw, 65px)",
+                fontSize: "clamp(28px, 5vw, 50px)",
                 letterSpacing: "-3px",
                 lineHeight: "1.1",
                 fontWeight: 400,
@@ -358,7 +345,7 @@ const Home = () => {
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", padding: "80px 0" }}>
           <div className="text-center px-4">
             <div
-              className="aeonik-regular text-white"
+              className="aeonik-mono text-white"
               style={{
                 fontSize: "clamp(32px, 6vw, 77px)",
                 letterSpacing: "-4px",
@@ -389,7 +376,7 @@ const Home = () => {
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
@@ -431,7 +418,7 @@ const Home = () => {
             {/* Left description */}
             <div style={{ maxWidth: "500px", flex: "1" }}>
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
@@ -493,7 +480,7 @@ const Home = () => {
             {/* Right green text */}
             <div style={{ maxWidth: "500px", flex: "1", textAlign: "right", }}>
               <div
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{
                   fontSize: "clamp(47.59px, 3vw, 32px)",
                   letterSpacing: "-1px",
@@ -551,7 +538,7 @@ const Home = () => {
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
@@ -605,7 +592,7 @@ const Home = () => {
             {/* Left description */}
             <div style={{ maxWidth: "500px", flex: "1" }}>
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
@@ -652,7 +639,7 @@ const Home = () => {
             {/* Right green text */}
             <div style={{ maxWidth: "700px", flex: "1", textAlign: "right" }}>
               <div
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{
                   fontSize: "clamp(47.59px, 3vw, 32px)",
                   letterSpacing: "-1px",
@@ -696,7 +683,7 @@ const Home = () => {
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
@@ -736,7 +723,7 @@ const Home = () => {
             {/* Left description */}
             <div style={{ maxWidth: "500px", flex: "1" }}>
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
@@ -783,7 +770,7 @@ const Home = () => {
             {/* Right green text */}
             <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
               <div
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{
                   fontSize: "clamp(47.59px, 3vw, 32px)",
                   letterSpacing: "-1px",
@@ -838,7 +825,7 @@ const Home = () => {
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
@@ -879,7 +866,7 @@ const Home = () => {
             {/* Left description */}
             <div style={{ maxWidth: "500px", flex: "1" }}>
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
@@ -926,7 +913,7 @@ const Home = () => {
             {/* Right green text */}
             <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
               <div
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{
                   fontSize: "clamp(47.59px, 3vw, 32px)",
                   letterSpacing: "-1px",
@@ -969,7 +956,7 @@ const Home = () => {
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
@@ -1023,7 +1010,7 @@ const Home = () => {
             {/* Left description */}
             <div style={{ maxWidth: "500px", flex: "1" }}>
               <div
-                className="aeonik-regular text-white"
+                className="aeonik-mono text-white"
                 style={{
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
@@ -1103,7 +1090,7 @@ const Home = () => {
             {/* Right green text */}
             <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
               <div
-                className="aeonik-regular"
+                className="aeonik-mono"
                 style={{
                   fontSize: "clamp(47.59px, 3vw, 32px)",
                   letterSpacing: "-1px",

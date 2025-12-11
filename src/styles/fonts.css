@@ -3,7 +3,44 @@
   font-family: 'AuxinNumbers';
   /* format('truetype') - Tells browsers this is a TrueType font file (.ttf) */
   src: url('../assets/fonts/AuxinNumbers.ttf') format('truetype');
+  font-display: swap;
 }
+
+/* ============================================
+   Aeonik Mono (Monospace)
+   ============================================ */
+
+/* Aeonik Mono Thin */
+@font-face {
+  font-family: 'Aeonik Mono';
+  src: url('../assets/fonts/AeonikMono-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Aeonik Mono Regular */
+@font-face {
+  font-family: 'Aeonik Mono';
+  src: url('../assets/fonts/AeonikMono-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Aeonik Mono Medium */
+@font-face {
+  font-family: 'Aeonik Mono';
+  src: url('../assets/fonts/AeonikMono-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================
+   Aeonik (Sans-Serif)
+   ============================================ */
+
 /* Aeonik Regular */
 @font-face {
     font-family: 'Aeonik';
@@ -105,11 +142,40 @@
   font-style: italic;
 }
 
+/* === Aeonik Mono Utility Classes === */
+
+/* Base Aeonik Mono font */
+.aeonik-mono {
+  font-family: 'Aeonik Mono', monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Aeonik Mono weights */
+.aeonik-mono-thin {
+  font-family: 'Aeonik Mono', monospace;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.aeonik-mono-regular {
+  font-family: 'Aeonik Mono', monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.aeonik-mono-medium {
+  font-family: 'Aeonik Mono', monospace;
+  font-weight: 500;
+  font-style: normal;
+}
+
 /* === AuxinNumbers Font Utility Class === */
 .auxin-numbers {
-  font-family: 'AuxinNumbers';
-  /* Optionally, only apply to numbers using a selector or span */
+  font-family: 'AuxinNumbers', sans-serif;
+  font-display: swap;
 }
+
 /* Font smoothing */
 .aeonik-font,
 .aeonik-light,
@@ -117,7 +183,12 @@
 .aeonik-bold,
 .aeonik-light-italic,
 .aeonik-italic,
-.aeonik-bold-italic {
+.aeonik-bold-italic,
+.aeonik-mono,
+.aeonik-mono-thin,
+.aeonik-mono-regular,
+.aeonik-mono-medium,
+.auxin-numbers {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
