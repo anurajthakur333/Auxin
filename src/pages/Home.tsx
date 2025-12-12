@@ -375,7 +375,7 @@ const Home = () => {
         </div>
 
       {/* Snapscroll - 1 */}
-        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -388,6 +388,7 @@ const Home = () => {
                   fontWeight: 700,
                   maxWidth: "800px",
                   textAlign: "left",
+                  wordSpacing: "-10px",
                 }}
               >
                 <ScrambleText
@@ -418,17 +419,19 @@ const Home = () => {
           </div>
 
           {/* Bottom content with left and right text */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "45px"}}>
-            {/* Left description */}
-            <div style={{ maxWidth: "500px", flex: "1" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "0px"}}>
+            {/* Left green text */}
+            <div style={{ maxWidth: "500px", flex: "1", textAlign: "left", overflow: "hidden" }}>
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono"
                 style={{
-                  fontSize: "clamp(24.9px, 2.2vw, 22px)",
-                  letterSpacing: "-0.5px",
-                  lineHeight: "30px",
-                  fontWeight:400,
+                  fontSize: "clamp(24px, 3vw, 48px)",
+                  letterSpacing: "-1px",
+                  lineHeight: "1.2",
+                  fontWeight: 400,
                   textAlign: "left",
+                  wordWrap: "break-word",
+                  wordSpacing: "-5px",
                 }}
               >
                 <ScrambleText
@@ -436,35 +439,10 @@ const Home = () => {
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
-                  matchWidth={true}
-                  delay={800}
-                  style={{ color: "white" }}
-                >
-                  We Sculpt Visual DNA That Embeds Itself In
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                  revealSpeed={0.1}
-                  scrambleIntensity={1}
-                  matchWidth={true}
-                  delay={1000}
-                  style={{ color: "white" }}
-                >
-                  The Cultural Psyche. Not Logos - Legacy
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                      revealSpeed={0.1}
-                  scrambleIntensity={1}
-                  matchWidth={true}
                   delay={1200}
-                  style={{ color: "white" }}
+                  style={{ color: "#00ff00" }}
                 >
-                  Systems. Not Messaging - Magnetic
+                  WHERE FIRST
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -472,25 +450,36 @@ const Home = () => {
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
-                  matchWidth={true}
                   delay={1400}
-                  style={{ color: "white" }}
+                  style={{ color: "#00ff00" }}
                 >
-                  Resonance.
+                  IMPRESSIONS BECOME
+                </ScrambleText>
+                <br />
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={1600}
+                  style={{ color: "#00ff00" }}
+                >
+                  LASTING LEGACIES
                 </ScrambleText>
               </div>
             </div>
 
-            {/* Right green text */}
-            <div style={{ maxWidth: "500px", flex: "1", textAlign: "right", }}>
+            {/* Right description */}
+            <div style={{ maxWidth: "600px", flex: "1", overflow: "hidden" }}>
               <div
-                className="aeonik-mono"
+                className="aeonik-mono text-white"
                 style={{
-                  fontSize: "clamp(47.59px, 3vw, 32px)",
-                  letterSpacing: "-1px",
-                  lineHeight: "50px",
+                  fontSize: "clamp(16px, 2vw, 22px)",
+                  letterSpacing: "-0.5px",
+                  lineHeight: "1.4",
                   fontWeight: 400,
                   textAlign: "right",
+                  wordWrap: "break-word",
                 }}
               >
                 <ScrambleText
@@ -498,12 +487,10 @@ const Home = () => {
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
-                  matchWidth={true}
-                  direction="right-to-left"
-                  delay={1200}
-                  style={{ color: "#00ff00" }}
+                  delay={800}
+                  style={{ color: "white" }}
                 >
-                  Where First
+                  WE SCULPT VISUAL DNA THAT EMBEDS ITSELF IN
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -511,25 +498,21 @@ const Home = () => {
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
-                  matchWidth={true}
-                  direction="right-to-left"
-                  delay={1400}
-                  style={{ color: "#00ff00" }}
+                  delay={1000}
+                  style={{ color: "white" }}
                 >
-                  Impressions Become
+                  THE CULTURAL PSYCHE. NOT LOGOS - LEGACY
                 </ScrambleText>
                 <br />
                 <ScrambleText
                   trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
-                        scrambleIntensity={1}
-                  matchWidth={true}
-                  direction="right-to-left"
-                  delay={1600}
-                  style={{ color: "#00ff00" }}
+                  scrambleIntensity={1}
+                  delay={1200}
+                  style={{ color: "white" }}
                 >
-                  Lasting Legacies
+                  SYSTEMS. NOT MESSAGING - MAGNETIC  RESONANCE.
                 </ScrambleText>
               </div>
             </div>
@@ -537,19 +520,20 @@ const Home = () => {
         </div>
 
       {/* Snapscroll - 2 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono-bold text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
                   lineHeight: "0.9",
-                  fontWeight: 400,
+                  fontWeight: 800,
                   maxWidth: "800px",
                   textAlign: "left",
+                  wordSpacing: "-10px",
                 }}
               >
                 <ScrambleText
@@ -592,17 +576,66 @@ const Home = () => {
           </div>
 
           {/* Bottom content with left and right text */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "40px"}}>
-            {/* Left description */}
-            <div style={{ maxWidth: "500px", flex: "1" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "0px", paddingBottom: "0px"}}>
+            {/* Left green text */}
+            <div style={{ maxWidth: "600px", flex: "0 1 auto", textAlign: "left", overflow: "hidden" }}>
+              <div
+                className="aeonik-mono"
+                style={{
+                  fontSize: "clamp(24px, 3vw, 48px)",
+                  letterSpacing: "-1px",
+                  lineHeight: "1.2",
+                  fontWeight: 400,
+                  textAlign: "left",
+                  wordWrap: "break-word",
+                  wordSpacing: "-5px",
+                }}
+              >
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={1800}
+                  style={{ color: "#00ff00" }}
+                >
+                  EVERY CLICK IS A PLOT
+                </ScrambleText>
+                <br />
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={2000}
+                  style={{ color: "#00ff00" }}
+                >
+                 TWIST EVERY SCROLL,
+                </ScrambleText>
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={2000}
+                  style={{ color: "#00ff00" }}
+                >
+                A STRATEGIC CLIMAX
+                </ScrambleText>
+              </div>
+            </div>
+
+            {/* Right description */}
+            <div style={{ maxWidth: "600px", flex: "1", overflow: "hidden" }}>
               <div
                 className="aeonik-mono text-white"
                 style={{
-                  fontSize: "clamp(24.9px, 2.2vw, 22px)",
+                  fontSize: "clamp(16px, 2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "30px",
-                  fontWeight: 300,
-                  textAlign: "left",
+                  lineHeight: "1.4",
+                  fontWeight: 400,
+                  textAlign: "right",
+                  wordWrap: "break-word",
                 }}
               >
                 <ScrambleText
@@ -613,7 +646,7 @@ const Home = () => {
                   delay={1200}
                   style={{ color: "white" }}
                 >
-                  We Treat Ad Campaigns As Blockbuster
+                  WE TREAT AD CAMPAIGNS AS BLOCKBUSTER
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -624,7 +657,7 @@ const Home = () => {
                   delay={1400}
                   style={{ color: "white" }}
                 >
-                  Narratives—Each Funnel Act Engineered For
+                  NARRATIVES—EACH FUNNEL ACT ENGINEERED FOR
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -635,46 +668,7 @@ const Home = () => {
                   delay={1600}
                   style={{ color: "white" }}
                 >
-                  Suspense, Revelation, And Standing Ovations.
-                </ScrambleText>
-              </div>
-            </div>
-
-            {/* Right green text */}
-            <div style={{ maxWidth: "700px", flex: "1", textAlign: "right" }}>
-              <div
-                className="aeonik-mono"
-                style={{
-                  fontSize: "clamp(47.59px, 3vw, 32px)",
-                  letterSpacing: "-1px",
-                  lineHeight: "50px",
-                  fontWeight: 400,
-                  textAlign: "right",
-                }}
-              >
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                  revealSpeed={0.1}
-                  direction="right-to-left"
-                  scrambleIntensity={1}
-                  delay={1800}
-                  style={{ color: "#00ff00" }}
-                >
-                  Every Click Is A Plot Twist
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                    speed="fast"
-                  revealSpeed={0.1}
-                  direction="right-to-left"
-                  scrambleIntensity={1}
-                  matchWidth={true}
-                  delay={2000}
-                  style={{ color: "#00ff00" }}
-                >
-                  Every Scroll, A Strategic Climax
+                  SUSPENSE, REVELATION, AND STANDING OVATIONS.
                 </ScrambleText>
               </div>
             </div>
@@ -682,19 +676,20 @@ const Home = () => {
         </div>
 
        {/* Snapscroll - 3 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono-bold text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
                   lineHeight: "0.9",
-                  fontWeight: 400,
+                  fontWeight: 800,
                   maxWidth: "800px",
                   textAlign: "left",
+                  wordSpacing: "-10px",
                 }}
               >
                 <ScrambleText
@@ -723,39 +718,89 @@ const Home = () => {
           </div>
 
           {/* Bottom content with left and right text */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "40px"}}>
-            {/* Left description */}
-            <div style={{ maxWidth: "500px", flex: "1" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "0px"}}>
+            {/* Left green text */}
+            <div style={{ maxWidth: "600px", flex: "1", textAlign: "left", overflow: "hidden" }}>
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono"
                 style={{
-                  fontSize: "clamp(24.9px, 2.2vw, 22px)",
-                  letterSpacing: "-0.5px",
-                  lineHeight: "30px",
-                  fontWeight: 300,
+                  fontSize: "clamp(24px, 3vw, 48px)",
+                  letterSpacing: "-1px",
+                  lineHeight: "1.2",
+                  fontWeight: 400,
                   textAlign: "left",
+                  wordWrap: "break-word",
+                  wordSpacing: "-5px",
                 }}
               >
                 <ScrambleText
-                        trigger="load"
-                    speed="fast"
+                  trigger="load"
+                  speed="fast"
                   revealSpeed={0.1}
-                        scrambleIntensity={1}
-                  delay={800}
-                  style={{ color: "white" }}
+                  scrambleIntensity={1}
+                  delay={1200}
+                  style={{ color: "#00ff00" }}
                 >
-                  Consumer Paths Aren't Linear—They're
+                  ARCHITECTING
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                      trigger="load"
-                    speed="fast"
-                      revealSpeed={0.1}
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={1400}
+                  style={{ color: "#00ff00" }}
+                >
+                  JOURNEYS IN THE
+                </ScrambleText>
+                <br />
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={1600}
+                  style={{ color: "#00ff00" }}
+                >
+                 ALGORITHMIC WILDERNESS
+                </ScrambleText>
+              </div>
+            </div>
+
+            {/* Right description */}
+            <div style={{ maxWidth: "600px", flex: "1", overflow: "hidden" }}>
+              <div
+                className="aeonik-mono text-white"
+                style={{
+                  fontSize: "clamp(16px, 2vw, 22px)",
+                  letterSpacing: "-0.5px",
+                  lineHeight: "1.4",
+                  fontWeight: 400,
+                  textAlign: "right",
+                  wordWrap: "break-word",
+                }}
+              >
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={800}
+                  style={{ color: "white" }}
+                >
+                  CONSUMER PATHS AREN'T LINEAR—THEY'RE
+                </ScrambleText>
+                <br />
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1000}
                   style={{ color: "white" }}
                 >
-                  Three-Act Structures. We Blueprint SEO And
+                  THREE-ACT STRUCTURES. WE BLUEPRINT SEO AND
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -766,57 +811,7 @@ const Home = () => {
                   delay={1200}
                   style={{ color: "white" }}
                 >
-                  Strategy Like Screenplays.
-                </ScrambleText>
-              </div>
-            </div>
-
-            {/* Right green text */}
-            <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
-              <div
-                className="aeonik-mono"
-                style={{
-                  fontSize: "clamp(47.59px, 3vw, 32px)",
-                  letterSpacing: "-1px",
-                  lineHeight: "50px",
-                  fontWeight: 400,
-                  textAlign: "right",
-                }}
-              >
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                    revealSpeed={0.1}
-                  direction="right-to-left"
-                  scrambleIntensity={1}
-                  delay={1200}
-                  style={{ color: "#00ff00" }}
-                >
-                  Architecting Journeys
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                  revealSpeed={0.1}
-                  direction="right-to-left"
-                  scrambleIntensity={1}
-                  delay={1400}
-                  style={{ color: "#00ff00" }}
-                >
-                  In The Algorithmic
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                  revealSpeed={0.1}
-                  direction="right-to-left"
-                  scrambleIntensity={1}
-                  delay={1600}
-                  style={{ color: "#00ff00" }}
-                >
-                  Wilderness
+                  STRATEGY LIKE SCREENPLAYS.
                 </ScrambleText>
               </div>
             </div>
@@ -824,19 +819,20 @@ const Home = () => {
         </div>
 
      {/* Snapscroll - 4 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono-bold text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
                   lineHeight: "0.9",
-                  fontWeight: 400,
+                  fontWeight: 800,
                   maxWidth: "800px",
                   textAlign: "left",
+                  wordSpacing: "-10px",
                 }}
               >
                 <ScrambleText
@@ -866,17 +862,56 @@ const Home = () => {
           </div>
 
           {/* Bottom content with left and right text */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "40px"}}>
-            {/* Left description */}
-            <div style={{ maxWidth: "500px", flex: "1" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "0px"}}>
+            {/* Left green text */}
+            <div style={{ maxWidth: "600px", flex: "1", textAlign: "left", overflow: "hidden" }}>
+              <div
+                className="aeonik-mono"
+                style={{
+                  fontSize: "clamp(24px, 3vw, 48px)",
+                  letterSpacing: "-1px",
+                  lineHeight: "1.2",
+                  fontWeight: 400,
+                  textAlign: "left",
+                  wordWrap: "break-word",
+                  wordSpacing: "-5px",
+                }}
+              >
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1} 
+                  delay={1200}
+                  style={{ color: "#00ff00" }}
+                >
+                  WHERE NUMBERS 
+                </ScrambleText>
+                <br />
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.3}
+                  scrambleIntensity={1}
+                  delay={1400}
+                  style={{ color: "#00ff00" }}
+                >
+                  DIRECT THE NEXT SCENE
+                </ScrambleText>
+              </div>
+            </div>
+
+            {/* Right description */}
+            <div style={{ maxWidth: "600px", flex: "1", overflow: "hidden" }}>
               <div
                 className="aeonik-mono text-white"
                 style={{
-                  fontSize: "clamp(24.9px, 2.2vw, 22px)",
+                  fontSize: "clamp(16px, 2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "30px",
-                  fontWeight: 300,
-                  textAlign: "left",
+                  lineHeight: "1.4",
+                  fontWeight: 400,
+                  textAlign: "right",
+                  wordWrap: "break-word",
                 }}
               >
                 <ScrambleText
@@ -887,67 +922,29 @@ const Home = () => {
                   delay={800}
                   style={{ color: "white" }}
                 >
-                  Heatmaps Become Mood Rings. Funnels
+                  HEATMAPS BECOME MOOD RINGS. FUNNELS
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                      trigger="load"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
                   delay={1000}
                   style={{ color: "white" }}
                 >
-                  Transform Into Suspense Graphs. We Turn
+                  TRANSFORM INTO SUSPENSE GRAPHS. WE TURN
                 </ScrambleText>
                 <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                    revealSpeed={0.1}
-                  scrambleIntensity={1}
-                  delay={1200}
-                  style={{ color: "white" }}
-                >
-                  Analytics Into Directorial Notes.
-                </ScrambleText>
-              </div>
-            </div>
-
-            {/* Right green text */}
-            <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
-              <div
-                className="aeonik-mono"
-                style={{
-                  fontSize: "clamp(47.59px, 3vw, 32px)",
-                  letterSpacing: "-1px",
-                  lineHeight: "50px",
-                  fontWeight: 400,
-                  textAlign: "right",
-                }}
-              >
                 <ScrambleText
                   trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
-                  direction="right-to-left"
-                  scrambleIntensity={1} 
-                  delay={1200}
-                  style={{ color: "#00ff00" }}
-                >
-                  Where Numbers Direct
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                  revealSpeed={0.3}
-                  direction="right-to-left"
                   scrambleIntensity={1}
-                  delay={1400}
-                  style={{ color: "#00ff00" }}
+                  delay={1200}
+                  style={{ color: "white" }}
                 >
-                  The Next Scene
+                  ANALYTICS INTO DIRECTORIAL NOTES.
                 </ScrambleText>
               </div>
             </div>
@@ -960,14 +957,15 @@ const Home = () => {
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono-bold text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
                   lineHeight: "0.9",
-                  fontWeight: 400,
+                  fontWeight: 800,
                   maxWidth: "800px",
                   textAlign: "left",
+                  wordSpacing: "-10px",
                 }}
               >
                 <ScrambleText
@@ -1010,17 +1008,56 @@ const Home = () => {
           </div>
 
           {/* Bottom content with left and right text */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "40px"}}>
-            {/* Left description */}
-            <div style={{ maxWidth: "500px", flex: "1" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "60px", paddingBottom: "0px"}}>
+            {/* Left green text */}
+            <div style={{ maxWidth: "600px", flex: "1", textAlign: "left", overflow: "hidden" }}>
+              <div
+                className="aeonik-mono"
+                style={{
+                  fontSize: "clamp(24px, 3vw, 48px)",
+                  letterSpacing: "-1px",
+                  lineHeight: "1.2",
+                  fontWeight: 400,
+                  textAlign: "left",
+                  wordWrap: "break-word",
+                  wordSpacing: "-5px",
+                }}
+              >
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={200}
+                  style={{ color: "#00ff00" }}
+                >
+                  IMMERSIVE 3D WEBSITES
+                </ScrambleText>
+                <br />
+                <ScrambleText
+                  trigger="load"
+                  speed="fast"
+                  revealSpeed={0.1}
+                  scrambleIntensity={1}
+                  delay={200}
+                  style={{ color: "#00ff00" }}
+                >
+                  STEP INSIDE YOUR BRAND
+                </ScrambleText>
+              </div>
+            </div>
+
+            {/* Right description */}
+            <div style={{ maxWidth: "600px", flex: "1", overflow: "hidden" }}>
               <div
                 className="aeonik-mono text-white"
                 style={{
-                  fontSize: "clamp(24.9px, 2.2vw, 22px)",
+                  fontSize: "clamp(16px, 2vw, 22px)",
                   letterSpacing: "-0.5px",
-                  lineHeight: "30px",
-                  fontWeight: 300,
-                  textAlign: "left",
+                  lineHeight: "1.4",
+                  fontWeight: 400,
+                  textAlign: "right",
+                  wordWrap: "break-word",
                 }}
               >
                 <ScrambleText
@@ -1031,14 +1068,14 @@ const Home = () => {
                   delay={1200}
                   style={{ color: "white" }}
                 >
-                  Whether You Need An Immersive 3D Journey
+                  WHETHER YOU NEED AN IMMERSIVE 3D JOURNEY
                 </ScrambleText>
                 <br />
                 <ScrambleText
-                      trigger="load"
+                  trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
-                      scrambleIntensity={1}
+                  scrambleIntensity={1}
                   delay={1400}
                   style={{ color: "white" }}
                 >
@@ -1053,7 +1090,7 @@ const Home = () => {
                   delay={1600}
                   style={{ color: "white" }}
                 >
-                  Team Architects Digital Experiences That
+                  TEAM ARCHITECTS DIGITAL EXPERIENCES THAT
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -1064,7 +1101,7 @@ const Home = () => {
                   delay={1800}
                   style={{ color: "white" }}
                 >
-                  Audiences Remember And Algorithms
+                  AUDIENCES REMEMBER AND ALGORITHMS
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -1075,54 +1112,18 @@ const Home = () => {
                   delay={2000}
                   style={{ color: "white" }}
                 >
-                  Reward. Let's Build Your Industry's Next
+                  REWARD. LET'S BUILD YOUR INDUSTRY'S NEXT
                 </ScrambleText>
                 <br />
-                <ScrambleText
-                    trigger="load"
-                  speed="fast"
-                    revealSpeed={0.1}
-                  scrambleIntensity={1}
-                  delay={2200}
-                  style={{ color: "white" }}
-                >
-                  Benchmark.
-                </ScrambleText>
-              </div>
-            </div>
-
-            {/* Right green text */}
-            <div style={{ maxWidth: "500px", flex: "1", textAlign: "right" }}>
-              <div
-                className="aeonik-mono"
-                style={{
-                  fontSize: "clamp(47.59px, 3vw, 32px)",
-                  letterSpacing: "-1px",
-                  lineHeight: "50px",
-                  fontWeight: 400,
-                  textAlign: "right",
-                }}
-              >
                 <ScrambleText
                   trigger="load"
                   speed="fast"
                   revealSpeed={0.1}
                   scrambleIntensity={1}
-                  delay={200}
-                  style={{ color: "#00ff00" }}
+                  delay={2200}
+                  style={{ color: "white" }}
                 >
-                  Immersive 3D Websites
-                </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                        revealSpeed={0.1}
-                      scrambleIntensity={1}
-                  delay={200}
-                  style={{ color: "#00ff00" }}
-                >
-                  Step Inside Your Brand
+                  BENCHMARK.
                 </ScrambleText>
               </div>
             </div>
