@@ -375,7 +375,7 @@ const Home = () => {
         </div>
 
       {/* Snapscroll - 1 */}
-        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "1px solid rgba(255, 255, 255, 0.15)" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -520,7 +520,7 @@ const Home = () => {
         </div>
 
       {/* Snapscroll - 2 */}
-        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
+          <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "1px solid rgba(255, 255, 255, 0.15)" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -676,7 +676,7 @@ const Home = () => {
         </div>
 
        {/* Snapscroll - 3 */}
-        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "1px solid rgba(255, 255, 255, 0.15)" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -819,7 +819,7 @@ const Home = () => {
         </div>
 
      {/* Snapscroll - 4 */}
-        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
+          <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "1px solid rgba(255, 255, 255, 0.15)" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
