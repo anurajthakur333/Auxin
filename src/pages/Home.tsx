@@ -172,7 +172,7 @@ const Home = () => {
         </div>
 
        {/* Section - 2 */}
-        <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "25px 0 80px 25px", position: "relative" }}>
+        <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "50px 0 80px 50px", position: "relative" }}>
        
           <div className="" style={{ position: "relative", zIndex: 1 }}>
             <div
@@ -273,7 +273,7 @@ const Home = () => {
         </div>
 
      {/* Section - 3  */}
-        <div className="d-flex align-items-start justify-content-end" style={{ minHeight: "100vh", padding: "25px 25px 80px 0" }}>
+        <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh", padding: "25px 25px 80px 0" }}>
           <div className="">
             <div
               className="aeonik-mono text-white"
@@ -283,7 +283,7 @@ const Home = () => {
                 lineHeight: "1.1",
                 fontWeight: 400,
                 maxWidth: "1000px",
-                textAlign: "right",
+                textAlign: "center",
               }}
             >
               <ScrambleText
@@ -322,21 +322,25 @@ const Home = () => {
                 delay={800}
                 style={{ color: "white" }}
               >
-                OUR AI-POWERED
+                OUR AI-POWERED AD SOLUTIONS.
               </ScrambleText>
-              <br />
-              <ScrambleText
-                trigger="load"
-                speed="fast"
-                revealSpeed={0.3}
-                direction="right-to-left"
-                scrambleIntensity={1}
-                matchWidth={true}
-                delay={1200}
-                style={{ color: "white" }}
-              >
-                AD SOLUTIONS.
-              </ScrambleText>
+            </div>
+          </div>
+        </div>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", padding: "80px 0" }}>
+          <div className="text-center px-4">
+            <div
+              className="aeonik-mono text-white"
+              style={{
+                fontSize: "clamp(28px, 5vw, 50px)",
+                letterSpacing: "-4px",
+                lineHeight: "70px",
+                fontWeight: 400,
+                maxWidth: "800px",
+                margin: "0 auto",
+              }}
+            >
+             
             </div>
           </div>
         </div>
@@ -347,7 +351,7 @@ const Home = () => {
             <div
               className="aeonik-mono text-white"
               style={{
-                fontSize: "clamp(32px, 6vw, 77px)",
+                fontSize: "clamp(28px, 5vw, 50px)",
                 letterSpacing: "-4px",
                 lineHeight: "70px",
                 fontWeight: 400,
@@ -371,17 +375,17 @@ const Home = () => {
         </div>
 
       {/* Snapscroll - 1 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
               <div
-                className="aeonik-mono text-white"
+                className="aeonik-mono-bold text-white"
                 style={{
                   fontSize: "clamp(28px, 5vw, 65px)",
                   letterSpacing: "-3px",
                   lineHeight: "0.9",
-                  fontWeight: 400,
+                  fontWeight: 700,
                   maxWidth: "800px",
                   textAlign: "left",
                 }}
@@ -423,7 +427,7 @@ const Home = () => {
                   fontSize: "clamp(24.9px, 2.2vw, 22px)",
                   letterSpacing: "-0.5px",
                   lineHeight: "30px",
-                  fontWeight: 300,
+                  fontWeight:400,
                   textAlign: "left",
                 }}
               >
