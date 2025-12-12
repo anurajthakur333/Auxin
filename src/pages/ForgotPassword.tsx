@@ -80,10 +80,10 @@ const ForgotPassword: React.FC = () => {
 
   // Validation functions
   const validateEmail = (email: string): string => {
-    if (!email.trim()) return 'Email is required';
+    if (!email.trim()) return 'EMAIL IS REQUIRED';
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    if (!emailRegex.test(email.trim())) return 'Please enter a valid email address';
-    if (email.length > 254) return 'Email is too long';
+    if (!emailRegex.test(email.trim())) return 'PLEASE ENTER A VALID EMAIL ADDRESS';
+    if (email.length > 254) return 'EMAIL IS TOO LONG';
     return '';
   };
 
@@ -97,7 +97,7 @@ const ForgotPassword: React.FC = () => {
     setEmailError(emailValidation);
 
     if (emailValidation) {
-      setError('Please fix the errors above');
+      setError('PLEASE FIX THE ERRORS ABOVE');
       return;
     }
 
@@ -116,13 +116,13 @@ const ForgotPassword: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess('Password reset instructions have been sent to your email address. Please check your inbox (and spam folder).');
+        setSuccess('PASSWORD RESET INSTRUCTIONS HAVE BEEN SENT TO YOUR EMAIL ADDRESS. PLEASE CHECK YOUR INBOX (AND SPAM FOLDER).');
       } else {
-        setError(data.error || 'Failed to send reset instructions. Please try again.');
+        setError((data.error || 'FAILED TO SEND RESET INSTRUCTIONS. PLEASE TRY AGAIN.').toUpperCase());
       }
     } catch (err) {
       console.error('Forgot password error:', err);
-      setError('An error occurred. Please try again.');
+      setError('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +146,7 @@ const ForgotPassword: React.FC = () => {
             -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             transition: background-color 9999s ease-in-out 0s;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -160,7 +160,7 @@ const ForgotPassword: React.FC = () => {
             -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             transition: background-color 9999s ease-in-out 0s !important;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -170,7 +170,7 @@ const ForgotPassword: React.FC = () => {
             -webkit-text-fill-color: #39FF14 !important;
             caret-color: #39FF14 !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -178,7 +178,7 @@ const ForgotPassword: React.FC = () => {
           }
           /* Force override for all autofill states */
           .forgot-input:-webkit-autofill::first-line {
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             color: #39FF14 !important;
           }
           /* Additional aggressive overrides */
@@ -226,10 +226,10 @@ const ForgotPassword: React.FC = () => {
               color: 'white', 
               fontSize: '1.5rem', 
               fontWeight: '400',
-              marginBottom: '0.5rem',
+              marginBottom: '1rem',
               textAlign: 'center'
             }}>
-              Reset Password
+              RESET PASSWORD
             </h2>
             
             <p className="aeonik-mono" style={{ 
@@ -238,7 +238,7 @@ const ForgotPassword: React.FC = () => {
               textAlign: 'center',
               marginBottom: '2rem'
             }}>
-              Enter your email address and we'll send you instructions to reset your password
+              ENTER YOUR EMAIL ADDRESS AND WE'LL SEND YOU INSTRUCTIONS TO RESET YOUR PASSWORD
             </p>
 
             {error && (
@@ -279,7 +279,7 @@ const ForgotPassword: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Email Address
+                EMAIL ADDRESS
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -343,7 +343,7 @@ const ForgotPassword: React.FC = () => {
                       fps={30}
                       duration={1000}
                     >
-                      example@email.com
+                      EXAMPLE@EMAIL.COM
                     </ScrambleText>
                   </div>
                 )}
@@ -388,9 +388,9 @@ const ForgotPassword: React.FC = () => {
               }}
             >
               {isLoading ? (
-                'Sending Instructions...'
+                'SENDING INSTRUCTIONS...'
               ) : success ? (
-                '✓  E M A I L    S E N T'
+                '✓ EMAIL SENT'
               ) : (
                 <ScrambleText
                   trigger="hover"
@@ -401,7 +401,7 @@ const ForgotPassword: React.FC = () => {
                   fps={30}
                   duration={800}
                 >
-                  S  E  N  D     R  E  S  E  T     L  I  N  K
+                  SEND RESET LINK
                 </ScrambleText>
               )}
             </button>
@@ -409,7 +409,7 @@ const ForgotPassword: React.FC = () => {
             {/* Back to Login Link */}
             <div style={{ textAlign: 'center' }}>
               <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
-                Remember your password?{' '}
+                REMEMBER YOUR PASSWORD?{' '}
               </span>
               <Link 
                 to="/login" 
@@ -426,7 +426,7 @@ const ForgotPassword: React.FC = () => {
                   e.currentTarget.style.textDecoration = 'none';
                 }}
               >
-                Sign In
+                SIGN IN
               </Link>
             </div>
           </form>

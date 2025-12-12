@@ -700,7 +700,7 @@ const Signup: React.FC = () => {
             <div style={{ 
               display: 'flex', 
               alignItems: 'flex-start', 
-              marginBottom: '2rem',
+              marginBottom: '10px',
               gap: '0.5rem'
             }}>
               <input
@@ -722,11 +722,10 @@ const Signup: React.FC = () => {
               />
               <label htmlFor="terms" className="aeonik-mono" style={{ 
                 color: 'white', 
-                fontSize: '0.9rem',
+                fontSize: '0.8rem',
                 cursor: 'pointer',
                 lineHeight: '1.4'
               }}>
-                I AGREE TO THE{' '}
                 <Link to="/terms" style={{ color: '#39FF14', textDecoration: 'none' }}>
                   TERMS OF SERVICE
                 </Link>
@@ -753,7 +752,8 @@ const Signup: React.FC = () => {
                 cursor: isLoading ? 'not-allowed' : 'pointer',
                 transition: 'all 0.3s ease',
                 opacity: isLoading ? 0.7 : 1,
-                marginBottom: '1rem'
+                marginBottom: '1rem',
+                marginTop: '10px'
               }}
               onMouseEnter={() => {
                 if (!isLoading) {
