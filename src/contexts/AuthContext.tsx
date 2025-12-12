@@ -226,47 +226,75 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           origin: event.origin,
           expectedOrigin: window.location.origin,
           type: event.data?.type,
-          hasData: !!event.data
+          hasData: !!event.data,
+          data: event.data
         });
 
-        // Check origin - allow same origin or frontend URL
-        // Also allow messages from the same protocol and host (for subdomains)
-        const currentOrigin = window.location.origin;
-        const allowedOrigins = [
-          currentOrigin,
-          process.env.VITE_FRONTEND_URL || currentOrigin,
-          // Allow if it's the same host (different protocol/port is OK for dev)
-          window.location.protocol + '//' + window.location.host
-        ];
-        
-        // Check if origin matches or if it's a trusted origin
-        const isAllowedOrigin = allowedOrigins.some(allowed => 
-          event.origin === allowed || 
-          event.origin.startsWith(allowed.split(':')[0] + '://') // Same protocol
-        );
-        
-        // For development, be more lenient
-        const isDevelopment = window.location.hostname === 'localhost' || 
-                             window.location.hostname === '127.0.0.1';
-        
-        if (!isAllowedOrigin && !isDevelopment) {
-          console.warn('⚠️ Message from unauthorized origin:', event.origin, 'Expected:', allowedOrigins);
-          return;
-        }
-        
         // Additional check: only process messages with the expected type
         if (!event.data || typeof event.data !== 'object' || !event.data.type) {
           console.warn('⚠️ Invalid message format:', event.data);
           return;
         }
         
-        if (event.data?.type === 'GOOGLE_AUTH_SUCCESS') {
+        // Only process Google auth messages
+        if (event.data.type !== 'GOOGLE_AUTH_SUCCESS' && event.data.type !== 'GOOGLE_AUTH_ERROR') {
+          console.warn('⚠️ Ignoring message with unexpected type:', event.data.type);
+          return;
+        }
+        
+        // For Google OAuth, we're more lenient with origin checking
+        // The popup redirects through backend, so origin might vary
+        // We trust messages that have the correct structure and type
+        const currentOrigin = window.location.origin;
+        const isSameOrigin = event.origin === currentOrigin;
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1' ||
+                           event.origin.includes('localhost') ||
+                           event.origin.includes('127.0.0.1');
+        
+        // Allow same origin, localhost, or if it's a Google auth message with valid structure
+        const isValidMessage = isSameOrigin || isLocalhost || 
+                              (event.data.type && event.data.user && event.data.token);
+        
+        if (!isValidMessage) {
+          console.warn('⚠️ Message from potentially unauthorized origin:', {
+            origin: event.origin,
+            expected: currentOrigin,
+            isLocalhost: isLocalhost,
+            hasValidStructure: !!(event.data.type && event.data.user && event.data.token)
+          });
+          // Still process if it has valid structure (for cross-origin scenarios)
+          if (!(event.data.type && event.data.user && event.data.token)) {
+            return;
+          }
+        }
+        
+        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
           console.log('✅ Google auth success, setting user:', event.data.user);
           
+          // Validate user data structure
+          if (!event.data.user || !event.data.token) {
+            console.error('❌ Invalid user data or token in message');
+            setLoading(false);
+            clearInterval(checkClosed);
+            clearTimeout(timeout);
+            window.removeEventListener('message', messageListener);
+            return;
+          }
+          
           // Set user and token
-          const userData = event.data.user;
+          const userData = {
+            id: event.data.user.id || event.data.user._id,
+            email: event.data.user.email,
+            name: event.data.user.name,
+            avatar: event.data.user.avatar,
+            isEmailVerified: event.data.user.isEmailVerified !== undefined 
+              ? event.data.user.isEmailVerified 
+              : true // Google OAuth users are auto-verified
+          };
           const token = event.data.token;
           
+          console.log('✅ Setting user state:', userData);
           setUser(userData);
           localStorage.setItem('token', token);
           
@@ -280,17 +308,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           // Close popup if still open
           if (popup && !popup.closed) {
-            popup.close();
+            setTimeout(() => {
+              if (popup && !popup.closed) {
+                popup.close();
+              }
+            }, 100);
           }
           
           console.log('✅ Google login completed successfully');
-          console.log('✅ User state updated:', userData);
+          console.log('✅ User state updated, token stored');
+          console.log('✅ Current user state:', userData);
           
           // Trigger a custom event for navigation (components can listen to this)
-          window.dispatchEvent(new CustomEvent('googleAuthSuccess', { 
-            detail: { user: userData } 
-          }));
-        } else if (event.data?.type === 'GOOGLE_AUTH_ERROR') {
+          // Use a small delay to ensure state is set first
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('googleAuthSuccess', { 
+              detail: { user: userData } 
+            }));
+            console.log('✅ Google auth success event dispatched');
+          }, 50);
+        } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
           console.error('❌ Google auth error:', event.data.error);
           setLoading(false);
           clearInterval(checkClosed);

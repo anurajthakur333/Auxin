@@ -20,6 +20,7 @@ import PaymentCancel from './pages/PaymentCancel';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import AuthNavigationHandler from './components/AuthNavigationHandler';
 import { useAuth } from './contexts/AuthContext';
 import "./styles/fonts.css";
 import "./styles/Main.css";
@@ -44,6 +45,7 @@ export default function App() {
       <ProfileMenuProvider>
         <Router>
           <ScrollToTop />
+          <AuthNavigationHandler />
           <Routes>
             <Route path="/" element={<Home />} />
           <Route path="/verify-email" element={<VerifyEmail />} />

@@ -39,23 +39,47 @@ const GoogleCallback: React.FC = () => {
             });
             
             // Send success message to parent window
-            // Use '*' as targetOrigin to allow cross-origin (if needed)
-            // But prefer window.location.origin for security
+            // Try multiple target origins to ensure message is received
             if (window.opener) {
-              window.opener.postMessage({
+              const message = {
                 type: 'GOOGLE_AUTH_SUCCESS',
                 user: user,
                 token: token
-              }, window.location.origin);
+              };
               
-              // Also try with wildcard as fallback (less secure but more compatible)
+              console.log('📤 Sending message to parent:', {
+                hasOpener: !!window.opener,
+                currentOrigin: window.location.origin,
+                messageType: message.type
+              });
+              
+              // Try with current origin first
+              try {
+                window.opener.postMessage(message, window.location.origin);
+                console.log('✅ Message sent with origin:', window.location.origin);
+              } catch (e) {
+                console.warn('⚠️ Failed to send with origin, trying wildcard:', e);
+              }
+              
+              // Also try with wildcard as fallback (for cross-origin scenarios)
               setTimeout(() => {
-                window.opener?.postMessage({
-                  type: 'GOOGLE_AUTH_SUCCESS',
-                  user: user,
-                  token: token
-                }, '*');
-              }, 100);
+                try {
+                  window.opener?.postMessage(message, '*');
+                  console.log('✅ Message sent with wildcard');
+                } catch (e) {
+                  console.error('❌ Failed to send message with wildcard:', e);
+                }
+              }, 50);
+              
+              // One more attempt after a short delay
+              setTimeout(() => {
+                try {
+                  window.opener?.postMessage(message, '*');
+                  console.log('✅ Message sent again (retry)');
+                } catch (e) {
+                  console.error('❌ Failed to send message (retry):', e);
+                }
+              }, 200);
             } else {
               console.error('❌ window.opener is null');
               setError('Cannot communicate with parent window');
@@ -105,20 +129,36 @@ const GoogleCallback: React.FC = () => {
             
             // Send success message to parent window
             if (window.opener) {
-              window.opener.postMessage({
+              const message = {
                 type: 'GOOGLE_AUTH_SUCCESS',
                 user: data.user,
                 token: data.token
-              }, window.location.origin);
+              };
+              
+              // Try with current origin first
+              try {
+                window.opener.postMessage(message, window.location.origin);
+              } catch (e) {
+                console.warn('⚠️ Failed to send with origin:', e);
+              }
               
               // Also try with wildcard as fallback
               setTimeout(() => {
-                window.opener?.postMessage({
-                  type: 'GOOGLE_AUTH_SUCCESS',
-                  user: data.user,
-                  token: data.token
-                }, '*');
-              }, 100);
+                try {
+                  window.opener?.postMessage(message, '*');
+                } catch (e) {
+                  console.error('❌ Failed to send message:', e);
+                }
+              }, 50);
+              
+              // Retry after delay
+              setTimeout(() => {
+                try {
+                  window.opener?.postMessage(message, '*');
+                } catch (e) {
+                  console.error('❌ Failed to send message (retry):', e);
+                }
+              }, 200);
             }
             
             setStatus('success');
