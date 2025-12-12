@@ -26,15 +26,15 @@ const Login: React.FC = () => {
     const verified = params.get('verified');
     
     if (verified === 'success') {
-      setSuccessMessage('Email verified successfully! You can now log in.');
+      setSuccessMessage('EMAIL VERIFIED SUCCESSFULLY! YOU CAN NOW LOG IN.');
       // Clean up URL
       window.history.replaceState({}, '', '/login');
     } else if (verified === 'already') {
-      setSuccessMessage('Email already verified. Please log in.');
+      setSuccessMessage('EMAIL ALREADY VERIFIED. PLEASE LOG IN.');
       window.history.replaceState({}, '', '/login');
     } else if (verified === 'failed') {
-      const errorMsg = params.get('error') || 'Verification failed';
-      setError(errorMsg);
+      const errorMsg = params.get('error') || 'VERIFICATION FAILED';
+      setError(errorMsg.toUpperCase());
       window.history.replaceState({}, '', '/login');
     }
   }, [location.search]);
@@ -125,10 +125,10 @@ const Login: React.FC = () => {
           navigate(`/verify-email?email=${encodeURIComponent(normalized)}`, { replace: true });
           return;
         }
-        setError(result.error || 'Invalid email or password');
+        setError((result.error || 'INVALID EMAIL OR PASSWORD').toUpperCase());
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +152,7 @@ const Login: React.FC = () => {
             -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             transition: background-color 9999s ease-in-out 0s;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -166,7 +166,7 @@ const Login: React.FC = () => {
             -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             transition: background-color 9999s ease-in-out 0s !important;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -176,7 +176,7 @@ const Login: React.FC = () => {
             -webkit-text-fill-color: #39FF14 !important;
             caret-color: #39FF14 !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -184,7 +184,7 @@ const Login: React.FC = () => {
           }
           /* Force override for all autofill states */
           .login-input:-webkit-autofill::first-line {
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             color: #39FF14 !important;
           }
           /* Additional aggressive overrides */
@@ -279,7 +279,7 @@ const Login: React.FC = () => {
               marginBottom: '0.5rem',
               textAlign: 'center'
             }}>
-              Login
+              LOGIN
             </h2>
             
             <p className="aeonik-mono" style={{ 
@@ -288,7 +288,7 @@ const Login: React.FC = () => {
               textAlign: 'center',
               marginBottom: '2rem'
             }}>
-              Welcome Back To Auxin
+              WELCOME BACK TO AUXIN
             </p>
 
             {successMessage && (
@@ -342,7 +342,7 @@ const Login: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Email
+                EMAIL
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -407,7 +407,7 @@ const Login: React.FC = () => {
                       fps={30}
                       duration={1000}
                     >
-                      example@email.com
+                      EXAMPLE@EMAIL.COM
                     </ScrambleText>
                   </div>
                 )}
@@ -422,7 +422,7 @@ const Login: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Password
+                PASSWORD
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -488,7 +488,7 @@ const Login: React.FC = () => {
                       fps={30}
                       duration={1200}
                     >
-                      Enter your password
+                      ENTER YOUR PASSWORD
                     </ScrambleText>
                   </div>
                 )}
@@ -563,7 +563,7 @@ const Login: React.FC = () => {
                 fontSize: '0.9rem',
                 cursor: 'pointer'
               }}>
-                Remember Me
+                REMEMBER ME
               </label>
             </div>
 
@@ -595,7 +595,7 @@ const Login: React.FC = () => {
               }}
             >
               {isLoading ? (
-                'Logging in...'
+                'LOGGING IN...'
               ) : (
                 <ScrambleText
                   trigger="hover"
@@ -606,7 +606,7 @@ const Login: React.FC = () => {
                   fps={30}
                   duration={800}
                 >
-                  L O G I N
+                  LOGIN
                 </ScrambleText>
               )}
             </button>
@@ -628,14 +628,14 @@ const Login: React.FC = () => {
                   e.currentTarget.style.textDecoration = 'none';
                 }}
               >
-                Forgot Password?
+                FORGOT PASSWORD?
               </Link>
             </div>
 
             {/* Sign Up Link */}
             <div style={{ textAlign: 'center' }}>
               <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
-                Don't have an account?{' '}
+                DON'T HAVE AN ACCOUNT?{' '}
               </span>
               <Link 
                 to="/signup" 
@@ -652,7 +652,7 @@ const Login: React.FC = () => {
                   e.currentTarget.style.textDecoration = 'none';
                 }}
               >
-                Create Account
+                CREATE ACCOUNT
               </Link>
             </div>
           </form>

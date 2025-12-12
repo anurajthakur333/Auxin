@@ -91,17 +91,17 @@ const Signup: React.FC = () => {
 
     // Validation
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('PASSWORDS DO NOT MATCH');
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('PASSWORD MUST BE AT LEAST 6 CHARACTERS');
       return;
     }
 
     if (!agreeToTerms) {
-      setError('Please agree to the terms and conditions');
+      setError('PLEASE AGREE TO THE TERMS AND CONDITIONS');
       return;
     }
 
@@ -114,11 +114,11 @@ const Signup: React.FC = () => {
         // Navigate to verify email screen with email param
         navigate(`/verify-email?email=${encodeURIComponent(email)}`, { replace: true });
       } else {
-        setError(result.error || 'Failed to create account. Please try again.');
+        setError((result.error || 'FAILED TO CREATE ACCOUNT. PLEASE TRY AGAIN.').toUpperCase());
       }
     } catch (err) {
       console.error('Signup error in component:', err);
-      setError('An error occurred. Please try again.');
+      setError('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +142,7 @@ const Signup: React.FC = () => {
             -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             transition: background-color 9999s ease-in-out 0s;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -156,7 +156,7 @@ const Signup: React.FC = () => {
             -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
             transition: background-color 9999s ease-in-out 0s !important;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -166,7 +166,7 @@ const Signup: React.FC = () => {
             -webkit-text-fill-color: #39FF14 !important;
             caret-color: #39FF14 !important;
             box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             background: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
@@ -174,7 +174,7 @@ const Signup: React.FC = () => {
           }
           /* Force override for all autofill states */
           .signup-input:-webkit-autofill::first-line {
-            font-family: 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+            font-family: 'Aeonik Mono', monospace !important;
             color: #39FF14 !important;
           }
           /* Additional aggressive overrides */
@@ -268,9 +268,9 @@ const Signup: React.FC = () => {
               fontSize: '1.5rem', 
               fontWeight: '400',
               marginBottom: '0.5rem',
-              textAlign: 'center'
+              textAlign: 'center',
             }}>
-              Create Account
+              CREATE ACCOUNT
             </h2>
             
             <p className="aeonik-mono" style={{ 
@@ -279,7 +279,7 @@ const Signup: React.FC = () => {
               textAlign: 'center',
               marginBottom: '2rem'
             }}>
-              Join Auxin Today
+              JOIN AUXIN TODAY
             </p>
 
             {error && (
@@ -318,7 +318,7 @@ const Signup: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Full Name
+                FULL NAME
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -375,7 +375,7 @@ const Signup: React.FC = () => {
                       fps={30}
                       duration={1000}
                     >
-                      Enter your full name
+                      ENTER YOUR FULL NAME
                     </ScrambleText>
                   </div>
                 )}
@@ -390,7 +390,7 @@ const Signup: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Email
+                EMAIL
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -447,7 +447,7 @@ const Signup: React.FC = () => {
                       fps={30}
                       duration={1100}
                     >
-                      example@email.com
+                      EXAMPLE@EMAIL.COM
                     </ScrambleText>
                   </div>
                 )}
@@ -462,7 +462,7 @@ const Signup: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Password
+                PASSWORD
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -528,7 +528,7 @@ const Signup: React.FC = () => {
                       fps={30}
                       duration={1200}
                     >
-                      Create a password
+                      CREATE A PASSWORD
                     </ScrambleText>
                   </div>
                 )}
@@ -583,7 +583,7 @@ const Signup: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Confirm Password
+                CONFIRM PASSWORD
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -649,7 +649,7 @@ const Signup: React.FC = () => {
                       fps={30}
                       duration={1300}
                     >
-                      Confirm your password
+                      CONFIRM YOUR PASSWORD
                     </ScrambleText>
                   </div>
                 )}
@@ -726,13 +726,13 @@ const Signup: React.FC = () => {
                 cursor: 'pointer',
                 lineHeight: '1.4'
               }}>
-                I agree to the{' '}
+                I AGREE TO THE{' '}
                 <Link to="/terms" style={{ color: '#39FF14', textDecoration: 'none' }}>
-                  Terms of Service
+                  TERMS OF SERVICE
                 </Link>
-                {' '}and{' '}
+                {' '}AND{' '}
                 <Link to="/privacy" style={{ color: '#39FF14', textDecoration: 'none' }}>
-                  Privacy Policy
+                  PRIVACY POLICY
                 </Link>
               </label>
             </div>
@@ -765,7 +765,7 @@ const Signup: React.FC = () => {
               }}
             >
               {isLoading ? (
-                'Creating Account...'
+                'CREATING ACCOUNT...'
               ) : (
                 <ScrambleText
                   trigger="hover"
@@ -776,7 +776,7 @@ const Signup: React.FC = () => {
                   fps={30}
                   duration={800}
                 >
-                  C  R  E  A  T  E     A  C  C  O  U  N  T
+                  CREATE ACCOUNT
                 </ScrambleText>
               )}
             </button>
@@ -784,7 +784,7 @@ const Signup: React.FC = () => {
             {/* Login Link */}
             <div style={{ textAlign: 'center' }}>
               <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
-                Already have an account?{' '}
+                ALREADY HAVE AN ACCOUNT?{' '}
               </span>
               <Link 
                 to="/login" 
@@ -801,7 +801,7 @@ const Signup: React.FC = () => {
                   e.currentTarget.style.textDecoration = 'none';
                 }}
               >
-                Sign In
+                SIGN IN
               </Link>
             </div>
           </form>
