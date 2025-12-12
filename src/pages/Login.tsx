@@ -64,14 +64,32 @@ const Login: React.FC = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (!user) return;
+    
+    console.log('🔍 User logged in, redirecting...', { user, isEmailVerified: user.isEmailVerified });
+    
     // If logged-in but unverified, go to verify screen
     if (!user.isEmailVerified) {
       navigate(`/verify-email?email=${encodeURIComponent(user.email)}`, { replace: true });
       return;
     }
     const from = location.state?.from?.pathname || '/';
+    console.log('🔍 Navigating to:', from);
     navigate(from, { replace: true });
   }, [user, navigate, location]);
+
+  // Listen for Google auth success event
+  useEffect(() => {
+    const handleGoogleAuthSuccess = (event: CustomEvent) => {
+      console.log('🔍 Google auth success event received, user:', event.detail?.user);
+      // The user state will be updated by AuthContext, which will trigger the redirect above
+    };
+
+    window.addEventListener('googleAuthSuccess', handleGoogleAuthSuccess as EventListener);
+    
+    return () => {
+      window.removeEventListener('googleAuthSuccess', handleGoogleAuthSuccess as EventListener);
+    };
+  }, []);
 
   // Simplified autofill detection (less performance impact)
   useEffect(() => {

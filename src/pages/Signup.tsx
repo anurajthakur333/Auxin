@@ -46,10 +46,25 @@ const Signup: React.FC = () => {
   // Redirect if already logged in (but not if we just signed up)
   useEffect(() => {
     if (user && user.isEmailVerified) {
+      console.log('🔍 User logged in on signup page, redirecting...', { user });
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
   }, [user, navigate, location]);
+
+  // Listen for Google auth success event
+  useEffect(() => {
+    const handleGoogleAuthSuccess = (event: CustomEvent) => {
+      console.log('🔍 Google auth success event received on signup page, user:', event.detail?.user);
+      // The user state will be updated by AuthContext, which will trigger the redirect above
+    };
+
+    window.addEventListener('googleAuthSuccess', handleGoogleAuthSuccess as EventListener);
+    
+    return () => {
+      window.removeEventListener('googleAuthSuccess', handleGoogleAuthSuccess as EventListener);
+    };
+  }, []);
 
   // Simplified autofill detection (less performance impact)
   useEffect(() => {

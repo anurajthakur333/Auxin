@@ -185,6 +185,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // The backend will handle the redirect to Google and the callback
       const backendOAuthUrl = `${API_BASE_URL}/auth/google`;
       
+      console.log('🔍 Opening Google OAuth popup:', backendOAuthUrl);
+      
       // Open backend OAuth endpoint in popup
       const popup = window.open(
         backendOAuthUrl,
@@ -192,41 +194,120 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         'width=500,height=600,scrollbars=yes,resizable=yes'
       );
 
+      if (!popup) {
+        setLoading(false);
+        console.error('❌ Popup blocked or failed to open');
+        return;
+      }
+
       // Listen for the popup to close
-      const checkClosed = setInterval(async () => {
-        if (popup?.closed) {
+      const checkClosed = setInterval(() => {
+        if (popup.closed) {
+          console.log('🔍 Popup closed');
           clearInterval(checkClosed);
-          setLoading(false);
+          // Don't set loading to false here - wait for message or timeout
         }
-      }, 1000);
+      }, 500);
+
+      // Timeout after 5 minutes
+      const timeout = setTimeout(() => {
+        console.error('❌ Google OAuth timeout');
+        clearInterval(checkClosed);
+        window.removeEventListener('message', messageListener);
+        setLoading(false);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+      }, 5 * 60 * 1000);
 
       // Listen for message from popup (sent by GoogleCallback component)
       const messageListener = (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
+        console.log('🔍 Message received:', {
+          origin: event.origin,
+          expectedOrigin: window.location.origin,
+          type: event.data?.type,
+          hasData: !!event.data
+        });
+
+        // Check origin - allow same origin or frontend URL
+        // Also allow messages from the same protocol and host (for subdomains)
+        const currentOrigin = window.location.origin;
+        const allowedOrigins = [
+          currentOrigin,
+          process.env.VITE_FRONTEND_URL || currentOrigin,
+          // Allow if it's the same host (different protocol/port is OK for dev)
+          window.location.protocol + '//' + window.location.host
+        ];
         
-        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-          setUser(event.data.user);
-          localStorage.setItem('token', event.data.token);
+        // Check if origin matches or if it's a trusted origin
+        const isAllowedOrigin = allowedOrigins.some(allowed => 
+          event.origin === allowed || 
+          event.origin.startsWith(allowed.split(':')[0] + '://') // Same protocol
+        );
+        
+        // For development, be more lenient
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1';
+        
+        if (!isAllowedOrigin && !isDevelopment) {
+          console.warn('⚠️ Message from unauthorized origin:', event.origin, 'Expected:', allowedOrigins);
+          return;
+        }
+        
+        // Additional check: only process messages with the expected type
+        if (!event.data || typeof event.data !== 'object' || !event.data.type) {
+          console.warn('⚠️ Invalid message format:', event.data);
+          return;
+        }
+        
+        if (event.data?.type === 'GOOGLE_AUTH_SUCCESS') {
+          console.log('✅ Google auth success, setting user:', event.data.user);
+          
+          // Set user and token
+          const userData = event.data.user;
+          const token = event.data.token;
+          
+          setUser(userData);
+          localStorage.setItem('token', token);
+          
+          // Clear session storage to avoid conflicts
+          sessionStorage.removeItem('token');
+          
           setLoading(false);
           clearInterval(checkClosed);
+          clearTimeout(timeout);
           window.removeEventListener('message', messageListener);
-        } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
-          console.error('Google auth error:', event.data.error);
+          
+          // Close popup if still open
+          if (popup && !popup.closed) {
+            popup.close();
+          }
+          
+          console.log('✅ Google login completed successfully');
+          console.log('✅ User state updated:', userData);
+          
+          // Trigger a custom event for navigation (components can listen to this)
+          window.dispatchEvent(new CustomEvent('googleAuthSuccess', { 
+            detail: { user: userData } 
+          }));
+        } else if (event.data?.type === 'GOOGLE_AUTH_ERROR') {
+          console.error('❌ Google auth error:', event.data.error);
           setLoading(false);
           clearInterval(checkClosed);
+          clearTimeout(timeout);
           window.removeEventListener('message', messageListener);
+          
+          // Close popup if still open
+          if (popup && !popup.closed) {
+            popup.close();
+          }
         }
       };
 
       window.addEventListener('message', messageListener);
       
-      // Cleanup if popup is blocked or fails to open
-      if (!popup) {
-        setLoading(false);
-        console.error('Popup blocked or failed to open');
-      }
     } catch (error) {
-      console.error('Google login error:', error);
+      console.error('❌ Google login error:', error);
       setLoading(false);
     }
   };

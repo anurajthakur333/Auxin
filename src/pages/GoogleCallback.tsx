@@ -32,24 +32,55 @@ const GoogleCallback: React.FC = () => {
           try {
             const user = JSON.parse(decodeURIComponent(userData));
             
-            // Send success message to parent window
-            window.opener?.postMessage({
-              type: 'GOOGLE_AUTH_SUCCESS',
+            console.log('✅ Google OAuth successful, sending message to parent:', {
               user: user,
-              token: token
-            }, window.location.origin);
+              hasToken: !!token,
+              origin: window.location.origin
+            });
+            
+            // Send success message to parent window
+            // Use '*' as targetOrigin to allow cross-origin (if needed)
+            // But prefer window.location.origin for security
+            if (window.opener) {
+              window.opener.postMessage({
+                type: 'GOOGLE_AUTH_SUCCESS',
+                user: user,
+                token: token
+              }, window.location.origin);
+              
+              // Also try with wildcard as fallback (less secure but more compatible)
+              setTimeout(() => {
+                window.opener?.postMessage({
+                  type: 'GOOGLE_AUTH_SUCCESS',
+                  user: user,
+                  token: token
+                }, '*');
+              }, 100);
+            } else {
+              console.error('❌ window.opener is null');
+              setError('Cannot communicate with parent window');
+              setStatus('error');
+              return;
+            }
             
             setStatus('success');
             
-            // Close popup after a short delay
+            // Close popup after a delay to ensure message is sent
             setTimeout(() => {
               window.close();
-            }, 1000);
+            }, 1500);
             return;
           } catch (parseError) {
-            console.error('Failed to parse user data:', parseError);
+            console.error('❌ Failed to parse user data:', parseError);
             setError('Failed to parse authentication data');
             setStatus('error');
+            
+            if (window.opener) {
+              window.opener.postMessage({
+                type: 'GOOGLE_AUTH_ERROR',
+                error: 'Failed to parse authentication data'
+              }, window.location.origin);
+            }
             return;
           }
         }
@@ -70,19 +101,32 @@ const GoogleCallback: React.FC = () => {
           const data = await response.json();
 
           if (response.ok) {
+            console.log('✅ Google OAuth successful (fallback flow), sending message to parent');
+            
             // Send success message to parent window
-            window.opener?.postMessage({
-              type: 'GOOGLE_AUTH_SUCCESS',
-              user: data.user,
-              token: data.token
-            }, window.location.origin);
+            if (window.opener) {
+              window.opener.postMessage({
+                type: 'GOOGLE_AUTH_SUCCESS',
+                user: data.user,
+                token: data.token
+              }, window.location.origin);
+              
+              // Also try with wildcard as fallback
+              setTimeout(() => {
+                window.opener?.postMessage({
+                  type: 'GOOGLE_AUTH_SUCCESS',
+                  user: data.user,
+                  token: data.token
+                }, '*');
+              }, 100);
+            }
             
             setStatus('success');
             
-            // Close popup after a short delay
+            // Close popup after a delay to ensure message is sent
             setTimeout(() => {
               window.close();
-            }, 1000);
+            }, 1500);
           } else {
             // Send error message to parent window
             window.opener?.postMessage({
