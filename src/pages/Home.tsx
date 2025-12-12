@@ -676,7 +676,7 @@ const Home = () => {
         </div>
 
        {/* Snapscroll - 3 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -819,7 +819,7 @@ const Home = () => {
         </div>
 
      {/* Snapscroll - 4 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between",borderBottom: "0.5px solid #00ff00" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -952,7 +952,7 @@ const Home = () => {
         </div>
 
       {/* Snapscroll - 5 */}
-        <div style={{ minHeight: "100vh", padding: "25px 25px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div style={{ minHeight: "100vh", padding: "50px 50px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           {/* Title */}
           <div className="d-flex align-items-start">
             <div className="">
@@ -1079,7 +1079,7 @@ const Home = () => {
                   delay={1400}
                   style={{ color: "white" }}
                 >
-                  Or A Conversion-Focused Rocket Ship, Our
+                  OR A CONVERSION-FOCUSED ROCKET SHIP, OUR
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -1101,7 +1101,7 @@ const Home = () => {
                   delay={1800}
                   style={{ color: "white" }}
                 >
-                  AUDIENCES REMEMBER AND ALGORITHMS
+                  AUDIENCES REMEMBER AND ALGORITHMS REWARD.
                 </ScrambleText>
                 <br />
                 <ScrambleText
@@ -1112,19 +1112,9 @@ const Home = () => {
                   delay={2000}
                   style={{ color: "white" }}
                 >
-                  REWARD. LET'S BUILD YOUR INDUSTRY'S NEXT
+                 LET'S BUILD YOUR INDUSTRY'S NEXT BENCHMARK.
                 </ScrambleText>
-                <br />
-                <ScrambleText
-                  trigger="load"
-                  speed="fast"
-                  revealSpeed={0.1}
-                  scrambleIntensity={1}
-                  delay={2200}
-                  style={{ color: "white" }}
-                >
-                  BENCHMARK.
-                </ScrambleText>
+          
               </div>
             </div>
           </div>

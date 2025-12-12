@@ -287,7 +287,6 @@ const Footer = () => {
   .icon-instagram { -webkit-mask-image: url('/Socials/instagram.svg'); mask-image: url('/Socials/instagram.svg'); }
   .icon-medium { -webkit-mask-image: url('/Socials/medium.svg'); mask-image: url('/Socials/medium.svg'); }
   .icon-behance { -webkit-mask-image: url('/Socials/behance.svg'); mask-image: url('/Socials/behance.svg'); }
-  .icon-discord { -webkit-mask-image: url('/Socials/discord.svg'); mask-image: url('/Socials/discord.svg'); }
   /* Hover neon green */
   .social-link:hover .social-icon {
     background-color: #39FF14;
@@ -408,9 +407,9 @@ const Footer = () => {
         {renderAnimatedHeader('studio').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>About Us</a></li>
-        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Our Team</a></li>
-        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Careers</a></li>
+        <li><a href="#about" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>ABOUT US</a></li>
+        <li><a href="#team" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>OUR TEAM</a></li>
+        <li><a href="#careers" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>CAREERS</a></li>
       </ul>
     </div>
 
@@ -421,9 +420,9 @@ const Footer = () => {
         {renderAnimatedHeader('workflow').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Experience</a></li>
-        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Case Studies</a></li>
-        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Client Testimonials</a></li>
+        <li><a href="#portfolio" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>EXPERIENCE</a></li>
+        <li><a href="#case-studies" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>CASE STUDIES</a></li>
+        <li><a href="#testimonials" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>CLIENT TESTIMONIALS</a></li>
       </ul>
     </div>
 
@@ -434,9 +433,9 @@ const Footer = () => {
         {renderAnimatedHeader('playbook').slice(4)}
       </h1>
       <ul className="list-unstyled">
-        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Growth Scripts</a></li>
-        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Insights</a></li>
-        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Trends</a></li>
+        <li><a href="#growth-scripts" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>GROWTH SCRIPTS</a></li>
+        <li><a href="#insights" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>INSIGHTS</a></li>
+        <li><a href="#trends" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>TRENDS</a></li>
       </ul>
     </div>
 
@@ -447,9 +446,9 @@ const Footer = () => {
         {renderAnimatedHeader('legal').slice(8)}
       </h1>
       <ul className="list-unstyled">
-        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Privacy Policy</Link></li>
-        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Terms & Conditions</Link></li>
-        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>Sitemap</a></li>
+        <li><Link to="/privacy" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>PRIVACY POLICY</Link></li>
+        <li><Link to="/terms" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>TERMS & CONDITIONS</Link></li>
+        <li><a href="#sitemap" className="footer-link text-white text-decoration-none aeonik-mono" onClick={playClickSound}>SITEMAP</a></li>
       </ul>
     </div>
   </div>
@@ -461,7 +460,7 @@ const Footer = () => {
         <div className="d-flex flex-column flex-lg-row align-items-center justify-content-between socials-row "
         style={{paddingRight:'110px',paddingLeft:'110px'}
       }>
-          {/* Social icons - order: LinkedIn, Facebook, Telegram, Instagram, Discord */}
+          {/* Social icons */}
           <div className="d-flex align-items-center socials-row">
           <a href="#" aria-label="Instagram" className="me-1 social-link" onClick={playClickSound}>
               <span className="social-icon icon-instagram" aria-hidden="true" />
@@ -478,11 +477,8 @@ const Footer = () => {
         <a href="#" aria-label="Medium" className="me-1 social-link" onClick={playClickSound}>
           <span className="social-icon icon-medium" aria-hidden="true" />
         </a>
-        <a href="#" aria-label="Behance" className="me-1 social-link" onClick={playClickSound}>
+        <a href="#" aria-label="Behance" className="social-link" onClick={playClickSound}>
           <span className="social-icon icon-behance" aria-hidden="true" />
-        </a>
-        <a href="#" aria-label="Discord" className="social-link" onClick={playClickSound}>
-          <span className="social-icon icon-discord" aria-hidden="true" />
         </a>
 
                    
