@@ -36,7 +36,7 @@ const ResetPassword: React.FC = () => {
   useEffect(() => {
     const validateToken = async () => {
       if (!token) {
-        setError('Invalid reset link. Please request a new password reset.');
+        setError('INVALID RESET LINK. PLEASE REQUEST A NEW PASSWORD RESET.');
         setIsValidating(false);
         return;
       }
@@ -49,11 +49,11 @@ const ResetPassword: React.FC = () => {
           setIsTokenValid(true);
           setUserEmail(data.email || '');
         } else {
-          setError(data.error || 'Invalid or expired reset link. Please request a new password reset.');
+          setError(data.error || 'INVALID OR EXPIRED RESET LINK. PLEASE REQUEST A NEW PASSWORD RESET.');
         }
       } catch (err) {
         console.error('Token validation error:', err);
-        setError('Failed to validate reset link. Please try again.');
+        setError('FAILED TO VALIDATE RESET LINK. PLEASE TRY AGAIN.');
       } finally {
         setIsValidating(false);
       }
@@ -64,14 +64,14 @@ const ResetPassword: React.FC = () => {
 
   // Validation functions
   const validatePassword = (password: string): string => {
-    if (!password) return 'Password is required';
-    if (password.length < 6) return 'Password must be at least 6 characters';
+    if (!password) return 'PASSWORD IS REQUIRED';
+    if (password.length < 6) return 'PASSWORD MUST BE AT LEAST 6 CHARACTERS';
     return '';
   };
 
   const validateConfirmPassword = (confirm: string): string => {
-    if (!confirm) return 'Please confirm your password';
-    if (confirm !== password) return 'Passwords do not match';
+    if (!confirm) return 'PLEASE CONFIRM YOUR PASSWORD';
+    if (confirm !== password) return 'PASSWORDS DO NOT MATCH';
     return '';
   };
 
@@ -88,7 +88,7 @@ const ResetPassword: React.FC = () => {
     setConfirmError(confirmValidation);
 
     if (passwordValidation || confirmValidation) {
-      setError('Please fix the errors above');
+      setError('PLEASE FIX THE ERRORS ABOVE');
       return;
     }
 
@@ -106,16 +106,16 @@ const ResetPassword: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess('Password reset successful! Redirecting to login...');
+        setSuccess('PASSWORD RESET SUCCESSFUL! REDIRECTING TO LOGIN...');
         setTimeout(() => {
           navigate('/login', { replace: true });
         }, 2000);
       } else {
-        setError(data.error || 'Failed to reset password. Please try again.');
+        setError(data.error || 'FAILED TO RESET PASSWORD. PLEASE TRY AGAIN.');
       }
     } catch (err) {
       console.error('Reset password error:', err);
-      setError('An error occurred. Please try again.');
+      setError('AN ERROR OCCURRED. PLEASE TRY AGAIN.');
     } finally {
       setIsLoading(false);
     }
@@ -133,7 +133,7 @@ const ResetPassword: React.FC = () => {
         justifyContent: 'center'
       }}>
         <div className="aeonik-mono" style={{ color: '#39FF14', fontSize: '1.2rem' }}>
-          Validating reset link...
+          VALIDATING RESET LINK...
         </div>
       </div>
     );
@@ -168,7 +168,7 @@ const ResetPassword: React.FC = () => {
               fontWeight: '400',
               marginBottom: '1rem'
             }}>
-              Invalid Reset Link
+              INVALID RESET LINK
             </h2>
             
             <div className="aeonik-mono" style={{
@@ -180,7 +180,7 @@ const ResetPassword: React.FC = () => {
               color: '#ff6b6b',
               fontSize: '0.9rem'
             }}>
-              {error}
+              {error.toUpperCase()}
             </div>
 
             <Link 
@@ -196,7 +196,7 @@ const ResetPassword: React.FC = () => {
                 fontWeight: '500'
               }}
             >
-              Request New Reset Link
+              REQUEST NEW RESET LINK
             </Link>
 
             <div style={{ marginTop: '1.5rem' }}>
@@ -209,7 +209,7 @@ const ResetPassword: React.FC = () => {
                   fontSize: '0.9rem'
                 }}
               >
-                Back to Login
+                BACK TO LOGIN
               </Link>
             </div>
           </div>
@@ -280,7 +280,7 @@ const ResetPassword: React.FC = () => {
               marginBottom: '0.5rem',
               textAlign: 'center'
             }}>
-              Create New Password
+              CREATE NEW PASSWORD
             </h2>
             
             <p className="aeonik-mono" style={{ 
@@ -289,7 +289,7 @@ const ResetPassword: React.FC = () => {
               textAlign: 'center',
               marginBottom: '2rem'
             }}>
-              {userEmail ? `Enter a new password for ${userEmail}` : 'Enter your new password below'}
+              {userEmail ? `ENTER A NEW PASSWORD FOR ${userEmail.toUpperCase()}` : 'ENTER YOUR NEW PASSWORD BELOW'}
             </p>
 
             {error && (
@@ -303,7 +303,7 @@ const ResetPassword: React.FC = () => {
                 fontSize: '0.9rem',
                 textAlign: 'center'
               }}>
-                {error}
+                {error.toUpperCase()}
               </div>
             )}
 
@@ -318,7 +318,7 @@ const ResetPassword: React.FC = () => {
                 fontSize: '0.9rem',
                 textAlign: 'center'
               }}>
-                {success}
+                {success.toUpperCase()}
               </div>
             )}
 
@@ -330,7 +330,7 @@ const ResetPassword: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                New Password
+                NEW PASSWORD
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -346,7 +346,7 @@ const ResetPassword: React.FC = () => {
                     }
                     // Also revalidate confirm if it has a value
                     if (confirmPassword.length > 0) {
-                      setConfirmError(value !== confirmPassword ? 'Passwords do not match' : '');
+                      setConfirmError(value !== confirmPassword ? 'PASSWORDS DO NOT MATCH' : '');
                     }
                   }}
                   placeholder=""
@@ -405,7 +405,7 @@ const ResetPassword: React.FC = () => {
                   marginTop: '0.25rem',
                   marginLeft: '0.25rem'
                 }}>
-                  {passwordError}
+                  {passwordError.toUpperCase()}
                 </div>
               )}
             </div>
@@ -418,7 +418,7 @@ const ResetPassword: React.FC = () => {
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
-                Confirm Password
+                CONFIRM PASSWORD
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -428,7 +428,7 @@ const ResetPassword: React.FC = () => {
                     const value = e.target.value;
                     setConfirmPassword(value);
                     if (value.length > 0) {
-                      setConfirmError(value !== password ? 'Passwords do not match' : '');
+                      setConfirmError(value !== password ? 'PASSWORDS DO NOT MATCH' : '');
                     } else {
                       setConfirmError('');
                     }
@@ -489,7 +489,7 @@ const ResetPassword: React.FC = () => {
                   marginTop: '0.25rem',
                   marginLeft: '0.25rem'
                 }}>
-                  {confirmError}
+                  {confirmError.toUpperCase()}
                 </div>
               )}
             </div>
@@ -514,9 +514,9 @@ const ResetPassword: React.FC = () => {
               }}
             >
               {isLoading ? (
-                'Resetting Password...'
+                'RESETTING PASSWORD...'
               ) : success ? (
-                'Password Reset!'
+                'PASSWORD RESET!'
               ) : (
                 <ScrambleText
                   trigger="hover"
@@ -535,7 +535,7 @@ const ResetPassword: React.FC = () => {
             {/* Back to Login Link */}
             <div style={{ textAlign: 'center' }}>
               <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
-                Remember your password?{' '}
+                REMEMBER YOUR PASSWORD?{' '}
               </span>
               <Link 
                 to="/login" 
@@ -552,7 +552,7 @@ const ResetPassword: React.FC = () => {
                   e.currentTarget.style.textDecoration = 'none';
                 }}
               >
-                Sign In
+                SIGN IN
               </Link>
             </div>
           </form>

@@ -41,7 +41,7 @@ const VerifyEmail: React.FC = () => {
 
   const handleSendVerification = async () => {
     if (!emailNormalized) {
-      setError('Email is required to send verification link.');
+      setError('EMAIL IS REQUIRED TO SEND VERIFICATION LINK.');
       return;
     }
     
@@ -67,13 +67,13 @@ const VerifyEmail: React.FC = () => {
       
       if (res?.success) {
         console.log('✅ Verification email sent');
-        setMessage('Verification link sent! Please check your email and click the link to verify.');
+        setMessage('VERIFICATION LINK SENT! PLEASE CHECK YOUR EMAIL AND CLICK THE LINK TO VERIFY.');
       } else {
-        throw new Error(res?.error || 'Failed to send verification email');
+        throw new Error(res?.error || 'FAILED TO SEND VERIFICATION EMAIL');
       }
     } catch (err: any) {
       console.error('❌ Failed to send verification email:', err);
-      const errorMsg = err?.message || err?.error || 'Failed to send verification email. Please try again.';
+      const errorMsg = err?.message || err?.error || 'FAILED TO SEND VERIFICATION EMAIL. PLEASE TRY AGAIN.';
       setError(errorMsg);
     } finally {
       setIsLoading(false);
@@ -96,14 +96,14 @@ const VerifyEmail: React.FC = () => {
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
         }}>
           <h2 className="aeonik-mono" style={{ color: 'white', fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>
-            Verify Your Email
+            VERIFY YOUR EMAIL
           </h2>
           
           <p className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem', textAlign: 'center', marginBottom: '2rem' }}>
             {email ? (
-              <>We've sent a verification link to <span style={{ color: '#39FF14' }}>{email}</span></>
+              <>WE'VE SENT A VERIFICATION LINK TO <span style={{ color: '#39FF14' }}>{email.toUpperCase()}</span></>
             ) : (
-              'Please check your email for a verification link'
+              'PLEASE CHECK YOUR EMAIL FOR A VERIFICATION LINK'
             )}
           </p>
 
@@ -118,7 +118,7 @@ const VerifyEmail: React.FC = () => {
               fontSize: '0.9rem',
               textAlign: 'center'
             }}>
-              {error}
+              {error.toUpperCase()}
             </div>
           )}
 
@@ -133,40 +133,21 @@ const VerifyEmail: React.FC = () => {
               fontSize: '0.9rem',
               textAlign: 'center'
             }}>
-              {message}
+              {message.toUpperCase()}
             </div>
           )}
-
-          {/* Email Icon */}
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <div style={{
-              width: '80px',
-              height: '80px',
-              margin: '0 auto',
-              background: 'rgba(57, 255, 20, 0.1)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
-            </div>
-          </div>
 
           {/* Instructions */}
           <div className="aeonik-mono" style={{ 
             color: '#888', 
             fontSize: '0.85rem', 
-            textAlign: 'center',
+            textAlign: 'left',
             marginBottom: '2rem',
             lineHeight: '1.6'
           }}>
-            <p style={{ marginBottom: '0.5rem' }}>📧 Check your inbox for the verification email</p>
-            <p style={{ marginBottom: '0.5rem' }}>🔗 Click the "VERIFY EMAIL" button in the email</p>
-            <p>✅ You'll be redirected to login after verification</p>
+            <p style={{ marginBottom: '0.75rem' }}>STEP 1: CHECK YOUR INBOX FOR THE VERIFICATION EMAIL</p>
+            <p style={{ marginBottom: '0.75rem' }}>STEP 2: CLICK THE "VERIFY EMAIL" BUTTON IN THE EMAIL</p>
+            <p>STEP 3: YOU'LL BE REDIRECTED TO LOGIN AFTER VERIFICATION</p>
           </div>
 
           {/* Resend Button */}
@@ -190,7 +171,7 @@ const VerifyEmail: React.FC = () => {
               textTransform: 'uppercase'
             }}
           >
-            {isLoading ? 'Sending...' : 'Resend Verification Email'}
+            {isLoading ? 'SENDING...' : 'RESEND VERIFICATION EMAIL'}
           </button>
 
           {/* Back to Login */}
@@ -205,10 +186,10 @@ const VerifyEmail: React.FC = () => {
                 border: 'none', 
                 cursor: 'pointer', 
                 fontSize: '0.9rem',
-                textDecoration: 'underline'
+                textDecoration: 'none'
               }}
             >
-              Back to Login
+              BACK TO LOGIN
             </button>
           </div>
         </div>

@@ -225,7 +225,7 @@ const ForgotPassword: React.FC = () => {
             <h2 className="aeonik-mono" style={{ 
               color: 'white', 
               fontSize: '1.5rem', 
-              fontWeight: '400',
+              fontWeight: '600',
               marginBottom: '1rem',
               textAlign: 'center'
             }}>
