@@ -10,6 +10,8 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Meeting from './pages/Meeting';
 import Login from './pages/Login';
+import AdminLogin from './pages/admin/AdminLogin';
+import Admin from './pages/admin/Admin';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -52,6 +54,8 @@ export default function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<Admin />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
