@@ -24,6 +24,8 @@ const Users = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null)
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   
   // Filter states
@@ -184,6 +186,122 @@ const Users = () => {
     setJoinedDateEnd("")
   }
 
+  const deleteUser = async (user: User) => {
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        setError('Admin authentication required')
+        return
+      }
+
+      setDeletingUserId(user.id)
+      setError(null)
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/users/${user.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      const data = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(data?.error || `Failed to delete user (${response.status})`)
+      }
+
+      // Remove user from local list
+      setUsers(prev => prev.filter(u => u.id !== user.id))
+    } catch (err) {
+      console.error('Error deleting user:', err)
+      setError(err instanceof Error ? err.message : 'Failed to delete user')
+    } finally {
+      setDeletingUserId(null)
+    }
+  }
+
+  const openDeleteDialog = (user: User) => {
+    setUserToDelete(user)
+  }
+
+  const cancelDeleteDialog = () => {
+    setUserToDelete(null)
+  }
+
+  const confirmDeleteDialog = async () => {
+    if (!userToDelete) return
+    await deleteUser(userToDelete)
+    setUserToDelete(null)
+  }
+
+  const exportToCSV = async () => {
+    try {
+      playClickSound()
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        setError('Admin authentication required')
+        return
+      }
+
+      // Call backend CSV export endpoint
+      const response = await fetch(`${API_BASE_URL}/api/admin/users/export`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to export CSV')
+      }
+
+      // Get the blob and create download link
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `users_export_${new Date().toISOString().split('T')[0]}.csv`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (err) {
+      console.error('Error exporting CSV:', err)
+      // Fallback: Generate CSV client-side
+      const csvContent = generateCSV(filteredUsers)
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `users_export_${new Date().toISOString().split('T')[0]}.csv`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    }
+  }
+
+  const generateCSV = (usersToExport: User[]): string => {
+    const headers = ['Name', 'Email', 'Status', 'Projects', 'Joined At', 'Email Verified', 'Password']
+    const rows = usersToExport.map(user => [
+      user.name,
+      user.email,
+      user.status.toUpperCase(),
+      user.projects.toString(),
+      new Date(user.joinDate).toLocaleString(),
+      user.isEmailVerified ? 'TRUE' : 'FALSE',
+      user.password || 'NONE'
+    ])
+
+    const csvRows = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ]
+
+    return csvRows.join('\n')
+  }
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
@@ -255,6 +373,32 @@ const Users = () => {
             }}
           >
             CLEAR
+          </button>
+
+          <button
+            onClick={exportToCSV}
+            className="aeonik-mono"
+            style={{
+              padding: "8px 16px",
+              background: "transparent",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              color: "#FFF",
+              fontSize: "12px",
+              cursor: "pointer",
+              borderRadius: "0px",
+              letterSpacing: "1px",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#39FF14"
+              e.currentTarget.style.color = "#39FF14"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+              e.currentTarget.style.color = "#FFF"
+            }}
+          >
+            EXPORT CSV
           </button>
           
           {/* Banned Users Component */}
@@ -431,53 +575,156 @@ const Users = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr",
+            gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
             padding: "20px 25px",
             background: "rgba(57, 255, 20, 0.05)",
             borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+            alignItems: "start",
           }}
         >
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600, 
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             NAME
           </div>
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             EMAIL
           </div>
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             STATUS
           </div>
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             PROJECTS
           </div>
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             JOINED AT
           </div>
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             EMAIL VERIFIED
           </div>
           <div
             className="aeonik-mono"
-            style={{ fontSize: "12px", color: "#39FF14", letterSpacing: "1px", fontWeight: 600 }}
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
           >
             PASSWORD
+          </div>
+          <div
+            className="aeonik-mono"
+            style={{ 
+              fontSize: "12px", 
+              color: "#39FF14", 
+              letterSpacing: "1px", 
+              fontWeight: 600,
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}
+          >
+            ACTIONS
           </div>
         </div>
 
@@ -487,11 +734,12 @@ const Users = () => {
             key={user.id}
             style={{
               display: "grid",
-              gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr",
+              gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
               padding: "20px 25px",
               borderBottom: index < activeUsers.length - 1 ? "1px solid rgba(255, 255, 255, 0.05)" : "none",
               transition: "all 0.3s ease",
               cursor: "pointer",
+              alignItems: "start",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
@@ -500,10 +748,128 @@ const Users = () => {
               e.currentTarget.style.background = "transparent"
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-              <span className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF" }}>
+            <div style={{ 
+              display: "flex", 
+              alignItems: "flex-start", 
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
+              <span className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255)" ,paddingLeft: "20px" ,paddingRight: "20px" }}>
                 {user.name}
               </span>
+            </div>
+            <div className="aeonik-mono" style={{ 
+              fontSize: "14px", 
+              color: "rgba(255, 255, 255)",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
+              {user.email}
+            </div>
+            <div style={{
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+            }}>
+              <span
+                className="aeonik-mono"
+                style={{
+                  fontSize: "11px",
+                  color: getStatusColor(user.status),
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
+                  padding: "4px 8px",
+                  border: `1px solid ${getStatusColor(user.status)}`,
+                  borderRadius: "0px",
+                  display: "inline-block",
+                }}
+              >
+                {user.status}
+              </span>
+            </div>
+            <div className="aeonik-mono" style={{ 
+              fontSize: "14px", 
+              color: "#39FF14",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
+              {user.projects}
+            </div>
+            <div className="aeonik-mono" style={{ 
+              fontSize: "14px", 
+              color: "#FFF",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
+              {new Date(user.joinDate).toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              })}
+            </div>
+            <div className="aeonik-mono" style={{ 
+              fontSize: "12px", 
+              color: user.isEmailVerified ? "#39FF14" : "rgba(255,255,255,0.6)",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
+              {user.isEmailVerified ? "TRUE" : "FALSE"}
+            </div>
+            <div className="aeonik-mono" style={{ 
+              fontSize: "12px", 
+              color: user.hasPassword ? "#39FF14" : "rgba(255,255,255,0.6)",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
+              {user.password || "NONE"}
+            </div>
+            <div style={{ 
+              display: "flex", 
+              alignItems: "flex-start", 
+              gap: "8px", 
+              flexWrap: "wrap",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              minWidth: 0,
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              whiteSpace: "normal"
+            }}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -529,43 +895,31 @@ const Users = () => {
               >
                 {user.isBanned ? "UNBAN" : "BAN"}
               </button>
-            </div>
-            <div className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.7)" }}>
-              {user.email}
-            </div>
-            <div>
-              <span
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playClickSound();
+                  openDeleteDialog(user);
+                }}
+                disabled={deletingUserId === user.id}
                 className="aeonik-mono"
                 style={{
                   fontSize: "11px",
-                  color: getStatusColor(user.status),
                   textTransform: "uppercase",
                   letterSpacing: "1px",
-                  padding: "4px 8px",
-                  border: `1px solid ${getStatusColor(user.status)}`,
+                  padding: "4px 10px",
                   borderRadius: "0px",
+                  cursor: deletingUserId === user.id ? "default" : "pointer",
+                  border: "1px solid #FF6B6B",
+                  color: "#FF6B6B",
+                  background: "transparent",
+                  opacity: deletingUserId === user.id ? 0.6 : 1,
+                  transition: "all 0.2s ease",
+                  flexShrink: 0
                 }}
               >
-                {user.status}
-              </span>
-            </div>
-            <div className="aeonik-mono" style={{ fontSize: "14px", color: "#39FF14" }}>
-              {user.projects}
-            </div>
-            <div className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.5)" }}>
-              {new Date(user.joinDate).toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-              })}
-            </div>
-            <div className="aeonik-mono" style={{ fontSize: "12px", color: user.isEmailVerified ? "#39FF14" : "rgba(255,255,255,0.6)" }}>
-              {user.isEmailVerified ? "TRUE" : "FALSE"}
-            </div>
-            <div className="aeonik-mono" style={{ fontSize: "12px", color: user.hasPassword ? "#39FF14" : "rgba(255,255,255,0.6)" }}>
-              {user.password || "NONE"}
+                DELETE
+              </button>
             </div>
           </div>
         ))}
@@ -600,53 +954,156 @@ const Users = () => {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr",
+                gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
                 padding: "20px 25px",
                 background: "rgba(255, 107, 107, 0.1)",
                 borderBottom: "1px solid rgba(255, 107, 107, 0.3)",
+                alignItems: "start",
               }}
             >
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 NAME
               </div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 EMAIL
               </div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 STATUS
               </div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 PROJECTS
               </div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 JOINED AT
               </div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 EMAIL VERIFIED
               </div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px", fontWeight: 600 }}
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
               >
                 PASSWORD
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                ACTIONS
               </div>
             </div>
 
@@ -656,11 +1113,12 @@ const Users = () => {
                 key={user.id}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr",
+                  gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
                   padding: "20px 25px",
                   borderBottom: index < bannedUsers.length - 1 ? "1px solid rgba(255, 107, 107, 0.1)" : "none",
                   transition: "all 0.3s ease",
                   cursor: "pointer",
+                  alignItems: "start",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(255, 107, 107, 0.05)"
@@ -669,13 +1127,131 @@ const Users = () => {
                   e.currentTarget.style.background = "transparent"
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                  <span className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF" }}>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "flex-start", 
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  <span className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF" ,paddingLeft: "20px" ,paddingRight: "20px" }}>
                     {user.name}
                   </span>
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "14px", 
+                  color: "rgba(255, 255, 255, 0.7)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.email}
+                </div>
+                <div style={{
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  <span
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      color: "#FF6B6B",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      padding: "4px 8px",
+                      border: "1px solid #FF6B6B",
+                      borderRadius: "0px",
+                      display: "inline-block",
+        
+                    }}
+                  >
+                    {user.status}
+                  </span>
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "14px", 
+                  color: "rgba(255, 255, 255)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.projects}
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "14px", 
+                  color: "rgba(255, 255, 255)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {new Date(user.joinDate).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  })}
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "12px", 
+                  color: user.isEmailVerified ? "#39FF14" : "rgba(255,255,255,0.6)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.isEmailVerified ? "TRUE" : "FALSE"}
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "12px", 
+                  color: user.hasPassword ? "#39FF14" : "rgba(255,255,255,0.6)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.password || "NONE"}
+                </div>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "flex-start", 
+                  gap: "8px", 
+                  flexWrap: "wrap",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      playClickSound();
                       toggleBan(user);
                     }}
                     disabled={updatingUserId === user.id}
@@ -697,46 +1273,159 @@ const Users = () => {
                   >
                     UNBAN
                   </button>
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.7)" }}>
-                  {user.email}
-                </div>
-                <div>
-                  <span
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playClickSound();
+                      openDeleteDialog(user);
+                    }}
+                    disabled={deletingUserId === user.id}
                     className="aeonik-mono"
                     style={{
                       fontSize: "11px",
-                      color: "#FF6B6B",
                       textTransform: "uppercase",
                       letterSpacing: "1px",
-                      padding: "4px 8px",
-                      border: "1px solid #FF6B6B",
+                      padding: "4px 10px",
                       borderRadius: "0px",
+                      cursor: deletingUserId === user.id ? "default" : "pointer",
+                      border: "1px solid #FF6B6B",
+                      color: "#FF6B6B",
+                      background: "transparent",
+                      opacity: deletingUserId === user.id ? 0.6 : 1,
+                      transition: "all 0.2s ease",
+                      flexShrink: 0
                     }}
                   >
-                    {user.status}
-                  </span>
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FF6B6B" }}>
-                  {user.projects}
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.5)" }}>
-                  {new Date(user.joinDate).toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  })}
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "12px", color: user.isEmailVerified ? "#39FF14" : "rgba(255,255,255,0.6)" }}>
-                  {user.isEmailVerified ? "TRUE" : "FALSE"}
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "12px", color: user.hasPassword ? "#39FF14" : "rgba(255,255,255,0.6)" }}>
-                  {user.password || "NONE"}
+                    DELETE
+                  </button>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Delete User Confirmation Dialog */}
+      {userToDelete && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "420px",
+              backgroundColor: "#000000",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              padding: "24px 24px 20px",
+              borderRadius: "0px",
+              boxShadow: "0 0 0 1px rgba(255,255,255,0.05)",
+            }}
+          >
+            <div style={{ marginBottom: "16px" }}>
+              <h3
+                className="aeonik-mono"
+                style={{
+                  fontSize: "16px",
+                  color: "#FFFFFF",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  margin: 0,
+                }}
+              >
+                ARE YOU ABSOLUTELY SURE?
+              </h3>
+              <p
+                className="aeonik-mono"
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  lineHeight: 1.6,
+                  color: "rgba(255,255,255,0.7)",
+                }}
+              >
+                THIS ACTION CANNOT BE UNDONE. THIS WILL PERMANENTLY DELETE USER{" "}
+                <span style={{ color: "#FF6B6B" }}>
+                  {userToDelete.name.toUpperCase()} ({userToDelete.email.toUpperCase()})
+                </span>{" "}
+                AND REMOVE THEIR DATA FROM OUR SERVERS.
+              </p>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "12px",
+                marginTop: "8px",
+              }}
+            >
+              <button
+                onClick={() => {
+                  playClickSound()
+                  cancelDeleteDialog()
+                }}
+                className="aeonik-mono"
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "0px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  background: "transparent",
+                  color: "#FFFFFF",
+                  fontSize: "12px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#FFFFFF"
+                  e.currentTarget.style.color = "#FFFFFF"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                  e.currentTarget.style.color = "#FFFFFF"
+                }}
+              >
+                CANCEL
+              </button>
+              <button
+                onClick={() => {
+                  playClickSound()
+                  confirmDeleteDialog()
+                }}
+                disabled={deletingUserId === userToDelete.id}
+                className="aeonik-mono"
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "0px",
+                  border: "1px solid #FF6B6B",
+                  background: "transparent",
+                  color: "#FF6B6B",
+                  fontSize: "12px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  cursor: deletingUserId === userToDelete.id ? "default" : "pointer",
+                  opacity: deletingUserId === userToDelete.id ? 0.6 : 1,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (deletingUserId === userToDelete.id) return
+                  e.currentTarget.style.background = "rgba(255, 107, 107, 0.1)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent"
+                }}
+              >
+                DELETE USER
+              </button>
+            </div>
           </div>
         </div>
       )}
