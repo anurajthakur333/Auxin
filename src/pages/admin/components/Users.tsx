@@ -169,6 +169,15 @@ const Users = () => {
     }
   }
 
+  const clearFilters = () => {
+    setNameEmailSearch("")
+    setEmailVerifiedFilter("all")
+    setStatusFilter("all")
+    setProjectsFilter("")
+    setJoinedDateStart("")
+    setJoinedDateEnd("")
+  }
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
@@ -208,6 +217,32 @@ const Users = () => {
             }}
           >
             REFRESH
+          </button>
+          
+          <button
+            onClick={clearFilters}
+            className="aeonik-mono"
+            style={{
+              padding: "8px 16px",
+              background: "transparent",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              color: "#FFF",
+              fontSize: "12px",
+              cursor: "pointer",
+              borderRadius: "4px",
+              letterSpacing: "1px",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#39FF14"
+              e.currentTarget.style.color = "#39FF14"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+              e.currentTarget.style.color = "#FFF"
+            }}
+          >
+            CLEAR
           </button>
           
           {/* Banned Users Component */}

@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import ScrambleText from "../components/Scramble";
+import LetterGlitch from "../components/LetterGlitch";
+import LaserFlow from "../components/LaserFlow";
 import Footer from "../components/Footer";
 import Preloader from "../components/Preloader";
-import Squares from "../components/Squares";
-import Particles from "../components/Particles";
+// import Squares from "../components/Squares";
+// import Particles from "../components/Particles";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
@@ -89,8 +91,39 @@ const Home = () => {
         <div style={{ flex: 1 }}>
     {/* Section - 1 */}
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", position: "relative" }}>
+          {/* LetterGlitch Background */}
+          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}>
+            <LetterGlitch
+              glitchSpeed={100}
+              centerVignette={true}
+              outerVignette={true}
+              smooth={true}
+              opacity={0.3}
+            />
+          </div>
+
+          {/* LaserFlow Background - Laser effect from top to bottom, fitted to section */}
+          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}>
+            <LaserFlow
+              horizontalBeamOffset={0.0}
+              verticalBeamOffset={-0.5}
+              verticalSizing={5.5}
+              horizontalSizing={2}
+              flowSpeed={1}
+              color="#39FF14"
+              fogIntensity={0}
+              wispIntensity={5.5}
+              flowStrength={0.3}
+              fogScale={0}
+              decay={1.8}
+              falloffStart={2.0}
+              wispDensity={1.2}
+              fogFallSpeed={0.4}
+            />
+          </div>
+
           {/* Squares Background - positioned to capture mouse events */}
-          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 3 }}>
+          {/* <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 3 }}>
             <Squares 
               speed={0.3} 
               squareSize={100}
@@ -100,10 +133,10 @@ const Home = () => {
               hoverPattern='plus'
               alignVerticalToCenter
             />
-          </div>
+          </div> */}
           
           {/* Particles Background */}
-          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 5 }}>
+          {/* <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 5 }}>
             <Particles 
               density="medium"
               speed="slow"
@@ -113,10 +146,10 @@ const Home = () => {
               fadeInDuration={8000}
               particleLifetime={8000}
             />
-          </div>
+          </div> */}
           
           {/* CSS Vignette Overlay - Ellipse Wide */}
-          <div
+          {/* <div
             style={{
               position: "absolute",
               top: 0,
@@ -127,7 +160,7 @@ const Home = () => {
               pointerEvents: "none",
               zIndex: 4
             }}
-          />
+          /> */}
           
           {/* Text Content */}
           <div className="text-center px-4" style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
