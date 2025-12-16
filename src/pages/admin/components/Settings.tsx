@@ -35,7 +35,7 @@ const Settings = () => {
               background: "rgba(255, 255, 255, 0.03)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               padding: "25px",
-              borderRadius: "8px",
+              borderRadius: "0px",
               transition: "all 0.3s ease",
               cursor: "pointer",
               display: "flex",
@@ -54,11 +54,11 @@ const Settings = () => {
             <div>
               <div
                 className="aeonik-mono"
-                style={{ fontSize: "18px", color: "#FFF", fontWeight: 600, marginBottom: "5px" }}
+                style={{ fontSize: "18px", color: "#FFF", fontWeight: 600, marginBottom: "5px", textTransform: "uppercase" }}
               >
                 {setting.title}
               </div>
-              <div className="aeonik-mono" style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.5)" }}>
+              <div className="aeonik-mono" style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase" }}>
                 {setting.description}
               </div>
             </div>
@@ -71,7 +71,7 @@ const Settings = () => {
                 letterSpacing: "1px",
                 padding: "6px 12px",
                 border: "1px solid #39FF14",
-                borderRadius: "4px",
+                borderRadius: "0px",
               }}
             >
               {setting.status}

@@ -59,7 +59,7 @@ const Projects = () => {
               background: "rgba(255, 255, 255, 0.03)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               padding: "25px",
-              borderRadius: "8px",
+              borderRadius: "0px",
               transition: "all 0.3s ease",
               cursor: "pointer",
             }}
@@ -83,11 +83,11 @@ const Projects = () => {
               <div>
                 <div
                   className="aeonik-mono"
-                  style={{ fontSize: "20px", color: "#FFF", fontWeight: 600, marginBottom: "5px" }}
+                  style={{ fontSize: "20px", color: "#FFF", fontWeight: 600, marginBottom: "5px", textTransform: "uppercase" }}
                 >
                   {project.name}
                 </div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.5)" }}>
+                <div className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase" }}>
                   Client: {project.client}
                 </div>
               </div>
@@ -100,7 +100,7 @@ const Projects = () => {
                   letterSpacing: "1px",
                   padding: "6px 12px",
                   border: `1px solid ${getStatusColor(project.status)}`,
-                  borderRadius: "4px",
+                  borderRadius: "0px",
                 }}
               >
                 {project.status}
@@ -111,22 +111,22 @@ const Projects = () => {
               <div>
                 <div
                   className="aeonik-mono"
-                  style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", marginBottom: "5px" }}
+                  style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", marginBottom: "5px", textTransform: "uppercase" }}
                 >
                   Revenue
                 </div>
-                <div className="aeonik-mono" style={{ fontSize: "18px", color: "#39FF14", fontWeight: 600 }}>
+                <div className="aeonik-mono" style={{ fontSize: "18px", color: "#39FF14", fontWeight: 600, textTransform: "uppercase" }}>
                   ${project.revenue.toLocaleString()}
                 </div>
               </div>
               <div>
                 <div
                   className="aeonik-mono"
-                  style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", marginBottom: "5px" }}
+                  style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", marginBottom: "5px", textTransform: "uppercase" }}
                 >
                   Start Date
                 </div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF" }}>
+                <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF", textTransform: "uppercase" }}>
                   {new Date(project.startDate).toLocaleDateString()}
                 </div>
               </div>

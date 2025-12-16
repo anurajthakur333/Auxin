@@ -6,6 +6,8 @@ import Analytics from "./components/Analytics"
 import Users from "./components/Users"
 import Projects from "./components/Projects"
 import Settings from "./components/Settings"
+import { useSound } from "../../hooks/useSound"
+import clickSound from "../../assets/Sound/Click1.wav"
 import "../../styles/fonts.css"
 import "../../styles/Main.css"
 import Lenis from "lenis"
@@ -15,6 +17,7 @@ const Admin = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings">("analytics")
+  const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Mock admin check - in production, check user.role === 'admin'
   useEffect(() => {
@@ -72,18 +75,46 @@ const Admin = () => {
         padding: "40px 50px",
       }}
     >
-      {/* Admin Header with Logout */}
+      {/* Admin Header with Title and Logout */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
           marginBottom: "40px",
           paddingBottom: "20px",
+          gap: "20px",
         }}
       >
+        {/* Page Title */}
+        <h1
+          className="aeonik-mono text-white"
+          style={{
+            fontSize: "clamp(32px, 10vw, 150px)",
+            lineHeight: "0.9",
+            letterSpacing: "-8px",
+            fontWeight: 600,
+            textAlign: "left",
+            margin: 0,
+            flex: 1,
+          }}
+        >
+          <ScrambleText
+            trigger="load"
+            speed="fast"
+            revealSpeed={0.3}
+            scrambleIntensity={1}
+            delay={0}
+            style={{ color: "white" }}
+          >
+            ADMIN PANEL
+          </ScrambleText>
+        </h1>
+
+        {/* Exit Button */}
         <button
           onClick={() => {
+            playClickSound()
             localStorage.removeItem('adminToken')
             navigate("/")
           }}
@@ -95,9 +126,10 @@ const Admin = () => {
             color: "white",
             fontSize: "12px",
             cursor: "pointer",
-            borderRadius: "4px",
+            borderRadius: "0px",
             letterSpacing: "1px",
             transition: "all 0.3s ease",
+            flexShrink: 0,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "#39FF14"
@@ -111,31 +143,6 @@ const Admin = () => {
           EXIT ADMIN PANEL
         </button>
       </div>
-
-      {/* Page Title */}
-      <h1
-        className="aeonik-mono text-white"
-        style={{
-          fontSize: "clamp(32px, 10vw, 150px)",
-          lineHeight: "0.9",
-          letterSpacing: "-8px",
-          fontWeight: 600,
-          textAlign: "left",
-          marginTop: "12px",
-          marginBottom: "20px",
-        }}
-      >
-        <ScrambleText
-          trigger="load"
-          speed="fast"
-          revealSpeed={0.3}
-          scrambleIntensity={1}
-          delay={0}
-          style={{ color: "white" }}
-        >
-          ADMIN PANEL
-        </ScrambleText>
-      </h1>
 
       {/* Tabs Navigation */}
       <div
@@ -151,7 +158,10 @@ const Admin = () => {
         {(["analytics", "users", "projects", "settings"] as const).map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              playClickSound()
+              setActiveTab(tab)
+            }}
             className="aeonik-mono"
             style={{
               fontSize: "14px",
@@ -161,7 +171,7 @@ const Admin = () => {
               padding: "10px 20px",
               background: activeTab === tab ? "rgba(57, 255, 20, 0.1)" : "transparent",
               border: activeTab === tab ? "1px solid #39FF14" : "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "6px",
+              borderRadius: "0px",
               cursor: "pointer",
               transition: "all 0.3s ease",
               fontWeight: activeTab === tab ? 600 : 400,

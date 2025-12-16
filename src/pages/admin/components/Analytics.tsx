@@ -31,7 +31,7 @@ const Analytics = () => {
               background: "rgba(255, 255, 255, 0.03)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               padding: "30px",
-              borderRadius: "8px",
+              borderRadius: "0px",
               transition: "all 0.3s ease",
             }}
             onMouseEnter={(e) => {
@@ -94,7 +94,7 @@ const Analytics = () => {
           background: "rgba(255, 255, 255, 0.03)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
           padding: "30px",
-          borderRadius: "8px",
+          borderRadius: "0px",
         }}
       >
         {[
@@ -114,14 +114,14 @@ const Analytics = () => {
             }}
           >
             <div>
-              <div className="aeonik-mono" style={{ fontSize: "15px", color: "#FFF", marginBottom: "5px" }}>
+              <div className="aeonik-mono" style={{ fontSize: "15px", color: "#FFF", marginBottom: "5px", textTransform: "uppercase" }}>
                 {activity.action}
               </div>
-              <div className="aeonik-mono" style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.5)" }}>
+              <div className="aeonik-mono" style={{ fontSize: "13px", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase" }}>
                 {activity.user}
               </div>
             </div>
-            <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.4)" }}>
+            <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.4)", textTransform: "uppercase" }}>
               {activity.time}
             </div>
           </div>

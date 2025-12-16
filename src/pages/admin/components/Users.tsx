@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react"
 import { API_BASE_URL } from "../../../lib/apiConfig"
+import DropdownMenu from "../../../components/ui/DropdownMenu"
+import DatePicker from "../../../components/ui/DatePicker"
+import Input from "../../../components/ui/Input"
+import { useSound } from "../../../hooks/useSound"
+import clickSound from "../../../assets/Sound/Click1.wav"
 
 interface User {
   id: string
@@ -19,6 +24,7 @@ const Users = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null)
+  const playClickSound = useSound(clickSound, { volume: 0.3 })
   
   // Filter states
   const [nameEmailSearch, setNameEmailSearch] = useState("")
@@ -194,7 +200,10 @@ const Users = () => {
         </h3>
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           <button
-            onClick={fetchUsers}
+            onClick={() => {
+              playClickSound()
+              fetchUsers()
+            }}
             className="aeonik-mono"
             style={{
               padding: "8px 16px",
@@ -203,7 +212,7 @@ const Users = () => {
               color: "#FFF",
               fontSize: "12px",
               cursor: "pointer",
-              borderRadius: "4px",
+              borderRadius: "0px",
               letterSpacing: "1px",
               transition: "all 0.3s ease",
             }}
@@ -220,7 +229,10 @@ const Users = () => {
           </button>
           
           <button
-            onClick={clearFilters}
+            onClick={() => {
+              playClickSound()
+              clearFilters()
+            }}
             className="aeonik-mono"
             style={{
               padding: "8px 16px",
@@ -229,7 +241,7 @@ const Users = () => {
               color: "#FFF",
               fontSize: "12px",
               cursor: "pointer",
-              borderRadius: "4px",
+              borderRadius: "0px",
               letterSpacing: "1px",
               transition: "all 0.3s ease",
             }}
@@ -251,7 +263,7 @@ const Users = () => {
               padding: "8px 16px",
               background: "rgba(255, 107, 107, 0.1)",
               border: "1px solid #FF6B6B",
-              borderRadius: "4px",
+              borderRadius: "0px",
               display: "flex",
               alignItems: "center",
               gap: "8px"
@@ -269,7 +281,7 @@ const Users = () => {
         style={{
           background: "rgba(255, 255, 255, 0.03)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "8px",
+          borderRadius: "0px",
           padding: "20px",
           marginBottom: "25px",
         }}
@@ -280,28 +292,11 @@ const Users = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
               SEARCH NAME/EMAIL
             </label>
-            <input
+            <Input
               type="text"
               value={nameEmailSearch}
               onChange={(e) => setNameEmailSearch(e.target.value)}
               placeholder="Search..."
-              className="aeonik-mono"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                color: "#FFF",
-                fontSize: "12px",
-                outline: "none",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "#39FF14"
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
-              }}
             />
           </div>
 
@@ -310,26 +305,15 @@ const Users = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
               EMAIL VERIFIED
             </label>
-            <select
+            <DropdownMenu
               value={emailVerifiedFilter}
-              onChange={(e) => setEmailVerifiedFilter(e.target.value as "all" | "true" | "false")}
-              className="aeonik-mono"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                color: "#FFF",
-                fontSize: "12px",
-                outline: "none",
-                cursor: "pointer",
-              }}
-            >
-              <option value="all" style={{ background: "#000", color: "#FFF" }}>ALL</option>
-              <option value="true" style={{ background: "#000", color: "#FFF" }}>VERIFIED</option>
-              <option value="false" style={{ background: "#000", color: "#FFF" }}>NOT VERIFIED</option>
-            </select>
+              onChange={(value) => setEmailVerifiedFilter(value as "all" | "true" | "false")}
+              options={[
+                { value: "all", label: "ALL" },
+                { value: "true", label: "VERIFIED" },
+                { value: "false", label: "NOT VERIFIED" },
+              ]}
+            />
           </div>
 
           {/* Status Filter */}
@@ -337,27 +321,16 @@ const Users = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
               STATUS
             </label>
-            <select
+            <DropdownMenu
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive" | "banned")}
-              className="aeonik-mono"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                color: "#FFF",
-                fontSize: "12px",
-                outline: "none",
-                cursor: "pointer",
-              }}
-            >
-              <option value="all" style={{ background: "#000", color: "#FFF" }}>ALL</option>
-              <option value="active" style={{ background: "#000", color: "#FFF" }}>ACTIVE</option>
-              <option value="inactive" style={{ background: "#000", color: "#FFF" }}>INACTIVE</option>
-              <option value="banned" style={{ background: "#000", color: "#FFF" }}>BANNED</option>
-            </select>
+              onChange={(value) => setStatusFilter(value as "all" | "active" | "inactive" | "banned")}
+              options={[
+                { value: "all", label: "ALL" },
+                { value: "active", label: "ACTIVE" },
+                { value: "inactive", label: "INACTIVE" },
+                { value: "banned", label: "BANNED" },
+              ]}
+            />
           </div>
 
           {/* Projects Filter - Number Input */}
@@ -365,29 +338,12 @@ const Users = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
               PROJECTS (EXACT NUMBER)
             </label>
-            <input
+            <Input
               type="number"
               value={projectsFilter}
               onChange={(e) => setProjectsFilter(e.target.value)}
               placeholder="Enter number..."
               min="0"
-              className="aeonik-mono"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                color: "#FFF",
-                fontSize: "12px",
-                outline: "none",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "#39FF14"
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
-              }}
             />
           </div>
 
@@ -396,28 +352,10 @@ const Users = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
               JOINED DATE START
             </label>
-            <input
-              type="date"
+            <DatePicker
               value={joinedDateStart}
-              onChange={(e) => setJoinedDateStart(e.target.value)}
-              className="aeonik-mono"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                color: "#FFF",
-                fontSize: "12px",
-                outline: "none",
-                cursor: "pointer",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "#39FF14"
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
-              }}
+              onChange={setJoinedDateStart}
+              placeholder="dd/mm/yyyy"
             />
           </div>
 
@@ -426,28 +364,10 @@ const Users = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
               JOINED DATE END
             </label>
-            <input
-              type="date"
+            <DatePicker
               value={joinedDateEnd}
-              onChange={(e) => setJoinedDateEnd(e.target.value)}
-              className="aeonik-mono"
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "4px",
-                color: "#FFF",
-                fontSize: "12px",
-                outline: "none",
-                cursor: "pointer",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "#39FF14"
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
-              }}
+              onChange={setJoinedDateEnd}
+              placeholder="dd/mm/yyyy"
             />
           </div>
         </div>
@@ -474,7 +394,7 @@ const Users = () => {
             padding: "20px",
             background: "rgba(255, 107, 107, 0.1)",
             border: "1px solid #FF6B6B",
-            borderRadius: "8px",
+            borderRadius: "0px",
             color: "#FF6B6B",
             fontSize: "14px",
             marginBottom: "20px",
@@ -503,7 +423,7 @@ const Users = () => {
           style={{
             background: "rgba(255, 255, 255, 0.03)",
             border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "8px",
+            borderRadius: "0px",
             overflow: "hidden",
           }}
         >
@@ -587,6 +507,7 @@ const Users = () => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  playClickSound();
                   toggleBan(user);
                 }}
                 disabled={updatingUserId === user.id}
@@ -596,7 +517,7 @@ const Users = () => {
                   textTransform: "uppercase",
                   letterSpacing: "1px",
                   padding: "4px 10px",
-                  borderRadius: "4px",
+                  borderRadius: "0px",
                   cursor: updatingUserId === user.id ? "default" : "pointer",
                   border: `1px solid ${user.isBanned ? "#FF6B6B" : "#39FF14"}`,
                   color: user.isBanned ? "#FF6B6B" : "#39FF14",
@@ -622,7 +543,7 @@ const Users = () => {
                   letterSpacing: "1px",
                   padding: "4px 8px",
                   border: `1px solid ${getStatusColor(user.status)}`,
-                  borderRadius: "4px",
+                  borderRadius: "0px",
                 }}
               >
                 {user.status}
@@ -671,7 +592,7 @@ const Users = () => {
             style={{
               background: "rgba(255, 107, 107, 0.05)",
               border: "1px solid rgba(255, 107, 107, 0.3)",
-              borderRadius: "8px",
+              borderRadius: "0px",
               overflow: "hidden",
             }}
           >
@@ -764,7 +685,7 @@ const Users = () => {
                       textTransform: "uppercase",
                       letterSpacing: "1px",
                       padding: "4px 10px",
-                      borderRadius: "4px",
+                      borderRadius: "0px",
                       cursor: updatingUserId === user.id ? "default" : "pointer",
                       border: "1px solid #39FF14",
                       color: "#39FF14",
@@ -790,7 +711,7 @@ const Users = () => {
                       letterSpacing: "1px",
                       padding: "4px 8px",
                       border: "1px solid #FF6B6B",
-                      borderRadius: "4px",
+                      borderRadius: "0px",
                     }}
                   >
                     {user.status}
