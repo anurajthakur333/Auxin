@@ -26,6 +26,7 @@ const Users = () => {
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
+  const [confirmAction, setConfirmAction] = useState<"clearFilters" | "exportCSV" | null>(null)
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   
   // Filter states
@@ -349,7 +350,7 @@ const Users = () => {
           <button
             onClick={() => {
               playClickSound()
-              clearFilters()
+              setConfirmAction("clearFilters")
             }}
             className="aeonik-mono"
             style={{
@@ -364,8 +365,8 @@ const Users = () => {
               transition: "all 0.3s ease",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#39FF14"
-              e.currentTarget.style.color = "#39FF14"
+              e.currentTarget.style.borderColor = "#3B82F6" // blue on hover
+              e.currentTarget.style.color = "#3B82F6"
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
@@ -376,7 +377,10 @@ const Users = () => {
           </button>
 
           <button
-            onClick={exportToCSV}
+            onClick={() => {
+              playClickSound()
+              setConfirmAction("exportCSV")
+            }}
             className="aeonik-mono"
             style={{
               padding: "8px 16px",
@@ -390,8 +394,8 @@ const Users = () => {
               transition: "all 0.3s ease",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#39FF14"
-              e.currentTarget.style.color = "#39FF14"
+              e.currentTarget.style.borderColor = "#FACC15" // yellow on hover
+              e.currentTarget.style.color = "#FACC15"
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
@@ -1351,9 +1355,11 @@ const Users = () => {
                   color: "rgba(255,255,255,0.7)",
                 }}
               >
-                THIS ACTION CANNOT BE UNDONE. THIS WILL PERMANENTLY DELETE USER{" "}
+                THIS ACTION CANNOT BE UNDONE. THIS WILL PERMANENTLY DELETE{" "}
                 <span style={{ color: "#FF6B6B" }}>
-                  {userToDelete.name.toUpperCase()} ({userToDelete.email.toUpperCase()})
+                  {userToDelete.name.toUpperCase() === userToDelete.email.toUpperCase()
+                    ? userToDelete.email.toUpperCase()
+                    : `${userToDelete.name.toUpperCase()} (${userToDelete.email.toUpperCase()})`}
                 </span>{" "}
                 AND REMOVE THEIR DATA FROM OUR SERVERS.
               </p>
@@ -1424,6 +1430,139 @@ const Users = () => {
                 }}
               >
                 DELETE USER
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Generic confirmation dialog for CLEAR FILTERS / EXPORT CSV */}
+      {confirmAction && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "420px",
+              backgroundColor: "#000000",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              padding: "24px 24px 20px",
+              borderRadius: "0px",
+              boxShadow: "0 0 0 1px rgba(255,255,255,0.05)",
+            }}
+          >
+            <div style={{ marginBottom: "16px" }}>
+              <h3
+                className="aeonik-mono"
+                style={{
+                  fontSize: "16px",
+                  color: "#FFFFFF",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  margin: 0,
+                }}
+              >
+                {confirmAction === "clearFilters"
+                  ? "CLEAR ALL FILTERS?"
+                  : "EXPORT ALL USERS TO CSV?"}
+              </h3>
+              <p
+                className="aeonik-mono"
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  lineHeight: 1.6,
+                  color: "rgba(255,255,255,0.7)",
+                }}
+              >
+                {confirmAction === "clearFilters"
+                  ? "THIS WILL RESET ALL CURRENT FILTERS AND SHOW THE FULL USER LIST AGAIN."
+                  : "THIS WILL GENERATE AND DOWNLOAD A CSV FILE OF THE CURRENTLY FILTERED USERS."}
+              </p>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "12px",
+                marginTop: "8px",
+              }}
+            >
+              <button
+                onClick={() => {
+                  playClickSound()
+                  setConfirmAction(null)
+                }}
+                className="aeonik-mono"
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "0px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  background: "transparent",
+                  color: "#FFFFFF",
+                  fontSize: "12px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#FFFFFF"
+                  e.currentTarget.style.color = "#FFFFFF"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                  e.currentTarget.style.color = "#FFFFFF"
+                }}
+              >
+                CANCEL
+              </button>
+              <button
+                onClick={async () => {
+                  playClickSound()
+                  if (confirmAction === "clearFilters") {
+                    clearFilters()
+                  } else if (confirmAction === "exportCSV") {
+                    await exportToCSV()
+                  }
+                  setConfirmAction(null)
+                }}
+                className="aeonik-mono"
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "0px",
+                  border:
+                    confirmAction === "clearFilters"
+                      ? "1px solid #3B82F6"
+                      : "1px solid #FACC15",
+                  background: "transparent",
+                  color: confirmAction === "clearFilters" ? "#3B82F6" : "#FACC15",
+                  fontSize: "12px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                    confirmAction === "clearFilters"
+                      ? "rgba(59,130,246,0.15)"
+                      : "rgba(250,204,21,0.15)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent"
+                }}
+              >
+                {confirmAction === "clearFilters" ? "CLEAR FILTERS" : "EXPORT CSV"}
               </button>
             </div>
           </div>

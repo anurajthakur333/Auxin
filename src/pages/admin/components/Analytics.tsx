@@ -1,16 +1,50 @@
+import { useEffect, useState } from "react"
+import { API_BASE_URL } from "../../../lib/apiConfig"
+
 interface SystemStat {
   label: string
   value: string | number
-  change: string
-  positive: boolean
 }
 
 const Analytics = () => {
+  const [totalUsers, setTotalUsers] = useState<number | null>(null)
+
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const adminToken = localStorage.getItem("adminToken")
+        if (!adminToken) {
+          return
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+        })
+
+        if (!response.ok) {
+          return
+        }
+
+        const data = await response.json()
+        const usersArray = Array.isArray(data.users) ? data.users : []
+        setTotalUsers(usersArray.length)
+      } catch {
+        // Silent fail for analytics; avoid blocking dashboard
+      }
+    }
+
+    fetchTotalUsers()
+  }, [])
+
   const systemStats: SystemStat[] = [
-    { label: "TOTAL USERS", value: 156, change: "+12%", positive: true },
-    { label: "ACTIVE PROJECTS", value: 28, change: "+8%", positive: true },
-    { label: "MONTHLY REVENUE", value: "$285K", change: "+23%", positive: true },
-    { label: "COMPLETION RATE", value: "94%", change: "-2%", positive: false },
+    { label: "TOTAL USERS", value: totalUsers ?? "—" },
+    { label: "ACTIVE PROJECTS", value: 28 },
+    { label: "MONTHLY REVENUE", value: "$285K" },
+    { label: "COMPLETION RATE", value: "94%" },
   ]
 
   return (
@@ -54,23 +88,16 @@ const Analytics = () => {
             >
               {stat.label}
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-              <div
-                className="aeonik-mono"
-                style={{ fontSize: "clamp(32px, 4vw, 48px)", color: "#39FF14", fontWeight: 600, lineHeight: "1" }}
-              >
-                {stat.value}
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{
-                  fontSize: "14px",
-                  color: stat.positive ? "#39FF14" : "#FF6B6B",
-                  fontWeight: 600,
-                }}
-              >
-                {stat.change}
-              </div>
+            <div
+              className="aeonik-mono"
+              style={{
+                fontSize: "clamp(32px, 4vw, 48px)",
+                color: "#39FF14",
+                fontWeight: 600,
+                lineHeight: "1",
+              }}
+            >
+              {stat.value}
             </div>
           </div>
         ))}
