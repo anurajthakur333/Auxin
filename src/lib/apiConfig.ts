@@ -37,6 +37,12 @@ export const API_BASE_URL = (() => {
   }
 })();
 
+// Helper function to get authentication token from storage
+// Checks both localStorage and sessionStorage (same as AuthContext does)
+export const getAuthToken = (): string | null => {
+  return localStorage.getItem('token') || sessionStorage.getItem('token');
+};
+
 // Helper function to make API calls with proper error handling
 export const apiCall = async (endpoint: string, options?: RequestInit) => {
   try {

@@ -87,16 +87,16 @@ const Analytics = () => {
               }}
             >
               {stat.label}
-            </div>
-            <div
-              className="aeonik-mono"
-              style={{
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{
                 fontSize: "clamp(32px, 4vw, 48px)",
                 color: "#39FF14",
-                fontWeight: 600,
+                  fontWeight: 600,
                 lineHeight: "1",
-              }}
-            >
+                }}
+              >
               {stat.value}
             </div>
           </div>

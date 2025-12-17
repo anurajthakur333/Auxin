@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { API_BASE_URL } from '../lib/apiConfig';
+import { API_BASE_URL, getAuthToken } from '../lib/apiConfig';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/fonts.css';
@@ -20,15 +20,18 @@ const PaymentCancel = () => {
         const appointmentId = searchParams.get('appointmentId') || localStorage.getItem('pendingAppointmentId');
 
         if (appointmentId) {
+          const token = getAuthToken();
+          if (token) {
           // Cancel the pending appointment
           await fetch(`${API_BASE_URL}/api/paypal/cancel-order`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ appointmentId })
           });
+          }
         }
 
         // Clear stored payment data

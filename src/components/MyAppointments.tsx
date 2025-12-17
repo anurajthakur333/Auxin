@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { API_BASE_URL } from '../lib/apiConfig';
+import { API_BASE_URL, getAuthToken } from '../lib/apiConfig';
 
 interface Appointment {
   _id?: string;
@@ -10,10 +11,13 @@ interface Appointment {
   status: 'confirmed' | 'pending' | 'cancelled';
   paymentStatus?: 'pending' | 'completed' | 'failed' | 'refunded';
   createdAt: string;
+  googleMeetLink?: string;
+  duration?: number;
 }
 
 const MyAppointments: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
@@ -32,9 +36,17 @@ const MyAppointments: React.FC = () => {
     try {
       console.log('🔄 Fetching appointments...');
       setLoading(true);
+      const token = getAuthToken();
+      if (!token) {
+        console.error('❌ No authentication token found');
+        setLoading(false);
+        return;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/api/appointments/my-appointments`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         }
       });
 
@@ -45,7 +57,19 @@ const MyAppointments: React.FC = () => {
         console.log('📋 First appointment structure:', data.appointments?.[0]);
         setAppointments(data.appointments || []);
       } else {
+        const errorText = await response.text();
         console.error('❌ Failed to fetch appointments, status:', response.status);
+        console.error('❌ Error response:', errorText);
+        if (response.status === 401) {
+          console.error('❌ Authentication failed. Token may be expired or invalid.');
+          // Clear invalid tokens
+          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
+          // Redirect to login after a short delay
+          setTimeout(() => {
+            navigate('/login', { state: { from: '/meeting' } });
+          }, 2000);
+        }
       }
     } catch (error) {
       console.error('💥 Error fetching appointments:', error);
@@ -77,7 +101,11 @@ const MyAppointments: React.FC = () => {
       const url = `${API_BASE_URL}/api/appointments/${appointmentId}/cancel`;
       console.log('📡 Making request to:', url);
       
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
+      if (!token) {
+        console.error('❌ No authentication token found');
+        return;
+      }
       console.log('🔑 Token exists:', !!token);
       console.log('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'null');
       
@@ -519,8 +547,10 @@ const MyAppointments: React.FC = () => {
           onWheel={handleWheel}
           onScroll={handleScroll}
         >
-          {displayAppointments.map(appointment => (
-            <div key={appointment.id} className="appointment-card">
+          {displayAppointments.map(appointment => {
+            const appointmentId = getAppointmentId(appointment)
+            return (
+            <div key={appointmentId || appointment.date + appointment.time} className="appointment-card">
               <div className="appointment-header">
                 <div className="appointment-date-time">
                   <div className="appointment-date">
@@ -545,6 +575,11 @@ const MyAppointments: React.FC = () => {
               
               <div className="appointment-meta">
                 Booked on {new Date(appointment.createdAt).toLocaleDateString()}
+                {appointment.duration && (
+                  <span style={{ marginLeft: '10px' }}>
+                    • Duration: {appointment.duration} minutes
+                  </span>
+                )}
               </div>
 
               {appointment.status !== 'cancelled' && isUpcoming(appointment.date, appointment.time) && (
@@ -566,7 +601,8 @@ const MyAppointments: React.FC = () => {
                 </div>
               )}
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
       

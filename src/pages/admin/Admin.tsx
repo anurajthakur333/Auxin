@@ -6,6 +6,7 @@ import Analytics from "./components/Analytics"
 import Users from "./components/Users"
 import Projects from "./components/Projects"
 import Settings from "./components/Settings"
+import MeetingDurations from "./components/MeetingDurations"
 import { useSound } from "../../hooks/useSound"
 import clickSound from "../../assets/Sound/Click1.wav"
 import "../../styles/fonts.css"
@@ -16,7 +17,7 @@ const Admin = () => {
   const lenisRef = useRef<Lenis | null>(null)
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings">("analytics")
+  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings">("analytics")
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Mock admin check - in production, check user.role === 'admin'
@@ -61,6 +62,8 @@ const Admin = () => {
         return <Projects />
       case "settings":
         return <Settings />
+      case "meetings":
+        return <MeetingDurations />
       default:
         return null
     }
@@ -155,7 +158,7 @@ const Admin = () => {
           flexWrap: "wrap",
         }}
       >
-        {(["analytics", "users", "projects", "settings"] as const).map((tab) => (
+        {(["analytics", "users", "projects", "settings", "meetings"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => {

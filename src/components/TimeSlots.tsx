@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { API_BASE_URL } from '../lib/apiConfig';
+import { API_BASE_URL, getAuthToken } from '../lib/apiConfig';
 
 interface TimeSlot {
   id: string;
@@ -69,10 +69,16 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       }
       
       const dateStr = date.toISOString().split('T')[0];
+      const token = getAuthToken();
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/api/appointments/available?date=${dateStr}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers,
       });
 
       if (response.ok) {
@@ -110,12 +116,19 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       setBookingLoading(true);
       setMessage(null);
       
+      const token = getAuthToken();
+      if (!token) {
+        setMessage({ type: 'error', text: 'Authentication required. Please log in again.' });
+        setBookingLoading(false);
+        return;
+      }
+      
       // Create PayPal order
       const response = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           date: selectedDate.toISOString().split('T')[0],
@@ -126,9 +139,30 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         })
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText || `HTTP ${response.status}` };
+        }
+        
+        console.error('❌ Failed to create PayPal order:', response.status, errorData);
+        if (response.status === 401) {
+          setMessage({ type: 'error', text: 'Authentication failed. Please log in again.' });
+          // Clear invalid tokens
+          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
+        } else {
+          setMessage({ type: 'error', text: errorData.error || 'Failed to initiate payment' });
+        }
+        return;
+      }
+
       const data = await response.json();
 
-      if (response.ok && data.approvalUrl) {
+      if (data.approvalUrl) {
         // Show processing message
         setMessage({ type: 'success', text: 'Redirecting to PayPal...' });
         

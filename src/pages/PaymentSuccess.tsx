@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { API_BASE_URL } from '../lib/apiConfig';
+import { API_BASE_URL, getAuthToken } from '../lib/apiConfig';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/fonts.css';
@@ -30,7 +30,9 @@ const PaymentSuccess = () => {
         // Get appointment ID from URL or localStorage
         const appointmentId = searchParams.get('appointmentId') || localStorage.getItem('pendingAppointmentId');
         // PayPal returns orderId as 'token' in the URL
-        const orderId = searchParams.get('token') || localStorage.getItem('pendingOrderId');
+        const orderId = searchParams.get('token') || searchParams.get('orderId') || localStorage.getItem('pendingOrderId');
+        // PayPal also returns PayerID
+        const payerId = searchParams.get('PayerID') || searchParams.get('payerId');
 
         if (!appointmentId || !orderId) {
           console.error('Missing payment info:', { appointmentId, orderId, url: window.location.href });
@@ -40,33 +42,106 @@ const PaymentSuccess = () => {
         }
         
         console.log('Capturing payment:', { appointmentId, orderId });
+        console.log('Full URL params:', Object.fromEntries(searchParams.entries()));
+        console.log('LocalStorage pendingAppointmentId:', localStorage.getItem('pendingAppointmentId'));
+        console.log('LocalStorage pendingOrderId:', localStorage.getItem('pendingOrderId'));
 
         // Capture the payment
+        const token = getAuthToken();
+        if (!token) {
+          setStatus('error');
+          setMessage('Authentication required. Please log in again.');
+          return;
+        }
+        
+        // Validate required fields
+        if (!orderId || !appointmentId) {
+          console.error('Missing required fields:', { 
+            orderId, 
+            appointmentId,
+            urlParams: Object.fromEntries(searchParams.entries()),
+            localStorage: {
+              pendingAppointmentId: localStorage.getItem('pendingAppointmentId'),
+              pendingOrderId: localStorage.getItem('pendingOrderId')
+            }
+          });
+          setStatus('error');
+          setMessage('Missing payment information. Please try booking again.');
+          return;
+        }
+
+        // Validate appointmentId format (should be MongoDB ObjectId - 24 hex characters)
+        const appointmentIdRegex = /^[0-9a-fA-F]{24}$/;
+        if (!appointmentIdRegex.test(appointmentId.trim())) {
+          console.error('Invalid appointmentId format:', appointmentId);
+          setStatus('error');
+          setMessage('Invalid appointment ID format. Please contact support.');
+          return;
+        }
+
+        const requestBody: {
+          orderId: string;
+          appointmentId: string;
+          payerId?: string;
+        } = {
+          orderId: orderId.trim(),
+          appointmentId: appointmentId.trim()
+        };
+        
+        // Add payerId if available
+        if (payerId) {
+          requestBody.payerId = payerId.trim();
+        }
+        
+        console.log('Request body:', requestBody);
+        console.log('All URL params:', Object.fromEntries(searchParams.entries()));
+        
         const response = await fetch(`${API_BASE_URL}/api/paypal/capture-order`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({
-            orderId,
-            appointmentId
-          })
+          body: JSON.stringify(requestBody)
         });
 
-        const data = await response.json();
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+        let data;
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+        
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse response:', parseError);
+          setStatus('error');
+          setMessage(`Server error: ${responseText || 'Invalid response format'}`);
+          return;
+        }
+
+        console.log('Response data:', data);
 
         if (response.ok && data.success) {
           setStatus('success');
           setMessage('Payment successful! Your meeting has been booked.');
           setAppointment(data.appointment);
           
+          // Log Meet link if available
+          if (data.appointment?.googleMeetLink) {
+            console.log('✅ Google Meet link received:', data.appointment.googleMeetLink);
+          } else {
+            console.warn('⚠️ No Google Meet link in response');
+          }
+          
           // Clear stored payment data
           localStorage.removeItem('pendingAppointmentId');
           localStorage.removeItem('pendingOrderId');
         } else {
+          console.error('Payment capture failed:', data);
           setStatus('error');
-          setMessage(data.error || 'Payment verification failed. Please contact support.');
+          setMessage(data.error || data.message || 'Payment verification failed. Please contact support.');
         }
       } catch (error) {
         console.error('Payment capture error:', error);
