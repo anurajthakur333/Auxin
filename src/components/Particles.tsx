@@ -9,6 +9,7 @@ interface ParticleProps {
   fadeInDuration?: number;
   particleLifetime?: number;
   uniformSize?: boolean;
+  direction?: 'up' | 'down' | 'left' | 'right' | 'random';
 }
 
 interface Particle {
@@ -34,6 +35,7 @@ const Particles: React.FC<ParticleProps> = ({
   fadeInDuration = 8000,
   particleLifetime = 5000,
   uniformSize = false,
+  direction = 'random',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -110,8 +112,30 @@ const Particles: React.FC<ParticleProps> = ({
         this.y = Math.random() * (canvas?.height || window.innerHeight);
         this.baseSize = useUniformSize ? sizeValue : Math.random() * sizeValue + 0.5;
         this.size = this.baseSize;
-        this.speedX = (Math.random() - 0.5) * speedValue;
-        this.speedY = (Math.random() - 0.5) * speedValue;
+        
+        // Set direction based on prop
+        switch (direction) {
+          case 'up':
+            this.speedX = (Math.random() - 0.5) * speedValue * 0.3; // Small horizontal drift
+            this.speedY = -Math.random() * speedValue - 0.1; // Upward movement
+            break;
+          case 'down':
+            this.speedX = (Math.random() - 0.5) * speedValue * 0.3;
+            this.speedY = Math.random() * speedValue + 0.1; // Downward movement
+            break;
+          case 'left':
+            this.speedX = -Math.random() * speedValue - 0.1; // Leftward movement
+            this.speedY = (Math.random() - 0.5) * speedValue * 0.3;
+            break;
+          case 'right':
+            this.speedX = Math.random() * speedValue + 0.1; // Rightward movement
+            this.speedY = (Math.random() - 0.5) * speedValue * 0.3;
+            break;
+          default: // 'random'
+            this.speedX = (Math.random() - 0.5) * speedValue;
+            this.speedY = (Math.random() - 0.5) * speedValue;
+        }
+        
         this.opacity = 0;
         this.lifetime = Math.random() * 2000 + particleLifetime;
         this.birthTime = Date.now();
@@ -138,8 +162,23 @@ const Particles: React.FC<ParticleProps> = ({
         const canvasWidth = canvas?.width || window.innerWidth;
         const canvasHeight = canvas?.height || window.innerHeight;
         
-        if (this.x < 0 || this.x > canvasWidth) this.x = Math.random() * canvasWidth;
-        if (this.y < 0 || this.y > canvasHeight) this.y = Math.random() * canvasHeight;
+        // Handle wrapping based on direction
+        if (direction === 'up' && this.y < 0) {
+          this.y = canvasHeight;
+          this.x = Math.random() * canvasWidth;
+        } else if (direction === 'down' && this.y > canvasHeight) {
+          this.y = 0;
+          this.x = Math.random() * canvasWidth;
+        } else if (direction === 'left' && this.x < 0) {
+          this.x = canvasWidth;
+          this.y = Math.random() * canvasHeight;
+        } else if (direction === 'right' && this.x > canvasWidth) {
+          this.x = 0;
+          this.y = Math.random() * canvasHeight;
+        } else if (direction === 'random') {
+          if (this.x < 0 || this.x > canvasWidth) this.x = Math.random() * canvasWidth;
+          if (this.y < 0 || this.y > canvasHeight) this.y = Math.random() * canvasHeight;
+        }
       }
 
       draw() {
@@ -208,7 +247,7 @@ const Particles: React.FC<ParticleProps> = ({
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [density, speed, size, color, glow, fadeInDuration, particleLifetime, uniformSize]);
+  }, [density, speed, size, color, glow, fadeInDuration, particleLifetime, uniformSize, direction]);
 
   return (
     <canvas

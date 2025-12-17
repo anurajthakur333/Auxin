@@ -6,7 +6,7 @@ import LaserFlow from "../components/LaserFlow";
 import Footer from "../components/Footer";
 import Preloader from "../components/Preloader";
 // import Squares from "../components/Squares";
-// import Particles from "../components/Particles";
+import Particles from "../components/Particles";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
@@ -94,7 +94,8 @@ const Home = () => {
           {/* LetterGlitch Background */}
           <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}>
             <LetterGlitch
-              glitchSpeed={100}
+              glitchColors={['#ffffff', '#00ff04']}
+              glitchSpeed={50}
               centerVignette={true}
               outerVignette={true}
               smooth={true}
@@ -109,10 +110,10 @@ const Home = () => {
               verticalBeamOffset={-0.5}
               verticalSizing={5.5}
               horizontalSizing={2}
-              flowSpeed={1}
+              flowSpeed={0.3}
               color="#39FF14"
               fogIntensity={0}
-              wispIntensity={5.5}
+              wispIntensity={10}
               flowStrength={0.3}
               fogScale={0}
               decay={1.8}
@@ -136,17 +137,18 @@ const Home = () => {
           </div> */}
           
           {/* Particles Background */}
-          {/* <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 5 }}>
+          <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}>
             <Particles 
-              density="medium"
-              speed="slow"
-              size="uniform-small"
-              color="rgb(255, 255, 255)"
-              glow={false}
-              fadeInDuration={8000}
-              particleLifetime={8000}
+              density="high"
+              speed="fast"
+              size="small"
+              color="#FFFFFF"
+              glow={true}
+              fadeInDuration={100000}
+              particleLifetime={100000}
+              direction="up"
             />
-          </div> */}
+          </div>
           
           {/* CSS Vignette Overlay - Ellipse Wide */}
           {/* <div
