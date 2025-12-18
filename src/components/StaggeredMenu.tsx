@@ -476,8 +476,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     <span className="sm-panel-itemLabel">
                       <ScrambleText
                         trigger="hover"
-                        speed="fast"
-                        scrambleColor={accentColor}
+                        speed="ultra-fast"
+                        scrambleColor="#ffffff"
                       >
                         {it.label.toUpperCase()}
                       </ScrambleText>

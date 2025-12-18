@@ -189,9 +189,6 @@
   width: 100%;
 }
 
-.sm-panel-item:hover {
-  color: var(--sm-accent);
-}
 
 .sm-panel-item:hover .sm-panel-itemLabel {
   transform: translateX(-20px);

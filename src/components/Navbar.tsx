@@ -156,7 +156,7 @@ const Navbar = () => {
   const menuItems = [
     { label: 'HOME', ariaLabel: 'Go to home page', link: '/' },
     { label: 'EXPERIENCE', ariaLabel: 'View experience section', link: '/#experience' },
-    { label: 'ARTICLES', ariaLabel: 'View articles section', link: '/#articles' },
+    { label: 'ARTICLES', ariaLabel: 'View articles page', link: '/articles' },
     { label: 'ABOUT US', ariaLabel: 'Learn about us', link: '/#about' },
     { label: 'MEETINGS', ariaLabel: 'Book a meeting', link: '/meeting' },
     ...(user 
@@ -232,7 +232,7 @@ const Navbar = () => {
       {/* Left side links */}
       <div className="d-flex justify-content-end" style={{ gap: '2rem' }}>
         <NavItem href="#experience" label="EXPERIENCE" minWidth={120} direction="left-to-right" onClickSound={playClickSound} loadDelay={200} />
-        <NavItem href="#articles" label="ARTICLES" minWidth={100} direction="left-to-right" onClickSound={playClickSound} loadDelay={350} />
+        <NavItem href="/articles" label="ARTICLES" minWidth={100} direction="left-to-right" onClickSound={playClickSound} loadDelay={350} />
       </div>
 
 

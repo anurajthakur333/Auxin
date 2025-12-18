@@ -20,6 +20,7 @@ import SplinePage from './pages/Spline';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import Dashboard from './pages/Dashboard';
+import Articles from './pages/Articles';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
@@ -61,6 +62,7 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/spline" element={<SplinePage />} />
+            <Route path="/articles" element={<Articles />} />
             <Route path="/auth/google/callback" element={<GoogleCallback />} />
             <Route 
               path="/meeting" 
