@@ -17,7 +17,7 @@ const Admin = () => {
   const lenisRef = useRef<Lenis | null>(null)
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings">("analytics")
+  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings" | "banned">("analytics")
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Mock admin check - in production, check user.role === 'admin'
@@ -58,6 +58,8 @@ const Admin = () => {
         return <Analytics />
       case "users":
         return <Users />
+      case "banned":
+        return <Users showBannedByDefault={true} />
       case "projects":
         return <Projects />
       case "settings":
@@ -158,7 +160,7 @@ const Admin = () => {
           flexWrap: "wrap",
         }}
       >
-        {(["analytics", "users", "projects", "settings", "meetings"] as const).map((tab) => (
+        {(["analytics", "users", "banned", "projects", "settings", "meetings"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => {
@@ -168,12 +170,18 @@ const Admin = () => {
             className="aeonik-mono"
             style={{
               fontSize: "14px",
-              color: activeTab === tab ? "#39FF14" : "rgba(255, 255, 255, 0.6)",
+              color: activeTab === tab 
+                ? (tab === "banned" ? "#FF6B6B" : "#39FF14") 
+                : "rgba(255, 255, 255, 0.6)",
               textTransform: "uppercase",
               letterSpacing: "1px",
               padding: "10px 20px",
-              background: activeTab === tab ? "rgba(57, 255, 20, 0.1)" : "transparent",
-              border: activeTab === tab ? "1px solid #39FF14" : "1px solid rgba(255, 255, 255, 0.1)",
+              background: activeTab === tab 
+                ? (tab === "banned" ? "rgba(255, 107, 107, 0.1)" : "rgba(57, 255, 20, 0.1)") 
+                : "transparent",
+              border: activeTab === tab 
+                ? (tab === "banned" ? "1px solid #FF6B6B" : "1px solid #39FF14") 
+                : "1px solid rgba(255, 255, 255, 0.1)",
               borderRadius: "0px",
               cursor: "pointer",
               transition: "all 0.3s ease",
@@ -181,8 +189,8 @@ const Admin = () => {
             }}
             onMouseEnter={(e) => {
               if (activeTab !== tab) {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)"
-                e.currentTarget.style.color = "#FFF"
+                e.currentTarget.style.borderColor = tab === "banned" ? "rgba(255, 107, 107, 0.5)" : "rgba(255, 255, 255, 0.3)"
+                e.currentTarget.style.color = tab === "banned" ? "#FF6B6B" : "#FFF"
               }
             }}
             onMouseLeave={(e) => {

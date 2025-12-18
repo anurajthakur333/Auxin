@@ -19,7 +19,11 @@ interface User {
   isBanned: boolean
 }
 
-const Users = () => {
+interface UsersProps {
+  showBannedByDefault?: boolean
+}
+
+const Users = ({ showBannedByDefault = false }: UsersProps) => {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,6 +31,7 @@ const Users = () => {
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
   const [confirmAction, setConfirmAction] = useState<"clearFilters" | "exportCSV" | null>(null)
+  const [showBannedUsers, setShowBannedUsers] = useState(showBannedByDefault)
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   
   // Filter states
@@ -36,10 +41,22 @@ const Users = () => {
   const [projectsFilter, setProjectsFilter] = useState<string>("")
   const [joinedDateStart, setJoinedDateStart] = useState<string>("")
   const [joinedDateEnd, setJoinedDateEnd] = useState<string>("")
+  
+  // Banned users filter states (separate from main filters)
+  const [bannedNameEmailSearch, setBannedNameEmailSearch] = useState("")
+  const [bannedEmailVerifiedFilter, setBannedEmailVerifiedFilter] = useState<"all" | "true" | "false">("all")
+  const [bannedProjectsFilter, setBannedProjectsFilter] = useState<string>("")
+  const [bannedJoinedDateStart, setBannedJoinedDateStart] = useState<string>("")
+  const [bannedJoinedDateEnd, setBannedJoinedDateEnd] = useState<string>("")
 
   useEffect(() => {
     fetchUsers()
   }, [])
+  
+  // Sync showBannedUsers with prop when navigating via tabs
+  useEffect(() => {
+    setShowBannedUsers(showBannedByDefault)
+  }, [showBannedByDefault])
   
   // Filter users based on all filter criteria
   const filteredUsers = users.filter(user => {
@@ -88,9 +105,53 @@ const Users = () => {
     return true
   })
   
-  // Separate banned users
-  const bannedUsers = filteredUsers.filter(user => user.isBanned)
+  // Separate banned users (from all users, not filtered)
+  const allBannedUsers = users.filter(user => user.isBanned)
   const activeUsers = filteredUsers.filter(user => !user.isBanned)
+  
+  // Filter banned users with their own filters
+  const filteredBannedUsers = allBannedUsers.filter(user => {
+    // Name/Email search
+    if (bannedNameEmailSearch) {
+      const searchLower = bannedNameEmailSearch.toLowerCase()
+      const matchesSearch = 
+        user.name.toLowerCase().includes(searchLower) || 
+        user.email.toLowerCase().includes(searchLower)
+      if (!matchesSearch) return false
+    }
+    
+    // Email verified filter
+    if (bannedEmailVerifiedFilter !== "all") {
+      if (bannedEmailVerifiedFilter === "true" && !user.isEmailVerified) return false
+      if (bannedEmailVerifiedFilter === "false" && user.isEmailVerified) return false
+    }
+    
+    // Projects filter - exact number match
+    if (bannedProjectsFilter.trim() !== "") {
+      const filterProjects = parseInt(bannedProjectsFilter, 10)
+      if (!isNaN(filterProjects) && user.projects !== filterProjects) return false
+    }
+    
+    // Joined date filter - date range
+    if (bannedJoinedDateStart || bannedJoinedDateEnd) {
+      const joinDate = new Date(user.joinDate)
+      joinDate.setHours(0, 0, 0, 0)
+      
+      if (bannedJoinedDateStart) {
+        const startDate = new Date(bannedJoinedDateStart)
+        startDate.setHours(0, 0, 0, 0)
+        if (joinDate < startDate) return false
+      }
+      
+      if (bannedJoinedDateEnd) {
+        const endDate = new Date(bannedJoinedDateEnd)
+        endDate.setHours(23, 59, 59, 999)
+        if (joinDate > endDate) return false
+      }
+    }
+    
+    return true
+  })
 
   const fetchUsers = async () => {
     try {
@@ -185,6 +246,14 @@ const Users = () => {
     setProjectsFilter("")
     setJoinedDateStart("")
     setJoinedDateEnd("")
+  }
+  
+  const clearBannedFilters = () => {
+    setBannedNameEmailSearch("")
+    setBannedEmailVerifiedFilter("all")
+    setBannedProjectsFilter("")
+    setBannedJoinedDateStart("")
+    setBannedJoinedDateEnd("")
   }
 
   const deleteUser = async (user: User) => {
@@ -303,6 +372,648 @@ const Users = () => {
     return csvRows.join('\n')
   }
 
+  // Render Banned Users View
+  if (showBannedUsers) {
+    return (
+      <>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+          <h3
+            className="aeonik-mono"
+            style={{
+              fontSize: "clamp(20px, 2.5vw, 28px)",
+              color: "#FF6B6B",
+              letterSpacing: "-1px",
+              fontWeight: 600,
+            }}
+          >
+            BANNED USERS ({allBannedUsers.length})
+          </h3>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <button
+              onClick={() => {
+                playClickSound()
+                fetchUsers()
+              }}
+              className="aeonik-mono"
+              style={{
+                padding: "8px 16px",
+                background: "transparent",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                color: "#FFF",
+                fontSize: "12px",
+                cursor: "pointer",
+                borderRadius: "0px",
+                letterSpacing: "1px",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#39FF14"
+                e.currentTarget.style.color = "#39FF14"
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                e.currentTarget.style.color = "#FFF"
+              }}
+            >
+              REFRESH
+            </button>
+            
+            <button
+              onClick={() => {
+                playClickSound()
+                clearBannedFilters()
+              }}
+              className="aeonik-mono"
+              style={{
+                padding: "8px 16px",
+                background: "transparent",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                color: "#FFF",
+                fontSize: "12px",
+                cursor: "pointer",
+                borderRadius: "0px",
+                letterSpacing: "1px",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#3B82F6"
+                e.currentTarget.style.color = "#3B82F6"
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                e.currentTarget.style.color = "#FFF"
+              }}
+            >
+              CLEAR
+            </button>
+          </div>
+        </div>
+
+        {/* Banned Users Filter Section */}
+        <div
+          style={{
+            background: "rgba(255, 107, 107, 0.03)",
+            border: "1px solid rgba(255, 107, 107, 0.2)",
+            borderRadius: "0px",
+            padding: "20px",
+            marginBottom: "25px",
+          }}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "15px" }}>
+            <div>
+              <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
+                SEARCH NAME/EMAIL
+              </label>
+              <Input
+                type="text"
+                value={bannedNameEmailSearch}
+                onChange={(e) => setBannedNameEmailSearch(e.target.value)}
+                placeholder="Search..."
+              />
+            </div>
+
+            <div>
+              <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
+                EMAIL VERIFIED
+              </label>
+              <DropdownMenu
+                value={bannedEmailVerifiedFilter}
+                onChange={(value) => setBannedEmailVerifiedFilter(value as "all" | "true" | "false")}
+                options={[
+                  { value: "all", label: "ALL" },
+                  { value: "true", label: "VERIFIED" },
+                  { value: "false", label: "NOT VERIFIED" },
+                ]}
+              />
+            </div>
+
+            <div>
+              <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
+                PROJECTS (EXACT NUMBER)
+              </label>
+              <Input
+                type="number"
+                value={bannedProjectsFilter}
+                onChange={(e) => setBannedProjectsFilter(e.target.value)}
+                placeholder="Enter number..."
+                min="0"
+              />
+            </div>
+
+            <div>
+              <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
+                JOINED DATE START
+              </label>
+              <DatePicker
+                value={bannedJoinedDateStart}
+                onChange={setBannedJoinedDateStart}
+                placeholder="dd/mm/yyyy"
+              />
+            </div>
+
+            <div>
+              <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", marginBottom: "6px", display: "block" }}>
+                JOINED DATE END
+              </label>
+              <DatePicker
+                value={bannedJoinedDateEnd}
+                onChange={setBannedJoinedDateEnd}
+                placeholder="dd/mm/yyyy"
+              />
+            </div>
+          </div>
+        </div>
+
+        {loading && (
+          <div
+            className="aeonik-mono"
+            style={{
+              padding: "40px",
+              textAlign: "center",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontSize: "14px",
+            }}
+          >
+            Loading users...
+          </div>
+        )}
+
+        {error && (
+          <div
+            className="aeonik-mono"
+            style={{
+              padding: "20px",
+              background: "rgba(255, 107, 107, 0.1)",
+              border: "1px solid #FF6B6B",
+              borderRadius: "0px",
+              color: "#FF6B6B",
+              fontSize: "14px",
+              marginBottom: "20px",
+            }}
+          >
+            Error: {error}
+          </div>
+        )}
+
+        {!loading && !error && allBannedUsers.length === 0 && (
+          <div
+            className="aeonik-mono"
+            style={{
+              padding: "40px",
+              textAlign: "center",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontSize: "14px",
+            }}
+          >
+            No banned users
+          </div>
+        )}
+
+        {!loading && !error && allBannedUsers.length > 0 && filteredBannedUsers.length === 0 && (
+          <div
+            className="aeonik-mono"
+            style={{
+              padding: "40px",
+              textAlign: "center",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontSize: "14px",
+            }}
+          >
+            No banned users match the current filters
+          </div>
+        )}
+
+        {!loading && !error && filteredBannedUsers.length > 0 && (
+          <div
+            style={{
+              background: "rgba(255, 107, 107, 0.03)",
+              border: "1px solid rgba(255, 107, 107, 0.2)",
+              borderRadius: "0px",
+              overflow: "hidden",
+            }}
+          >
+            {/* Banned Users Table Header */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
+                padding: "20px 25px",
+                background: "rgba(255, 107, 107, 0.1)",
+                borderBottom: "1px solid rgba(255, 107, 107, 0.3)",
+                alignItems: "start",
+              }}
+            >
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600, 
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                NAME
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                EMAIL
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                STATUS
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                PROJECTS
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                JOINED AT
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                EMAIL VERIFIED
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                PASSWORD
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{ 
+                  fontSize: "12px", 
+                  color: "#FF6B6B", 
+                  letterSpacing: "1px", 
+                  fontWeight: 600,
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}
+              >
+                ACTIONS
+              </div>
+            </div>
+
+            {/* Banned Users Table Rows */}
+            {filteredBannedUsers.map((user, index) => (
+              <div
+                key={user.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
+                  padding: "20px 25px",
+                  borderBottom: index < filteredBannedUsers.length - 1 ? "1px solid rgba(255, 107, 107, 0.1)" : "none",
+                  transition: "all 0.3s ease",
+                  cursor: "pointer",
+                  alignItems: "start",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 107, 107, 0.05)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent"
+                }}
+              >
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "flex-start", 
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  <span className="aeonik-mono" style={{ fontSize: "14px", color: "rgba(255, 255, 255)", paddingLeft: "20px", paddingRight: "20px" }}>
+                    {user.name}
+                  </span>
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "14px", 
+                  color: "rgba(255, 255, 255)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.email}
+                </div>
+                <div style={{
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                }}>
+                  <span
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      color: "#FF6B6B",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      padding: "4px 8px",
+                      border: "1px solid #FF6B6B",
+                      borderRadius: "0px",
+                      display: "inline-block",
+                    }}
+                  >
+                    {user.status}
+                  </span>
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "14px", 
+                  color: "#FF6B6B",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.projects}
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "14px", 
+                  color: "#FFF",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {new Date(user.joinDate).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  })}
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "12px", 
+                  color: user.isEmailVerified ? "#39FF14" : "rgba(255,255,255,0.6)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.isEmailVerified ? "TRUE" : "FALSE"}
+                </div>
+                <div className="aeonik-mono" style={{ 
+                  fontSize: "12px", 
+                  color: user.hasPassword ? "#39FF14" : "rgba(255,255,255,0.6)",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  {user.password || "NONE"}
+                </div>
+                <div style={{ 
+                  display: "flex", 
+                  alignItems: "flex-start", 
+                  gap: "8px", 
+                  flexWrap: "wrap",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  minWidth: 0,
+                  wordWrap: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal"
+                }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playClickSound();
+                      toggleBan(user);
+                    }}
+                    disabled={updatingUserId === user.id}
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      padding: "4px 10px",
+                      borderRadius: "0px",
+                      cursor: updatingUserId === user.id ? "default" : "pointer",
+                      border: "1px solid #39FF14",
+                      color: "#39FF14",
+                      background: "transparent",
+                      opacity: updatingUserId === user.id ? 0.6 : 1,
+                      transition: "all 0.2s ease",
+                      flexShrink: 0
+                    }}
+                  >
+                    UNBAN
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playClickSound();
+                      openDeleteDialog(user);
+                    }}
+                    disabled={deletingUserId === user.id}
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      padding: "4px 10px",
+                      borderRadius: "0px",
+                      cursor: deletingUserId === user.id ? "default" : "pointer",
+                      border: "1px solid #FF6B6B",
+                      color: "#FF6B6B",
+                      background: "transparent",
+                      opacity: deletingUserId === user.id ? 0.6 : 1,
+                      transition: "all 0.2s ease",
+                      flexShrink: 0
+                    }}
+                  >
+                    DELETE
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Delete User Confirmation Dialog */}
+        {userToDelete && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "420px",
+                backgroundColor: "#000000",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                padding: "24px 24px 20px",
+                borderRadius: "0px",
+                boxShadow: "0 0 0 1px rgba(255,255,255,0.05)",
+              }}
+            >
+              <div style={{ marginBottom: "16px" }}>
+                <h3 className="aeonik-mono" style={{ fontSize: "16px", color: "#FFFFFF", letterSpacing: "1px", textTransform: "uppercase", margin: 0 }}>
+                  ARE YOU ABSOLUTELY SURE?
+                </h3>
+                <p className="aeonik-mono" style={{ marginTop: "10px", fontSize: "12px", lineHeight: 1.6, color: "rgba(255,255,255,0.7)" }}>
+                  THIS ACTION CANNOT BE UNDONE. THIS WILL PERMANENTLY DELETE{" "}
+                  <span style={{ color: "#FF6B6B" }}>
+                    {userToDelete.name.toUpperCase() === userToDelete.email.toUpperCase()
+                      ? userToDelete.email.toUpperCase()
+                      : `${userToDelete.name.toUpperCase()} (${userToDelete.email.toUpperCase()})`}
+                  </span>{" "}
+                  AND REMOVE THEIR DATA FROM OUR SERVERS.
+                </p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
+                <button
+                  onClick={() => { playClickSound(); cancelDeleteDialog() }}
+                  className="aeonik-mono"
+                  style={{ padding: "8px 16px", borderRadius: "0px", border: "1px solid rgba(255, 255, 255, 0.2)", background: "transparent", color: "#FFFFFF", fontSize: "12px", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s ease" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#FFFFFF"; e.currentTarget.style.color = "#FFFFFF" }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"; e.currentTarget.style.color = "#FFFFFF" }}
+                >
+                  CANCEL
+                </button>
+                <button
+                  onClick={() => { playClickSound(); confirmDeleteDialog() }}
+                  disabled={deletingUserId === userToDelete.id}
+                  className="aeonik-mono"
+                  style={{ padding: "8px 16px", borderRadius: "0px", border: "1px solid #FF6B6B", background: "transparent", color: "#FF6B6B", fontSize: "12px", letterSpacing: "1px", textTransform: "uppercase", cursor: deletingUserId === userToDelete.id ? "default" : "pointer", opacity: deletingUserId === userToDelete.id ? 0.6 : 1, transition: "all 0.2s ease" }}
+                  onMouseEnter={(e) => { if (deletingUserId === userToDelete.id) return; e.currentTarget.style.background = "rgba(255, 107, 107, 0.1)" }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+                >
+                  DELETE USER
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    )
+  }
+
+  // Render Main Users View
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
@@ -365,7 +1076,7 @@ const Users = () => {
               transition: "all 0.3s ease",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#3B82F6" // blue on hover
+              e.currentTarget.style.borderColor = "#3B82F6"
               e.currentTarget.style.color = "#3B82F6"
             }}
             onMouseLeave={(e) => {
@@ -394,7 +1105,7 @@ const Users = () => {
               transition: "all 0.3s ease",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#FACC15" // yellow on hover
+              e.currentTarget.style.borderColor = "#FACC15"
               e.currentTarget.style.color = "#FACC15"
             }}
             onMouseLeave={(e) => {
@@ -405,8 +1116,9 @@ const Users = () => {
             EXPORT CSV
           </button>
           
-          {/* Banned Users Component */}
+          {/* Banned Users Count Display */}
           <div
+            className="aeonik-mono"
             style={{
               padding: "8px 16px",
               background: "rgba(255, 107, 107, 0.1)",
@@ -414,11 +1126,11 @@ const Users = () => {
               borderRadius: "0px",
               display: "flex",
               alignItems: "center",
-              gap: "8px"
+              gap: "8px",
             }}
           >
-            <span className="aeonik-mono" style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px" }}>
-              BANNED: {bannedUsers.length}
+            <span style={{ fontSize: "12px", color: "#FF6B6B", letterSpacing: "1px" }}>
+              BANNED: {allBannedUsers.length}
             </span>
           </div>
         </div>
@@ -927,385 +1639,6 @@ const Users = () => {
             </div>
           </div>
         ))}
-        </div>
-      )}
-
-      {/* Banned Users Section */}
-      {!loading && !error && bannedUsers.length > 0 && (
-        <div style={{ marginTop: "40px" }}>
-          <h4
-            className="aeonik-mono"
-            style={{
-              fontSize: "clamp(18px, 2vw, 24px)",
-              color: "#FF6B6B",
-              letterSpacing: "-1px",
-              fontWeight: 600,
-              marginBottom: "20px",
-            }}
-          >
-            BANNED USERS ({bannedUsers.length})
-          </h4>
-          
-          <div
-            style={{
-              background: "rgba(255, 107, 107, 0.05)",
-              border: "1px solid rgba(255, 107, 107, 0.3)",
-              borderRadius: "0px",
-              overflow: "hidden",
-            }}
-          >
-            {/* Banned Users Table Header */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
-                padding: "20px 25px",
-                background: "rgba(255, 107, 107, 0.1)",
-                borderBottom: "1px solid rgba(255, 107, 107, 0.3)",
-                alignItems: "start",
-              }}
-            >
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                NAME
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                EMAIL
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                STATUS
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                PROJECTS
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                JOINED AT
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                EMAIL VERIFIED
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                PASSWORD
-              </div>
-              <div
-                className="aeonik-mono"
-                style={{ 
-                  fontSize: "12px", 
-                  color: "#FF6B6B", 
-                  letterSpacing: "1px", 
-                  fontWeight: 600,
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}
-              >
-                ACTIONS
-              </div>
-            </div>
-
-            {/* Banned Users Table Rows */}
-            {bannedUsers.map((user, index) => (
-              <div
-                key={user.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
-                  padding: "20px 25px",
-                  borderBottom: index < bannedUsers.length - 1 ? "1px solid rgba(255, 107, 107, 0.1)" : "none",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  alignItems: "start",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255, 107, 107, 0.05)"
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent"
-                }}
-              >
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "flex-start", 
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  <span className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF" ,paddingLeft: "20px" ,paddingRight: "20px" }}>
-                    {user.name}
-                  </span>
-                </div>
-                <div className="aeonik-mono" style={{ 
-                  fontSize: "14px", 
-                  color: "rgba(255, 255, 255, 0.7)",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  {user.email}
-                </div>
-                <div style={{
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  <span
-                    className="aeonik-mono"
-                    style={{
-                      fontSize: "11px",
-                      color: "#FF6B6B",
-                      textTransform: "uppercase",
-                      letterSpacing: "1px",
-                      padding: "4px 8px",
-                      border: "1px solid #FF6B6B",
-                      borderRadius: "0px",
-                      display: "inline-block",
-        
-                    }}
-                  >
-                    {user.status}
-                  </span>
-                </div>
-                <div className="aeonik-mono" style={{ 
-                  fontSize: "14px", 
-                  color: "rgba(255, 255, 255)",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  {user.projects}
-                </div>
-                <div className="aeonik-mono" style={{ 
-                  fontSize: "14px", 
-                  color: "rgba(255, 255, 255)",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  {new Date(user.joinDate).toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                  })}
-                </div>
-                <div className="aeonik-mono" style={{ 
-                  fontSize: "12px", 
-                  color: user.isEmailVerified ? "#39FF14" : "rgba(255,255,255,0.6)",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  {user.isEmailVerified ? "TRUE" : "FALSE"}
-                </div>
-                <div className="aeonik-mono" style={{ 
-                  fontSize: "12px", 
-                  color: user.hasPassword ? "#39FF14" : "rgba(255,255,255,0.6)",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  {user.password || "NONE"}
-                </div>
-                <div style={{ 
-                  display: "flex", 
-                  alignItems: "flex-start", 
-                  gap: "8px", 
-                  flexWrap: "wrap",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  minWidth: 0,
-                  wordWrap: "break-word",
-                  overflowWrap: "break-word",
-                  wordBreak: "break-word",
-                  whiteSpace: "normal"
-                }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playClickSound();
-                      toggleBan(user);
-                    }}
-                    disabled={updatingUserId === user.id}
-                    className="aeonik-mono"
-                    style={{
-                      fontSize: "11px",
-                      textTransform: "uppercase",
-                      letterSpacing: "1px",
-                      padding: "4px 10px",
-                      borderRadius: "0px",
-                      cursor: updatingUserId === user.id ? "default" : "pointer",
-                      border: "1px solid #39FF14",
-                      color: "#39FF14",
-                      background: "transparent",
-                      opacity: updatingUserId === user.id ? 0.6 : 1,
-                      transition: "all 0.2s ease",
-                      flexShrink: 0
-                    }}
-                  >
-                    UNBAN
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playClickSound();
-                      openDeleteDialog(user);
-                    }}
-                    disabled={deletingUserId === user.id}
-                    className="aeonik-mono"
-                    style={{
-                      fontSize: "11px",
-                      textTransform: "uppercase",
-                      letterSpacing: "1px",
-                      padding: "4px 10px",
-                      borderRadius: "0px",
-                      cursor: deletingUserId === user.id ? "default" : "pointer",
-                      border: "1px solid #FF6B6B",
-                      color: "#FF6B6B",
-                      background: "transparent",
-                      opacity: deletingUserId === user.id ? 0.6 : 1,
-                      transition: "all 0.2s ease",
-                      flexShrink: 0
-                    }}
-                  >
-                    DELETE
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 

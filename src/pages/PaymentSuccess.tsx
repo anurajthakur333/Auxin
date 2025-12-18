@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { API_BASE_URL, getAuthToken } from '../lib/apiConfig';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import '../styles/fonts.css';
 import '../styles/Main.css';
 
@@ -181,8 +179,6 @@ const PaymentSuccess = () => {
       position: 'relative',
       zIndex: 1
     }}>
-      <Navbar />
-
       <div style={{
         flex: 1,
         display: 'flex',
@@ -213,9 +209,9 @@ const PaymentSuccess = () => {
                 marginBottom: '1rem',
                 fontSize: '1.5rem'
               }}>
-                Processing Payment
+                {"PROCESSING PAYMENT"}
               </h2>
-              <p style={{ color: '#888' }}>{message}</p>
+              <p className="aeonik-mono" style={{ color: '#888' }}>{message.toUpperCase()}</p>
             </>
           )}
 
@@ -248,9 +244,9 @@ const PaymentSuccess = () => {
                 marginBottom: '1rem',
                 fontSize: '1.5rem'
               }}>
-                Payment Successful!
+                {"PAYMENT SUCCESSFUL!"}
               </h2>
-              <p style={{ color: '#fff', marginBottom: '2rem' }}>{message}</p>
+              <p className="aeonik-mono" style={{ color: '#fff', marginBottom: '2rem' }}>{message.toUpperCase()}</p>
 
               {appointment && (
                 <div style={{
@@ -260,27 +256,28 @@ const PaymentSuccess = () => {
                   textAlign: 'left',
                   borderLeft: '4px solid #39FF14'
                 }}>
-                  <h3 style={{ 
+                  <h3 className="aeonik-mono" style={{ 
                     color: '#39FF14', 
                     marginBottom: '1rem',
                     fontSize: '1rem',
                     fontWeight: '600'
                   }}>
-                    Booking Details
+                    {"BOOKING DETAILS"}
                   </h3>
-                  <p style={{ color: '#fff', marginBottom: '0.5rem' }}>
-                    <strong>Date:</strong> {formatDate(appointment.date)}
+                  <p className="aeonik-mono" style={{ color: '#fff', marginBottom: '0.5rem' }}>
+                    <strong>{"DATE:"}</strong> {formatDate(appointment.date).toUpperCase()}
                   </p>
-                  <p style={{ color: '#39FF14', marginBottom: '0.5rem' }}>
-                    <strong style={{ color: '#fff' }}>Time:</strong> {formatTime(appointment.time)}
+                  <p className="aeonik-mono" style={{ color: '#39FF14', marginBottom: '0.5rem' }}>
+                    <strong style={{ color: '#fff' }}>{"TIME:"}</strong> {formatTime(appointment.time).toUpperCase()}
                   </p>
-                  <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '1rem' }}>
-                    A confirmation email has been sent to your registered email address.
+                  <p className="aeonik-mono" style={{ color: '#888', fontSize: '0.85rem', marginTop: '1rem' }}>
+                    {"A CONFIRMATION EMAIL HAS BEEN SENT TO YOUR REGISTERED EMAIL ADDRESS."}
                   </p>
                 </div>
               )}
 
               <button
+                className="aeonik-mono"
                 onClick={() => navigate('/meeting')}
                 style={{
                   background: '#39FF14',
@@ -291,13 +288,12 @@ const PaymentSuccess = () => {
                   fontWeight: '600',
                   cursor: 'pointer',
                   width: '100%',
-                  fontFamily: 'Aeonik, sans-serif',
                   transition: 'all 0.3s ease'
                 }}
                 onMouseOver={(e) => e.currentTarget.style.background = '#2ecc11'}
                 onMouseOut={(e) => e.currentTarget.style.background = '#39FF14'}
               >
-                View My Appointments
+                {"VIEW MY APPOINTMENTS"}
               </button>
             </>
           )}
@@ -332,11 +328,12 @@ const PaymentSuccess = () => {
                 marginBottom: '1rem',
                 fontSize: '1.5rem'
               }}>
-                Payment Failed
+                {"PAYMENT FAILED"}
               </h2>
-              <p style={{ color: '#888', marginBottom: '2rem' }}>{message}</p>
+              <p className="aeonik-mono" style={{ color: '#888', marginBottom: '2rem' }}>{message.toUpperCase()}</p>
 
               <button
+                className="aeonik-mono"
                 onClick={() => navigate('/meeting')}
                 style={{
                   background: 'transparent',
@@ -347,7 +344,6 @@ const PaymentSuccess = () => {
                   fontWeight: '600',
                   cursor: 'pointer',
                   width: '100%',
-                  fontFamily: 'Aeonik, sans-serif',
                   transition: 'all 0.3s ease'
                 }}
                 onMouseOver={(e) => {
@@ -359,7 +355,7 @@ const PaymentSuccess = () => {
                   e.currentTarget.style.color = '#39FF14';
                 }}
               >
-                Try Again
+                {"TRY AGAIN"}
               </button>
             </>
           )}
@@ -372,8 +368,6 @@ const PaymentSuccess = () => {
           100% { transform: rotate(360deg); }
         }
       `}</style>
-
-      <Footer />
     </div>
   );
 };
