@@ -139,13 +139,13 @@ const Home = () => {
           {/* Particles Background */}
           <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}>
             <Particles 
-              density="high"
-              speed="fast"
+              density="medium"
+              speed="hyper"
               size="small"
               color="#FFFFFF"
-              glow={true}
-              fadeInDuration={100000}
-              particleLifetime={100000}
+              glow={false}
+              fadeInDuration={0}
+              particleLifetime={2000}
               direction="up"
             />
           </div>

@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 
 interface ParticleProps {
   density?: 'low' | 'medium' | 'high' | number;
-  speed?: 'slow' | 'medium' | 'fast' | number;
+  speed?: 'slow' | 'medium' | 'fast' | 'ultra-fast' | 'hyper' | 'insane' | number;
   size?: 'small' | 'medium' | 'large' | 'uniform-small' | 'uniform-medium' | 'uniform-large' | number;
   color?: string;
   glow?: boolean;
@@ -53,12 +53,15 @@ const Particles: React.FC<ParticleProps> = ({
     }
   };
 
-  const getSpeedValue = (speed: 'slow' | 'medium' | 'fast' | number): number => {
+  const getSpeedValue = (speed: 'slow' | 'medium' | 'fast' | 'ultra-fast' | 'hyper' | 'insane' | number): number => {
     if (typeof speed === 'number') return speed;
     switch (speed) {
       case 'slow': return 0.2;
       case 'medium': return 0.5;
       case 'fast': return 1.0;
+      case 'ultra-fast': return 2.0;
+      case 'hyper': return 3.5;
+      case 'insane': return 5.0;
       default: return 0.2;
     }
   };
