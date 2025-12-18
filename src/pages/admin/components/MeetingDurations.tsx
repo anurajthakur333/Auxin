@@ -445,8 +445,8 @@ const MeetingDurations = () => {
                 style={{
                   padding: "8px 16px",
                   background: duration.isActive ? "#39FF14" : "transparent",
-                  color: duration.isActive ? "#000" : "#FFF",
-                  border: `1px solid ${duration.isActive ? "#39FF14" : "rgba(255, 255, 255, 0.2)"}`,
+                  color: duration.isActive ? "#000" : "#FF0000",
+                  border: `1px solid ${duration.isActive ? "#39FF14" : "#FF0000"}`,
                   fontSize: "11px",
                   cursor: "pointer",
                   letterSpacing: "1px",
@@ -455,19 +455,23 @@ const MeetingDurations = () => {
                   transition: "all 0.2s ease",
                 }}
                 onMouseEnter={(e) => {
-                  if (!duration.isActive) {
-                    e.currentTarget.style.borderColor = "#39FF14"
-                    e.currentTarget.style.color = "#39FF14"
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!duration.isActive) {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                  if (duration.isActive) {
+                    e.currentTarget.style.background = "#2ecc11"
+                  } else {
+                    e.currentTarget.style.background = "#FF0000"
                     e.currentTarget.style.color = "#FFF"
                   }
                 }}
+                onMouseLeave={(e) => {
+                  if (duration.isActive) {
+                    e.currentTarget.style.background = "#39FF14"
+                  } else {
+                    e.currentTarget.style.background = "transparent"
+                    e.currentTarget.style.color = "#FF0000"
+                  }
+                }}
               >
-                ACTIVE
+                {duration.isActive ? "ACTIVE" : "INACTIVE"}
               </button>
 
               <button

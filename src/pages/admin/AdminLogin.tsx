@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ScrambleText from '../../components/Scramble';
-import ElectricBorder from '../../components/ElectricBorder';
 import { API_BASE_URL } from '../../lib/apiConfig';
 import '../../styles/fonts.css';
 import '../../styles/Main.css';
@@ -135,23 +134,14 @@ const AdminLogin: React.FC = () => {
 
       
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <ElectricBorder
-          color="#39FF14"
-          speed={3}
-          chaos={1}
-          thickness={1}
-          style={{ 
-            width: '100%',
-            maxWidth: '400px',
-            borderRadius: '0px'
-          }}
-        >
           <div style={{
             background: 'rgba(255, 255, 255, 0.05)',
             backdropFilter: 'blur(20px)',
             borderRadius: '0px',
             padding: '3rem',
             width: '100%',
+            maxWidth: '400px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
           }}>
           {/* Login Form */}
@@ -388,7 +378,6 @@ const AdminLogin: React.FC = () => {
             </button>
           </form>
           </div>
-        </ElectricBorder>
       </div>
     </div>
   );

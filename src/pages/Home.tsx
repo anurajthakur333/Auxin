@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import Preloader from "../components/Preloader";
 // import Squares from "../components/Squares";
 import Particles from "../components/Particles";
+import MagicBento from "../components/MagicBento";
 import "../styles/fonts.css";
 import "../styles/Main.css";
 import Lenis from "lenis";
@@ -187,7 +188,7 @@ const Home = () => {
                 delay={50}
                 style={{ color: "white" }}
               >
-           AUXIN BUILDS HIGH-PERFORMANCE WEBSITES
+           WE BUILDS HIGH-PERFORMANCE WEBSITES
               </ScrambleText>
              
               <ScrambleText
@@ -254,14 +255,90 @@ const Home = () => {
           </div>
         </div>
 
-       {/* Section - 2 */}
+  {/* Section - 2  */}
+  <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh", padding: "25px 25px 80px 0" }}>
+          <div className="">
+            <div
+              className="aeonik-mono text-white"
+              style={{
+                fontSize: "clamp(15px, 6vw, 40px)",
+                letterSpacing: "-3px",
+                lineHeight: "1.1",
+                fontWeight: 400,
+                maxWidth: "1000px",
+                textAlign: "center",
+              }}
+            >
+              <ScrambleText
+                trigger="load"
+                speed="fast"
+                  revealSpeed={0.3}
+                direction="right-to-left"
+                scrambleIntensity={1}
+                matchWidth={true}
+                delay={0}
+                style={{ color: "white" }}
+              >
+                REACH YOUR AUDIENCE
+              </ScrambleText>
+              <br />
+              <ScrambleText
+                trigger="load"
+                speed="fast"
+                  revealSpeed={0.3}
+                direction="right-to-left"
+                scrambleIntensity={1}
+                matchWidth={true}
+                delay={400}
+                style={{ color: "white" }}
+              >
+                SMARTER AND FASTER WITH
+              </ScrambleText>
+              <br />
+              <ScrambleText
+                trigger="load"
+                speed="fast"
+                revealSpeed={0.3}
+                direction="right-to-left"
+                        scrambleIntensity={1}
+                matchWidth={true}
+                delay={800}
+                style={{ color: "white" }}
+              >
+                OUR AI-POWERED AD SOLUTIONS.
+              </ScrambleText>
+            </div>
+          </div>
+        </div>
+
+{/* section - 3 */}
+
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", padding: "80px 0", width: "100%" }}>
+          <MagicBento 
+            textAutoHide={true}
+            enableStars={false}
+            enableSpotlight={true}
+            enableBorderGlow={true}
+            enableTilt={false}
+            enableMagnetism={false}
+            clickEffect={true}
+            spotlightRadius={500}
+            particleCount={12}
+            glowColor="57, 255, 20"
+          />
+        </div>
+
+
+
+
+       {/* Section - 4 */}
         <div className="d-flex align-items-start" style={{ minHeight: "100vh", padding: "50px 0 80px 50px", position: "relative" }}>
        
           <div className="" style={{ position: "relative", zIndex: 1 }}>
             <div
               className="aeonik-mono text-white"
               style={{
-                fontSize: "clamp(28px, 5vw, 50px)",
+                fontSize: "clamp(15px, 6vw, 40px)",
                 letterSpacing: "-3px",
                 lineHeight: "1.1",
                 fontWeight: 400,
@@ -355,80 +432,10 @@ const Home = () => {
           </div>
         </div>
 
-     {/* Section - 3  */}
-        <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh", padding: "25px 25px 80px 0" }}>
-          <div className="">
-            <div
-              className="aeonik-mono text-white"
-              style={{
-                fontSize: "clamp(28px, 5vw, 50px)",
-                letterSpacing: "-3px",
-                lineHeight: "1.1",
-                fontWeight: 400,
-                maxWidth: "1000px",
-                textAlign: "center",
-              }}
-            >
-              <ScrambleText
-                trigger="load"
-                speed="fast"
-                  revealSpeed={0.3}
-                direction="right-to-left"
-                scrambleIntensity={1}
-                matchWidth={true}
-                delay={0}
-                style={{ color: "white" }}
-              >
-                REACH YOUR AUDIENCE
-              </ScrambleText>
-              <br />
-              <ScrambleText
-                trigger="load"
-                speed="fast"
-                  revealSpeed={0.3}
-                direction="right-to-left"
-                scrambleIntensity={1}
-                matchWidth={true}
-                delay={400}
-                style={{ color: "white" }}
-              >
-                SMARTER AND FASTER WITH
-              </ScrambleText>
-              <br />
-              <ScrambleText
-                trigger="load"
-                speed="fast"
-                revealSpeed={0.3}
-                direction="right-to-left"
-                        scrambleIntensity={1}
-                matchWidth={true}
-                delay={800}
-                style={{ color: "white" }}
-              >
-                OUR AI-POWERED AD SOLUTIONS.
-              </ScrambleText>
-            </div>
-          </div>
-        </div>
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", padding: "80px 0" }}>
-          <div className="text-center px-4">
-            <div
-              className="aeonik-mono text-white"
-              style={{
-                fontSize: "clamp(28px, 5vw, 50px)",
-                letterSpacing: "-4px",
-                lineHeight: "70px",
-                fontWeight: 400,
-                maxWidth: "800px",
-                margin: "0 auto",
-              }}
-            >
-             
-            </div>
-          </div>
-        </div>
+   
+     
 
-       {/* Section - 4  */}
+          {/* Section - 5  */}
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", padding: "80px 0" }}>
           <div className="text-center px-4">
             <div
