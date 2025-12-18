@@ -165,15 +165,15 @@ const Home = () => {
           /> */}
           
           {/* Text Content */}
-          <div className="text-center px-4" style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
+          <div className="text-center justify-content-center align-items-center" style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
             <div
               className="aeonik-mono text-white"
               style={{
-                fontSize: "clamp(15px, 6vw, 50px)",
-                letterSpacing: "-4px",
-                lineHeight: "50px",
-                fontWeight: 400,
-                maxWidth: "800px",
+                fontSize: "clamp(15px, 6vw, 40px)",
+                letterSpacing: "-1px",
+                lineHeight: "40px",
+                fontWeight: 500,
+                maxWidth: "1000px",
                 margin: "0 auto",
               }}
             >
@@ -187,7 +187,7 @@ const Home = () => {
                 delay={50}
                 style={{ color: "white" }}
               >
-                REDEFINING BUSINESS WITH THE
+           AUXIN BUILDS HIGH-PERFORMANCE WEBSITES
               </ScrambleText>
              
               <ScrambleText
@@ -199,9 +199,57 @@ const Home = () => {
                 scrambleIntensity={1}
                 delay={300}
                 style={{ color: "white" }}
-              >
-             INTELLIGENCE YOU CAN TRUST
+              >AND DIGITAL SYSTEMS FOR
               </ScrambleText>
+              <br />
+              <ScrambleText
+                      trigger="load"
+               speed="ultra-slow"
+                direction="center-out"
+               matchWidth={true}
+               revealSpeed={0.3}
+                scrambleIntensity={1}
+                delay={300}
+                style={{ color: "white" }}
+              >MODERN BUSINESSES
+              </ScrambleText>
+              </div>
+              <div className="text-center mt-4 justify-content-center align-items-center" style={{ position: "relative", zIndex: 1, pointerEvents: "none" }}>
+            <div
+              className="aeonik-mono text-white"
+              style={{
+                fontSize: "clamp(15px, 6vw, 20px)",
+                letterSpacing: "-2px",
+                lineHeight: "25px",
+                fontWeight: 400,
+                maxWidth: "900px",
+                margin: "0 auto",
+              }}
+            >
+              <ScrambleText
+                      trigger="load"
+               speed="ultra-slow"
+                direction="center-out"
+               matchWidth={true}
+               revealSpeed={0.3}
+                scrambleIntensity={1}
+                delay={300}
+                style={{ color: "white" }}
+              >STRATEGY, DESIGN, DEVELOPMENT, AND AUTOMATION—BUILT
+              </ScrambleText>
+<br />
+              <ScrambleText
+                      trigger="load"
+               speed="ultra-slow"
+                direction="center-out"
+               matchWidth={true}
+               revealSpeed={0.3}
+                scrambleIntensity={1}
+                delay={300}
+                style={{ color: "white" }}
+              >FOR SPEED, CLARITY, AND SCALE.
+              </ScrambleText>
+              </div>
             </div>
           </div>
         </div>

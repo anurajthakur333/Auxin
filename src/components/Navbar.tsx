@@ -269,9 +269,9 @@ const Navbar = () => {
         
         {/* User Name & Menu */}
         {user && (
-          <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
-            {user.name}
-          </span>
+            <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
+              {user.name}
+            </span>
         )}
         {!user && (
           <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" onClickSound={playClickSound} loadDelay={800} />
