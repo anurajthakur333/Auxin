@@ -2,8 +2,8 @@ import "../styles/fonts.css";
 import "../styles/Navbar.css";
 import ScrambleText from "./Scramble";
 import LiquidGlass from "./LiquidGlass";
+import StaggeredMenu from "./StaggeredMenu";
 import { useAuth } from "../contexts/AuthContext";
-import { useProfileMenu } from "../contexts/ProfileMenuContext";
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSound } from "../hooks/useSound";
@@ -122,7 +122,6 @@ const Navbar = () => {
   const [navWidth, setNavWidth] = useState(1920);
   const navRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-  const { openProfileMenu } = useProfileMenu();
   const playClickSound = useSound(clickSound, { volume: 0.3});
 
   useEffect(() => {
@@ -154,7 +153,41 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
+  const menuItems = [
+    { label: 'HOME', ariaLabel: 'Go to home page', link: '/' },
+    { label: 'EXPERIENCE', ariaLabel: 'View experience section', link: '/#experience' },
+    { label: 'ARTICLES', ariaLabel: 'View articles section', link: '/#articles' },
+    { label: 'ABOUT US', ariaLabel: 'Learn about us', link: '/#about' },
+    { label: 'MEETINGS', ariaLabel: 'Book a meeting', link: '/meeting' },
+    ...(user 
+      ? [
+          { label: 'DASHBOARD', ariaLabel: 'Go to dashboard', link: '/dashboard' },
+          { label: 'PROFILE', ariaLabel: 'Open profile menu', link: '#profile' }
+        ]
+      : [{ label: 'LOGIN', ariaLabel: 'Login to your account', link: '/login' }]
+    ),
+  ];
+
   return (
+    <>
+      {/* StaggeredMenu at top */}
+      <StaggeredMenu
+        position="right"
+        items={menuItems}
+        displaySocials={false}
+        displayItemNumbering={true}
+        menuButtonColor="#fff"
+        openMenuButtonColor="#fff"
+        changeMenuColorOnOpen={true}
+        colors={['#111', '#000']}
+        accentColor="#39FF14"
+        isFixed={true}
+        closeOnClickAway={true}
+        onMenuOpen={() => playClickSound()}
+        onMenuClose={() => playClickSound()}
+      />
+      
+      {/* Bottom Navbar */}
       <div 
         ref={navRef}
         className="navbar navbar-expand-xxl fixed-bottom" 
@@ -234,51 +267,19 @@ const Navbar = () => {
         {/* Spacer to push auth section to the right */}
         <div style={{ flex: 1 }}></div>
         
-        {/* User Icon / Auth Section */}
-        {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
-              {user.name}
-            </span>
-            <button
-              onClick={() => { playClickSound(); openProfileMenu(); }}
-              className="nav-link text-white"
-              style={{ 
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "32px",
-                height: "32px",
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                transition: "color 0.2s ease"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "#39FF14";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "white";
-              }}
-            >
-              <img 
-                src="/UserProfile.svg" 
-                alt="User Profile" 
-                style={{ 
-                  width: "30px", 
-                  height: "30px",
-                  filter: "brightness(0) invert(1)" // Makes the SVG white by default
-                }}
-              />
-            </button>
-          </div>
-        ) : (
+        {/* User Name & Menu */}
+        {user && (
+          <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
+            {user.name}
+          </span>
+        )}
+        {!user && (
           <NavItem href="/login" label="LOGIN" minWidth={80} direction="right-to-left" onClickSound={playClickSound} loadDelay={800} />
         )}
       </div>
       </div>
     </div>
+    </>
   );
 };
 
