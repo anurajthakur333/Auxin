@@ -9,6 +9,14 @@ interface TimeSlot {
   available: boolean;
 }
 
+interface MeetingDuration {
+  _id: string;
+  minutes: number;
+  label: string;
+  price: number;
+  isActive: boolean;
+}
+
 interface TimeSlotsProps {
   selectedDate: Date;
   onTimeSelect: (time: string) => void;
@@ -28,12 +36,54 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [userTimezone, setUserTimezone] = useState<string>('');
   const [timeFormat, setTimeFormat] = useState<'12hr' | '24hr'>('24hr');
+  const [meetingDurations, setMeetingDurations] = useState<MeetingDuration[]>([]);
+  const [selectedDuration, setSelectedDuration] = useState<MeetingDuration | null>(null);
+  const [durationsLoading, setDurationsLoading] = useState(true);
+  const [durationsError, setDurationsError] = useState<string | null>(null);
 
   // Detect user's timezone
   useEffect(() => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     setUserTimezone(timezone);
   }, []);
+
+  // Fetch meeting durations from API
+  useEffect(() => {
+    const fetchMeetingDurations = async () => {
+      try {
+        setDurationsLoading(true);
+        setDurationsError(null);
+        const response = await fetch(`${API_BASE_URL}/api/meeting-durations/public`);
+        if (response.ok) {
+          const data = await response.json();
+          const activeDurations = (data.durations || []).filter((d: MeetingDuration) => d.isActive);
+          setMeetingDurations(activeDurations);
+          // Auto-select first duration if available
+          if (activeDurations.length > 0 && !selectedDuration) {
+            setSelectedDuration(activeDurations[0]);
+          }
+        } else {
+          const errorData = await response.json().catch(() => ({ error: 'Failed to fetch durations' }));
+          setDurationsError(errorData.error || 'Failed to load meeting durations');
+          console.error('Failed to fetch meeting durations:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching meeting durations:', error);
+        setDurationsError('Network error. Please refresh the page.');
+      } finally {
+        setDurationsLoading(false);
+      }
+    };
+
+    fetchMeetingDurations();
+  }, []);
+
+  // Update selected duration when durations are loaded
+  useEffect(() => {
+    if (meetingDurations.length > 0 && !selectedDuration) {
+      setSelectedDuration(meetingDurations[0]);
+    }
+  }, [meetingDurations]);
 
   // Generate time slots (9 AM to 6 PM, 30-minute intervals)
   const generateTimeSlots = (): TimeSlot[] => {
@@ -57,6 +107,56 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
     return slots;
   };
 
+  // Calculate how many 30-minute slots are needed for the selected duration
+  const getRequiredSlots = (durationMinutes: number): number => {
+    return Math.ceil(durationMinutes / 30);
+  };
+
+  // Check if a time slot can accommodate the selected duration
+  const canAccommodateDuration = (slotTime: string, durationMinutes: number): boolean => {
+    if (!selectedDuration) return true;
+    
+    const requiredSlots = getRequiredSlots(durationMinutes);
+    const slotIndex = availableSlots.findIndex(slot => slot.time === slotTime);
+    
+    if (slotIndex === -1) return false;
+    
+    // Check if we have enough consecutive available slots
+    for (let i = 0; i < requiredSlots; i++) {
+      const checkIndex = slotIndex + i;
+      if (checkIndex >= availableSlots.length) return false;
+      if (!availableSlots[checkIndex].available) return false;
+    }
+    
+    return true;
+  };
+
+  // Get all time slots that would be booked for the selected duration
+  const getSlotsForDuration = (startTime: string, durationMinutes: number): string[] => {
+    const requiredSlots = getRequiredSlots(durationMinutes);
+    const slotIndex = availableSlots.findIndex(slot => slot.time === startTime);
+    
+    if (slotIndex === -1) return [startTime];
+    
+    const slots: string[] = [];
+    for (let i = 0; i < requiredSlots; i++) {
+      const checkIndex = slotIndex + i;
+      if (checkIndex < availableSlots.length) {
+        slots.push(availableSlots[checkIndex].time);
+      }
+    }
+    
+    return slots;
+  };
+
+  // Helper function to format date as YYYY-MM-DD in local timezone (not UTC)
+  const formatDateLocal = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Get available slots for selected date
   const fetchAvailableSlots = async (date: Date) => {
     try {
@@ -68,7 +168,8 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         setFetchingNewDate(true);
       }
       
-      const dateStr = date.toISOString().split('T')[0];
+      // Format date as YYYY-MM-DD in local timezone (not UTC)
+      const dateStr = formatDateLocal(date);
       const token = getAuthToken();
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
@@ -108,6 +209,36 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
     fetchAvailableSlots(selectedDate);
   }, [selectedDate]);
 
+  // Re-check slot availability when duration changes (only if a time is selected)
+  useEffect(() => {
+    if (selectedTime && selectedDuration && availableSlots.length > 0) {
+      const requiredSlots = getRequiredSlots(selectedDuration.minutes);
+      const slotIndex = availableSlots.findIndex(slot => slot.time === selectedTime);
+      
+      if (slotIndex === -1) {
+        onTimeSelect('');
+        return;
+      }
+      
+      // Check if we have enough consecutive available slots (not booked)
+      let canAccommodate = true;
+      for (let i = 0; i < requiredSlots; i++) {
+        const checkIndex = slotIndex + i;
+        if (checkIndex >= availableSlots.length || !availableSlots[checkIndex].available) {
+          canAccommodate = false;
+          break;
+        }
+      }
+      
+      if (!canAccommodate) {
+        // Clear selection if current time can't accommodate new duration
+        onTimeSelect('');
+        setMessage({ type: 'error', text: `Selected time cannot accommodate ${selectedDuration.minutes} minutes. Please choose another time.` });
+        setTimeout(() => setMessage(null), 3000);
+      }
+    }
+  }, [selectedDuration]);
+
   // Book appointment - Create PayPal order and redirect to PayPal
   const bookAppointment = async () => {
     if (!selectedTime || !user) return;
@@ -123,6 +254,15 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
         return;
       }
       
+      if (!selectedDuration) {
+        setMessage({ type: 'error', text: 'Please select a meeting duration' });
+        setBookingLoading(false);
+        return;
+      }
+
+      // Get all time slots that need to be booked
+      const slotsToBook = getSlotsForDuration(selectedTime, selectedDuration.minutes);
+      
       // Create PayPal order
       const response = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
         method: 'POST',
@@ -131,11 +271,15 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          date: selectedDate.toISOString().split('T')[0],
+          date: formatDateLocal(selectedDate), // Use local date format, not UTC
           time: selectedTime,
+          endTime: slotsToBook.length > 0 ? slotsToBook[slotsToBook.length - 1] : selectedTime,
           userEmail: user.email,
           userName: user.name,
-          timezone: userTimezone
+          timezone: userTimezone,
+          duration: selectedDuration.minutes,
+          price: selectedDuration.price,
+          slots: slotsToBook // Send all slots that will be booked
         })
       });
 
@@ -272,6 +416,12 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           color: #000;
           border-color: #39FF14;
           font-weight: 600;
+        }
+
+        .time-slot.selected-part {
+          background: rgba(57, 255, 20, 0.3);
+          border-color: #39FF14;
+          border-style: dashed;
         }
 
         .time-slot.unavailable {
@@ -440,6 +590,110 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
           month: 'long', 
           day: 'numeric' 
         }).toUpperCase()}</p>
+        {selectedDuration && (
+          <div style={{ 
+            marginTop: '0.75rem', 
+            paddingTop: '0.75rem', 
+            borderTop: '1px solid rgba(57, 255, 20, 0.3)',
+            fontSize: '1rem',
+            color: '#39FF14',
+            fontWeight: 600
+          }}>
+            {selectedDuration.minutes} MINUTES
+          </div>
+        )}
+      </div>
+
+      {/* Meeting Duration Selection - Always visible, placed before time slots */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h4 style={{ 
+          fontSize: '0.9rem', 
+          color: '#39FF14', 
+          marginBottom: '0.75rem',
+          textTransform: 'uppercase',
+          letterSpacing: '1px'
+        }}>
+          SELECT DURATION
+        </h4>
+        
+        {durationsLoading && (
+          <div style={{ 
+            padding: '1rem', 
+            textAlign: 'center', 
+            color: '#888',
+            fontSize: '0.85rem'
+          }}>
+            Loading durations...
+          </div>
+        )}
+        
+        {durationsError && (
+          <div style={{ 
+            padding: '1rem', 
+            textAlign: 'center', 
+            color: '#ff6b6b',
+            fontSize: '0.85rem',
+            border: '1px solid #ff6b6b',
+            background: 'rgba(255, 107, 107, 0.1)'
+          }}>
+            {durationsError}
+          </div>
+        )}
+        
+        {!durationsLoading && !durationsError && meetingDurations.length === 0 && (
+          <div style={{ 
+            padding: '1rem', 
+            textAlign: 'center', 
+            color: '#888',
+            fontSize: '0.85rem'
+          }}>
+            No meeting durations available. Please contact support.
+          </div>
+        )}
+        
+        {!durationsLoading && !durationsError && meetingDurations.length > 0 && (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
+            gap: '0.5rem' 
+          }}>
+            {meetingDurations.map((duration) => (
+              <button
+                key={duration._id}
+                onClick={() => setSelectedDuration(duration)}
+                style={{
+                  padding: '0.75rem 0.5rem',
+                  background: selectedDuration?._id === duration._id ? '#39FF14' : '#222',
+                  color: selectedDuration?._id === duration._id ? '#000' : '#fff',
+                  border: `1px solid ${selectedDuration?._id === duration._id ? '#39FF14' : '#333'}`,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'Aeonik, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: selectedDuration?._id === duration._id ? 600 : 400,
+                  textAlign: 'center',
+                  borderRadius: '0px'
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedDuration?._id !== duration._id) {
+                    e.currentTarget.style.borderColor = '#39FF14';
+                    e.currentTarget.style.background = '#333';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedDuration?._id !== duration._id) {
+                    e.currentTarget.style.borderColor = '#333';
+                    e.currentTarget.style.background = '#222';
+                  }
+                }}
+              >
+                <div style={{ fontWeight: 600 }}>
+                  {duration.minutes} MIN
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="time-slots-header">
@@ -461,19 +715,51 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       </div>
 
       <div className="time-slots-grid">
-        {availableSlots.map(slot => (
-          <div
-            key={slot.id}
-            className={`time-slot ${selectedTime === slot.time ? 'selected' : ''} ${!slot.available ? 'unavailable' : ''}`}
-            onClick={() => slot.available && onTimeSelect(slot.time)}
-          >
-            {timeFormat === '24hr' ? (
-              <div className="time-display">{slot.time}</div>
-            ) : (
-              <div className="time-display">{slot.time12}</div>
-            )}
-          </div>
-        ))}
+        {availableSlots.map(slot => {
+          const isSelected = selectedTime === slot.time;
+          // Check if slot is already booked - show ALL bookings regardless of selected duration
+          const isBooked = !slot.available;
+          
+          // For available slots, check if they can accommodate the selected duration
+          let canAccommodate = true;
+          let cannotAccommodateReason = '';
+          if (!isBooked && selectedDuration) {
+            canAccommodate = canAccommodateDuration(slot.time, selectedDuration.minutes);
+            if (!canAccommodate) {
+              cannotAccommodateReason = `Not enough consecutive slots for ${selectedDuration.minutes} minutes`;
+            }
+          }
+          
+          // Get slots that would be part of the selected booking
+          const slotsForDuration = selectedTime && selectedDuration && !isBooked ? getSlotsForDuration(selectedTime, selectedDuration.minutes) : [];
+          const isPartOfSelected = slotsForDuration.includes(slot.time) && !isBooked && slot.time !== selectedTime;
+          
+          // Slot is unavailable if: already booked OR cannot accommodate selected duration
+          const isUnavailable = isBooked || (!isBooked && selectedDuration && !canAccommodate);
+          
+          return (
+            <div
+              key={slot.id}
+              className={`time-slot ${isSelected ? 'selected' : ''} ${isPartOfSelected ? 'selected-part' : ''} ${isUnavailable ? 'unavailable' : ''}`}
+              onClick={() => {
+                if (!isBooked && canAccommodate) {
+                  onTimeSelect(slot.time);
+                }
+              }}
+              title={
+                isBooked 
+                  ? 'This slot is already booked' 
+                  : cannotAccommodateReason
+              }
+            >
+              {timeFormat === '24hr' ? (
+                <div className="time-display">{slot.time}</div>
+              ) : (
+                <div className="time-display">{slot.time12}</div>
+              )}
+            </div>
+          );
+        })}
       </div>
       
       {loading && (
@@ -522,19 +808,38 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
             Your timezone: {userTimezone}
           </div>
         )}
+        {selectedDuration && (
+          <div style={{ 
+            marginBottom: '0.75rem',
+            padding: '0.75rem',
+            background: 'rgba(57, 255, 20, 0.05)',
+            border: '1px solid rgba(57, 255, 20, 0.3)',
+            borderRadius: '0px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              fontSize: '1rem', 
+              color: '#39FF14',
+              fontWeight: 600
+            }}>
+              {selectedDuration.minutes} MINUTES
+            </div>
+          </div>
+        )}
         <button
           className="book-button"
           onClick={bookAppointment}
-          disabled={!selectedTime || bookingLoading}
+          disabled={!selectedTime || !selectedDuration || bookingLoading}
         >
           {bookingLoading ? 'PROCESSING...' : (() => {
             if (!selectedTime) return 'SELECT TIME FIRST';
+            if (!selectedDuration) return 'SELECT DURATION FIRST';
             const selectedSlot = availableSlots.find(slot => slot.time === selectedTime);
             if (selectedSlot) {
               const displayTime = timeFormat === '24hr' ? selectedSlot.time : selectedSlot.time12;
-              return `BOOK & PAY $150 - ${displayTime}`;
+              return `BOOK & PAY $${Math.round(selectedDuration.price)} - ${displayTime}`;
             }
-            return `BOOK & PAY $150 - ${selectedTime}`;
+            return `BOOK & PAY $${Math.round(selectedDuration.price)} - ${selectedTime}`;
           })()}
         </button>
         <div style={{ 
