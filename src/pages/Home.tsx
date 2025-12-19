@@ -146,7 +146,7 @@ const Home = () => {
               color="#FFFFFF"
               glow={false}
               fadeInDuration={0}
-              particleLifetime={2000}
+              particleLifetime={10000}
               direction="up"
             />
           </div>
@@ -188,7 +188,7 @@ const Home = () => {
                 delay={50}
                 style={{ color: "white" }}
               >
-           WE BUILDS HIGH-PERFORMANCE WEBSITES
+           WE BUILD HIGH-PERFORMANCE WEBSITES
               </ScrambleText>
              
               <ScrambleText
@@ -220,7 +220,7 @@ const Home = () => {
               className="aeonik-mono text-white"
               style={{
                 fontSize: "clamp(15px, 6vw, 20px)",
-                letterSpacing: "-2px",
+                letterSpacing: "0px",
                 lineHeight: "25px",
                 fontWeight: 400,
                 maxWidth: "900px",
