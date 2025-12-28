@@ -12,6 +12,11 @@
   top: 0;
   left: 0;
   right: 0;
+  pointer-events: none;
+}
+
+.staggered-menu-wrapper.fixed-wrapper[data-open="true"] {
+  pointer-events: auto;
 }
 
 /* Header */
@@ -22,6 +27,7 @@
   padding: 20px 40px;
   position: relative;
   z-index: 10001;
+  pointer-events: auto;
 }
 
 /* Logo */
