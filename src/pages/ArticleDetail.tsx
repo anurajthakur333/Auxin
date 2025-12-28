@@ -28,6 +28,22 @@ const ArticleDetail = () => {
   const { slug } = useParams<{ slug: string }>()
   const [article, setArticle] = useState<Article | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showShareLink, setShowShareLink] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const getArticleUrl = () => {
+    return `${window.location.origin}/articles/${slug}`
+  }
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(getArticleUrl())
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy:", err)
+    }
+  }
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -325,32 +341,98 @@ const ArticleDetail = () => {
           style={{
             marginTop: "60px",
             display: "flex",
+            flexDirection: "column",
             gap: "15px",
           }}
         >
           <button
+            onClick={() => setShowShareLink(!showShareLink)}
             className="aeonik-mono"
             style={{
               padding: "15px 35px",
-              background: "#39FF14",
+              background: showShareLink ? "transparent" : "#39FF14",
               border: "1px solid #39FF14",
-              color: "#000",
+              color: showShareLink ? "#39FF14" : "#000",
               fontSize: "12px",
               letterSpacing: "1px",
               cursor: "pointer",
               transition: "all 0.3s ease",
+              width: "fit-content",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#2ecc11"
-              e.currentTarget.style.borderColor = "#2ecc11"
+              if (!showShareLink) {
+                e.currentTarget.style.background = "#2ecc11"
+                e.currentTarget.style.borderColor = "#2ecc11"
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#39FF14"
-              e.currentTarget.style.borderColor = "#39FF14"
+              if (!showShareLink) {
+                e.currentTarget.style.background = "#39FF14"
+                e.currentTarget.style.borderColor = "#39FF14"
+              }
             }}
           >
-            {"SHARE ARTICLE"}
+            {showShareLink ? "HIDE LINK" : "SHARE ARTICLE"}
           </button>
+
+          {/* Share Link Section */}
+          {showShareLink && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "15px 20px",
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+              }}
+            >
+              <input
+                type="text"
+                value={getArticleUrl()}
+                readOnly
+                className="aeonik-mono"
+                style={{
+                  flex: 1,
+                  padding: "10px 15px",
+                  background: "rgba(0, 0, 0, 0.5)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#FFF",
+                  fontSize: "12px",
+                  letterSpacing: "0.5px",
+                  outline: "none",
+                  minWidth: "250px",
+                }}
+              />
+              <button
+                onClick={handleCopyLink}
+                className="aeonik-mono"
+                style={{
+                  padding: "10px 20px",
+                  background: copied ? "#39FF14" : "transparent",
+                  border: "1px solid #39FF14",
+                  color: copied ? "#000" : "#39FF14",
+                  fontSize: "11px",
+                  letterSpacing: "1px",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => {
+                  if (!copied) {
+                    e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!copied) {
+                    e.currentTarget.style.background = "transparent"
+                  }
+                }}
+              >
+                {copied ? "COPIED!" : "COPY LINK"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
