@@ -27,7 +27,7 @@
   padding: 20px 40px;
   position: relative;
   z-index: 10001;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 /* Logo */
@@ -62,6 +62,7 @@
   font-size: 14px;
   letter-spacing: 2px;
   transition: opacity 0.3s ease;
+  pointer-events: auto;
 }
 
 .sm-toggle:hover {
