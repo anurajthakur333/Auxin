@@ -16,6 +16,7 @@ interface Article {
   author: string
   tags: string[]
   content: string[]
+  image?: string
   isActive: boolean
 }
 
@@ -41,6 +42,7 @@ const ArticlesAdmin = () => {
     author: "",
     tags: [],
     content: [],
+    image: "",
     isActive: true,
   })
   const [readTimeMinutes, setReadTimeMinutes] = useState<number>(5)
@@ -352,6 +354,7 @@ const ArticlesAdmin = () => {
       author: "",
       tags: [],
       content: [],
+      image: "",
       isActive: true,
     })
     setReadTimeMinutes(5)
@@ -735,6 +738,53 @@ const ArticlesAdmin = () => {
               onChange={(e) => setTagsInput(e.target.value.toUpperCase())}
               placeholder="WEB DESIGN, TRENDS, UI/UX"
             />
+          </div>
+
+          {/* Image URL Input */}
+          <div style={{ marginBottom: "20px" }}>
+            <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "8px", display: "block" }}>
+              {"COVER IMAGE URL"}
+            </label>
+            <Input
+              value={formData.image || ""}
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              placeholder="HTTPS://EXAMPLE.COM/IMAGE.JPG"
+            />
+            {/* Image Preview */}
+            {formData.image && (
+              <div style={{ marginTop: "15px" }}>
+                <p className="aeonik-mono" style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", marginBottom: "8px" }}>
+                  {"PREVIEW:"}
+                </p>
+                <div
+                  style={{
+                    width: "100%",
+                    maxWidth: "400px",
+                    aspectRatio: "16/9",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    overflow: "hidden",
+                    position: "relative",
+                  }}
+                >
+                  <img
+                    src={formData.image}
+                    alt="Cover preview"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none"
+                    }}
+                    onLoad={(e) => {
+                      (e.target as HTMLImageElement).style.display = "block"
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: "20px" }}>

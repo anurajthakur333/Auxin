@@ -21,6 +21,7 @@ interface Article {
   author: string
   tags: string[]
   content: string[]
+  image?: string
   isActive?: boolean
 }
 
@@ -272,6 +273,30 @@ const ArticleDetail = () => {
             {article.readTime} {"READ"}
           </span>
         </div>
+
+        {/* Hero Image */}
+        {article.image && (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "1200px",
+              marginBottom: "60px",
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src={article.image}
+              alt={article.title}
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "600px",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          </div>
+        )}
 
         {/* Article Content */}
         {article.content.map((paragraph, index) => (

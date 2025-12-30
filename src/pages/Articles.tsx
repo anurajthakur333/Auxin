@@ -21,6 +21,7 @@ interface Article {
   excerpt: string
   author: string
   tags: string[]
+  image?: string
   isActive?: boolean
 }
 
@@ -230,10 +231,10 @@ const Articles = () => {
                   background: "rgba(255, 255, 255, 0.03)",
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   borderRadius: "0px",
-                  padding: "35px",
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                   display: "block",
+                  overflow: "hidden",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
@@ -246,23 +247,54 @@ const Articles = () => {
                   e.currentTarget.style.transform = "translateY(0)"
                 }}
               >
-                {/* Category Badge */}
-                <span
-                  className="aeonik-mono"
-                  style={{
-                    display: "inline-block",
-                    padding: "6px 12px",
-                    fontSize: "10px",
-                    color: "#39FF14",
-                    background: "rgba(57, 255, 20, 0.1)",
-                    border: "1px solid #39FF14",
-                    borderRadius: "0px",
-                    letterSpacing: "1px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  {article.category}
-                </span>
+                {/* Article Cover Image */}
+                {article.image && (
+                  <div
+                    style={{
+                      width: "100%",
+                      aspectRatio: "16/9",
+                      overflow: "hidden",
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 0.5s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.target as HTMLImageElement).style.transform = "scale(1.05)"
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.target as HTMLImageElement).style.transform = "scale(1)"
+                      }}
+                    />
+                  </div>
+                )}
+                
+                {/* Card Content */}
+                <div style={{ padding: "35px" }}>
+                  {/* Category Badge */}
+                  <span
+                    className="aeonik-mono"
+                    style={{
+                      display: "inline-block",
+                      padding: "6px 12px",
+                      fontSize: "10px",
+                      color: "#39FF14",
+                      background: "rgba(57, 255, 20, 0.1)",
+                      border: "1px solid #39FF14",
+                      borderRadius: "0px",
+                      letterSpacing: "1px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {article.category}
+                  </span>
 
                 {/* Title */}
                 <h2
@@ -341,6 +373,7 @@ const Articles = () => {
                       </span>
                     ))}
                   </div>
+                </div>
                 </div>
               </Link>
             ))}
