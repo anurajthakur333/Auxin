@@ -77,13 +77,34 @@ const PaymentSuccess = () => {
           return;
         }
 
+        // Get cached form data from localStorage
+        const cachedFormData = localStorage.getItem('meetingFormData');
+        let categoryData: { categoryId?: string; categoryName?: string; formAnswers?: Record<string, string> } = {};
+        
+        if (cachedFormData) {
+          try {
+            const parsed = JSON.parse(cachedFormData);
+            categoryData = {
+              categoryId: parsed.categoryId,
+              categoryName: parsed.categoryName,
+              formAnswers: parsed.formAnswers || {}
+            };
+          } catch (e) {
+            console.error('Failed to parse cached form data:', e);
+          }
+        }
+
         const requestBody: {
           orderId: string;
           appointmentId: string;
           payerId?: string;
+          categoryId?: string;
+          categoryName?: string;
+          formAnswers?: Record<string, string>;
         } = {
           orderId: orderId.trim(),
-          appointmentId: appointmentId.trim()
+          appointmentId: appointmentId.trim(),
+          ...categoryData
         };
         
         // Add payerId if available
@@ -136,6 +157,7 @@ const PaymentSuccess = () => {
           // Clear stored payment data
           localStorage.removeItem('pendingAppointmentId');
           localStorage.removeItem('pendingOrderId');
+          localStorage.removeItem('meetingFormData');
         } else {
           console.error('Payment capture failed:', data);
           setStatus('error');
