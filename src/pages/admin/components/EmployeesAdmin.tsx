@@ -179,6 +179,8 @@ const EmployeesAdmin = () => {
       }
 
       // Only include password if it's provided (for new employees or when updating)
+      // NOTE: Employee passwords are stored as PLAIN TEXT (not encrypted/hashed)
+      // Backend should save password as-is without any hashing
       if (formData.password && formData.password.length > 0) {
         requestBody.password = formData.password
       }
@@ -723,4 +725,5 @@ const EmployeesAdmin = () => {
 }
 
 export default EmployeesAdmin
+
 
