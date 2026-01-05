@@ -8,6 +8,7 @@ export interface StaggeredMenuItem {
   label: string;
   ariaLabel: string;
   link: string;
+  onClick?: () => void;
 }
 
 export interface StaggeredMenuSocialItem {
@@ -362,8 +363,18 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
   }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
 
-  const handleNavigation = useCallback((link: string) => {
+  const handleNavigation = useCallback((item: StaggeredMenuItem) => {
     closeMenu();
+    
+    // If item has custom onClick handler, use it instead of navigation
+    if (item.onClick) {
+      setTimeout(() => {
+        item.onClick?.();
+      }, 350);
+      return;
+    }
+    
+    const link = item.link;
     setTimeout(() => {
       // Check if it's a hash link (like /#experience or #experience)
       if (link.includes('#')) {
@@ -471,7 +482,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     className="sm-panel-item aeonik-mono" 
                     aria-label={it.ariaLabel} 
                     data-index={idx + 1}
-                    onClick={() => handleNavigation(it.link)}
+                    onClick={() => handleNavigation(it)}
                   >
                     <span className="sm-panel-itemLabel">
                       <ScrambleText

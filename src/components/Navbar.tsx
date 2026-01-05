@@ -5,7 +5,7 @@ import LiquidGlass from "./LiquidGlass";
 import StaggeredMenu from "./StaggeredMenu";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect, useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSound } from "../hooks/useSound";
 import clickSound from "../assets/Sound/Click1.wav";
 
@@ -118,10 +118,11 @@ const NavItem = ({ href, label, minWidth = 100, direction = "left-to-right", onC
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(true);
   const [navWidth, setNavWidth] = useState(1920);
   const navRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const playClickSound = useSound(clickSound, { volume: 0.3});
 
   useEffect(() => {
@@ -162,7 +163,17 @@ const Navbar = () => {
     ...(user 
       ? [
           { label: 'DASHBOARD', ariaLabel: 'Go to dashboard', link: '/dashboard' },
-          { label: 'PROFILE', ariaLabel: 'Open profile menu', link: '#profile' }
+          { label: 'PROFILE', ariaLabel: 'Open profile menu', link: '#profile' },
+          { 
+            label: 'LOGOUT', 
+            ariaLabel: 'Logout from your account', 
+            link: '#',
+            onClick: () => {
+              playClickSound();
+              logout();
+              navigate('/');
+            }
+          }
         ]
       : [{ label: 'LOGIN', ariaLabel: 'Login to your account', link: '/login' }]
     ),
