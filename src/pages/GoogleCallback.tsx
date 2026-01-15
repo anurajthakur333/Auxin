@@ -10,6 +10,19 @@ const GoogleCallback: React.FC = () => {
   useEffect(() => {
     const handleGoogleCallback = async () => {
       try {
+        // Store opener reference immediately to prevent loss during redirects
+        const opener = window.opener;
+        // Safely get parent origin - handle case where opener might be closed
+        let parentOrigin = window.location.origin;
+        try {
+          if (opener && !opener.closed) {
+            parentOrigin = new URL(opener.location.href).origin;
+          }
+        } catch (e) {
+          console.warn('Could not access opener location, using current origin:', e);
+          parentOrigin = window.location.origin;
+        }
+        
         // Check if we have user data and token in URL params (from backend redirect)
         const token = searchParams.get('token');
         const userData = searchParams.get('user');
@@ -19,11 +32,31 @@ const GoogleCallback: React.FC = () => {
           setError(decodeURIComponent(error));
           setStatus('error');
           
-          // Send error message to parent window
-          window.opener?.postMessage({
-            type: 'GOOGLE_AUTH_ERROR',
-            error: decodeURIComponent(error)
-          }, window.location.origin);
+          // Send error message to parent window - try multiple methods
+          if (opener && !opener.closed) {
+            try {
+              opener.postMessage({
+                type: 'GOOGLE_AUTH_ERROR',
+                error: decodeURIComponent(error)
+              }, parentOrigin);
+            } catch (e) {
+              console.warn('Failed to send error with origin, trying wildcard:', e);
+              opener.postMessage({
+                type: 'GOOGLE_AUTH_ERROR',
+                error: decodeURIComponent(error)
+              }, '*');
+            }
+          } else {
+            // Fallback: try to find parent window
+            try {
+              window.parent.postMessage({
+                type: 'GOOGLE_AUTH_ERROR',
+                error: decodeURIComponent(error)
+              }, '*');
+            } catch (e) {
+              console.error('Cannot communicate with parent window:', e);
+            }
+          }
           return;
         }
 
@@ -35,75 +68,160 @@ const GoogleCallback: React.FC = () => {
             console.log('✅ Google OAuth successful, sending message to parent:', {
               user: user,
               hasToken: !!token,
-              origin: window.location.origin
+              origin: window.location.origin,
+              hasOpener: !!opener,
+              openerClosed: opener?.closed
             });
             
-            // Send success message to parent window
-            // Try multiple target origins to ensure message is received
-            if (window.opener) {
-              const message = {
-                type: 'GOOGLE_AUTH_SUCCESS',
-                user: user,
-                token: token
-              };
-              
-              console.log('📤 Sending message to parent:', {
-                hasOpener: !!window.opener,
-                currentOrigin: window.location.origin,
-                messageType: message.type
-              });
-              
-              // Try with current origin first
-              try {
-                window.opener.postMessage(message, window.location.origin);
-                console.log('✅ Message sent with origin:', window.location.origin);
-              } catch (e) {
-                console.warn('⚠️ Failed to send with origin, trying wildcard:', e);
+            const message = {
+              type: 'GOOGLE_AUTH_SUCCESS',
+              user: user,
+              token: token
+            };
+            
+            // Function to send message using all available methods
+            const sendMessage = () => {
+              // Method 1: Use stored opener reference
+              if (opener && !opener.closed) {
+                try {
+                  opener.postMessage(message, parentOrigin);
+                  console.log('✅ Message sent with opener to origin:', parentOrigin);
+                } catch (e) {
+                  try {
+                    opener.postMessage(message, '*');
+                    console.log('✅ Message sent with opener wildcard');
+                  } catch (e2) {
+                    console.warn('⚠️ Failed to send with opener:', e2);
+                  }
+                }
               }
               
-              // Also try with wildcard as fallback (for cross-origin scenarios)
-              setTimeout(() => {
+              // Method 2: Try window.opener (in case it's still available)
+              if (window.opener && !window.opener.closed) {
                 try {
-                  window.opener?.postMessage(message, '*');
-                  console.log('✅ Message sent with wildcard');
+                  window.opener.postMessage(message, window.location.origin);
+                  console.log('✅ Message sent with window.opener to origin');
                 } catch (e) {
-                  console.error('❌ Failed to send message with wildcard:', e);
+                  try {
+                    window.opener.postMessage(message, '*');
+                    console.log('✅ Message sent with window.opener wildcard');
+                  } catch (e2) {
+                    console.warn('⚠️ Failed to send with window.opener:', e2);
+                  }
                 }
-              }, 50);
+              }
               
-              // One more attempt after a short delay
-              setTimeout(() => {
-                try {
-                  window.opener?.postMessage(message, '*');
-                  console.log('✅ Message sent again (retry)');
-                } catch (e) {
-                  console.error('❌ Failed to send message (retry):', e);
-                }
-              }, 200);
-            } else {
-              console.error('❌ window.opener is null');
-              setError('Cannot communicate with parent window');
-              setStatus('error');
-              return;
+              // Method 3: Try window.parent as fallback
+              try {
+                window.parent.postMessage(message, '*');
+                console.log('✅ Message sent with window.parent');
+              } catch (e) {
+                console.warn('⚠️ Failed to send with window.parent:', e);
+              }
+            };
+            
+            // Send message immediately
+            sendMessage();
+            
+            // Send message multiple times to ensure it's received
+            const messageInterval = setInterval(() => {
+              sendMessage();
+            }, 200);
+            
+            // Stop sending after 2 seconds
+            setTimeout(() => {
+              clearInterval(messageInterval);
+            }, 2000);
+            
+            // Also store in localStorage as backup
+            try {
+              localStorage.setItem('googleAuthResult', JSON.stringify(message));
+              localStorage.setItem('googleAuthTimestamp', Date.now().toString());
+              console.log('✅ Message stored in localStorage as backup');
+            } catch (e) {
+              console.warn('⚠️ Failed to store in localStorage:', e);
+            }
+            
+            // Try direct redirect fallback as well
+            try {
+              if (opener && !opener.closed) {
+                // Store auth data in parent's localStorage
+                opener.localStorage.setItem('token', token);
+                opener.localStorage.setItem('googleAuthUser', JSON.stringify(user));
+                opener.localStorage.setItem('googleAuthRedirect', 'true');
+                console.log('✅ Stored auth data in parent localStorage');
+              } else if (window.opener && !window.opener.closed) {
+                window.opener.localStorage.setItem('token', token);
+                window.opener.localStorage.setItem('googleAuthUser', JSON.stringify(user));
+                window.opener.localStorage.setItem('googleAuthRedirect', 'true');
+                console.log('✅ Stored auth data in parent localStorage');
+              }
+            } catch (e) {
+              console.warn('⚠️ Could not store in parent localStorage (cross-origin):', e);
             }
             
             setStatus('success');
             
             // Close popup after a delay to ensure message is sent
-            setTimeout(() => {
-              window.close();
-            }, 1500);
+            // Try multiple times to close the window
+            let closeAttempts = 0;
+            const tryCloseWindow = () => {
+              closeAttempts++;
+              try {
+                // Try to close the window
+                if (window.opener && !window.opener.closed) {
+                  window.close();
+                } else if (opener && !opener.closed) {
+                  window.close();
+                } else {
+                  // If opener is closed/null, try closing anyway
+                  // Some browsers allow this if window was opened by script
+                  window.close();
+                }
+                
+                // If window didn't close after 3 seconds, try redirecting parent
+                if (closeAttempts < 3) {
+                  setTimeout(tryCloseWindow, 1000);
+                } else {
+                  // Last resort: try to redirect parent window directly
+                  try {
+                    if (opener && !opener.closed) {
+                      opener.location.href = '/';
+                    } else if (window.opener && !window.opener.closed) {
+                      window.opener.location.href = '/';
+                    }
+                  } catch (e) {
+                    console.warn('Could not redirect parent window:', e);
+                  }
+                }
+              } catch (e) {
+                console.warn('Error closing window:', e);
+                if (closeAttempts < 3) {
+                  setTimeout(tryCloseWindow, 1000);
+                }
+              }
+            };
+            
+            // Start trying to close after a short delay
+            setTimeout(tryCloseWindow, 500);
             return;
           } catch (parseError) {
             console.error('❌ Failed to parse user data:', parseError);
             setError('Failed to parse authentication data');
             setStatus('error');
             
-            if (window.opener) {
-              window.opener.postMessage({
-                type: 'GOOGLE_AUTH_ERROR',
-                error: 'Failed to parse authentication data'
-              }, window.location.origin);
+            if (opener && !opener.closed) {
+              try {
+                opener.postMessage({
+                  type: 'GOOGLE_AUTH_ERROR',
+                  error: 'Failed to parse authentication data'
+                }, parentOrigin);
+              } catch (e) {
+                opener.postMessage({
+                  type: 'GOOGLE_AUTH_ERROR',
+                  error: 'Failed to parse authentication data'
+                }, '*');
+              }
             }
             return;
           }
@@ -127,52 +245,117 @@ const GoogleCallback: React.FC = () => {
           if (response.ok) {
             console.log('✅ Google OAuth successful (fallback flow), sending message to parent');
             
-            // Send success message to parent window
-            if (window.opener) {
-              const message = {
-                type: 'GOOGLE_AUTH_SUCCESS',
-                user: data.user,
-                token: data.token
-              };
-              
-              // Try with current origin first
+            const message = {
+              type: 'GOOGLE_AUTH_SUCCESS',
+              user: data.user,
+              token: data.token
+            };
+            
+            // Try multiple methods to send message
+            let messageSent = false;
+            
+            if (opener && !opener.closed) {
+              try {
+                opener.postMessage(message, parentOrigin);
+                messageSent = true;
+              } catch (e) {
+                try {
+                  opener.postMessage(message, '*');
+                  messageSent = true;
+                } catch (e2) {
+                  console.error('Failed to send with opener:', e2);
+                }
+              }
+            }
+            
+            if (!messageSent && window.opener && !window.opener.closed) {
               try {
                 window.opener.postMessage(message, window.location.origin);
+                messageSent = true;
               } catch (e) {
-                console.warn('⚠️ Failed to send with origin:', e);
+                try {
+                  window.opener.postMessage(message, '*');
+                  messageSent = true;
+                } catch (e2) {
+                  console.error('Failed to send with window.opener:', e2);
+                }
               }
-              
-              // Also try with wildcard as fallback
-              setTimeout(() => {
-                try {
-                  window.opener?.postMessage(message, '*');
-                } catch (e) {
-                  console.error('❌ Failed to send message:', e);
-                }
-              }, 50);
-              
-              // Retry after delay
-              setTimeout(() => {
-                try {
-                  window.opener?.postMessage(message, '*');
-                } catch (e) {
-                  console.error('❌ Failed to send message (retry):', e);
-                }
-              }, 200);
+            }
+            
+            if (!messageSent) {
+              try {
+                localStorage.setItem('googleAuthResult', JSON.stringify(message));
+                localStorage.setItem('googleAuthTimestamp', Date.now().toString());
+                messageSent = true;
+              } catch (e) {
+                console.error('Failed to store in localStorage:', e);
+              }
             }
             
             setStatus('success');
             
             // Close popup after a delay to ensure message is sent
-            setTimeout(() => {
-              window.close();
-            }, 1500);
+            // Try multiple times to close the window
+            let closeAttempts = 0;
+            const tryCloseWindow = () => {
+              closeAttempts++;
+              try {
+                // Try to close the window
+                if (window.opener && !window.opener.closed) {
+                  window.close();
+                } else if (opener && !opener.closed) {
+                  window.close();
+                } else {
+                  // If opener is closed/null, try closing anyway
+                  // Some browsers allow this if window was opened by script
+                  window.close();
+                }
+                
+                // If window didn't close after 3 seconds, try redirecting parent
+                if (closeAttempts < 3) {
+                  setTimeout(tryCloseWindow, 1000);
+                } else {
+                  // Last resort: try to redirect parent window directly
+                  try {
+                    if (opener && !opener.closed) {
+                      opener.location.href = '/';
+                    } else if (window.opener && !window.opener.closed) {
+                      window.opener.location.href = '/';
+                    }
+                  } catch (e) {
+                    console.warn('Could not redirect parent window:', e);
+                  }
+                }
+              } catch (e) {
+                console.warn('Error closing window:', e);
+                if (closeAttempts < 3) {
+                  setTimeout(tryCloseWindow, 1000);
+                }
+              }
+            };
+            
+            // Start trying to close after a short delay
+            setTimeout(tryCloseWindow, 500);
           } else {
             // Send error message to parent window
-            window.opener?.postMessage({
+            const errorMessage = {
               type: 'GOOGLE_AUTH_ERROR',
               error: data.error || 'Authentication failed'
-            }, window.location.origin);
+            };
+            
+            if (opener && !opener.closed) {
+              try {
+                opener.postMessage(errorMessage, parentOrigin);
+              } catch (e) {
+                opener.postMessage(errorMessage, '*');
+              }
+            } else if (window.opener && !window.opener.closed) {
+              try {
+                window.opener.postMessage(errorMessage, window.location.origin);
+              } catch (e) {
+                window.opener.postMessage(errorMessage, '*');
+              }
+            }
             
             setError(data.error || 'Google authentication failed');
             setStatus('error');
@@ -182,10 +365,24 @@ const GoogleCallback: React.FC = () => {
           setStatus('error');
           
           // Send error message to parent window
-          window.opener?.postMessage({
+          const errorMessage = {
             type: 'GOOGLE_AUTH_ERROR',
             error: 'No authentication data received'
-          }, window.location.origin);
+          };
+          
+          if (opener && !opener.closed) {
+            try {
+              opener.postMessage(errorMessage, parentOrigin);
+            } catch (e) {
+              opener.postMessage(errorMessage, '*');
+            }
+          } else if (window.opener && !window.opener.closed) {
+            try {
+              window.opener.postMessage(errorMessage, window.location.origin);
+            } catch (e) {
+              window.opener.postMessage(errorMessage, '*');
+            }
+          }
         }
       } catch (err) {
         console.error('Google callback error:', err);
@@ -247,6 +444,34 @@ const GoogleCallback: React.FC = () => {
             </svg>
           </div>
           <p>Authentication successful! Closing window...</p>
+          <button
+            onClick={() => {
+              try {
+                window.close();
+              } catch (e) {
+                // If window.close() fails, try redirecting parent
+                try {
+                  if (window.opener && !window.opener.closed) {
+                    window.opener.location.href = '/';
+                  }
+                } catch (e2) {
+                  console.error('Could not close window or redirect parent:', e2);
+                }
+              }
+            }}
+            style={{
+              marginTop: '1rem',
+              padding: '0.5rem 1rem',
+              background: '#39FF14',
+              color: '#000',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            Close Window
+          </button>
         </>
       )}
       

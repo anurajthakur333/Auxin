@@ -37,6 +37,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check for Google auth redirect fallback (from direct redirect method)
+    const googleAuthRedirect = localStorage.getItem('googleAuthRedirect');
+    if (googleAuthRedirect === 'true') {
+      const storedUser = localStorage.getItem('googleAuthUser');
+      const token = localStorage.getItem('token');
+      
+      if (storedUser && token) {
+        try {
+          const userData = JSON.parse(storedUser);
+          const user = {
+            id: userData.id || userData._id,
+            email: userData.email,
+            name: userData.name,
+            avatar: userData.avatar,
+            isEmailVerified: userData.isEmailVerified !== undefined 
+              ? userData.isEmailVerified 
+              : true
+          };
+          
+          console.log('✅ Processing Google auth redirect fallback:', user);
+          setUser(user);
+          
+          // Clean up redirect flags
+          localStorage.removeItem('googleAuthRedirect');
+          localStorage.removeItem('googleAuthUser');
+          
+          // Trigger navigation event
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('googleAuthSuccess', { 
+              detail: { user: user } 
+            }));
+          }, 100);
+          
+          setLoading(false);
+          return;
+        } catch (e) {
+          console.error('Failed to parse stored Google auth user:', e);
+          localStorage.removeItem('googleAuthRedirect');
+          localStorage.removeItem('googleAuthUser');
+        }
+      }
+    }
+    
     // Check for existing session on app load
     // First check localStorage (Remember Me was checked), then sessionStorage
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -179,6 +222,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const googleLogin = async (): Promise<void> => {
     try {
+      console.log("in google service<<<<<<<<<<<<<<<<<<<<<<<<")
       setLoading(true);
       
       // Redirect to backend OAuth endpoint instead of getting URL from backend
@@ -209,17 +253,84 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }, 500);
 
+      // Also check localStorage for fallback communication
+      const checkLocalStorage = setInterval(() => {
+        try {
+          const storedResult = localStorage.getItem('googleAuthResult');
+          const timestamp = localStorage.getItem('googleAuthTimestamp');
+          
+          if (storedResult && timestamp) {
+            const timeDiff = Date.now() - parseInt(timestamp);
+            // Only process if stored within last 10 seconds
+            if (timeDiff < 10000) {
+              const message = JSON.parse(storedResult);
+              console.log('✅ Found Google auth result in localStorage:', message);
+              
+              // Process the message
+              if (message.type === 'GOOGLE_AUTH_SUCCESS' && message.user && message.token) {
+                const userData = {
+                  id: message.user.id || message.user._id,
+                  email: message.user.email,
+                  name: message.user.name,
+                  avatar: message.user.avatar,
+                  isEmailVerified: message.user.isEmailVerified !== undefined 
+                    ? message.user.isEmailVerified 
+                    : true
+                };
+                const token = message.token;
+                
+                setUser(userData);
+                localStorage.setItem('token', token);
+                sessionStorage.removeItem('token');
+                
+                // Clean up
+                localStorage.removeItem('googleAuthResult');
+                localStorage.removeItem('googleAuthTimestamp');
+                
+                clearInterval(checkLocalStorage);
+                clearInterval(checkClosed);
+                clearTimeout(timeout);
+                window.removeEventListener('message', messageListener);
+                setLoading(false);
+                
+                if (popup && !popup.closed) {
+                  setTimeout(() => popup.close(), 100);
+                }
+                
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent('googleAuthSuccess', { 
+                    detail: { user: userData } 
+                  }));
+                }, 50);
+              }
+            } else {
+              // Stale data, remove it
+              localStorage.removeItem('googleAuthResult');
+              localStorage.removeItem('googleAuthTimestamp');
+            }
+          }
+        } catch (e) {
+          console.error('Error checking localStorage:', e);
+        }
+      }, 500);
+
       // Timeout after 5 minutes
       const timeout = setTimeout(() => {
         console.error('❌ Google OAuth timeout');
         clearInterval(checkClosed);
+        clearInterval(checkLocalStorage);
         window.removeEventListener('message', messageListener);
         setLoading(false);
+        
+        // Clean up localStorage
+        localStorage.removeItem('googleAuthResult');
+        localStorage.removeItem('googleAuthTimestamp');
+        
         if (popup && !popup.closed) {
           popup.close();
         }
       }, 5 * 60 * 1000);
-
+      
       // Listen for message from popup (sent by GoogleCallback component)
       const messageListener = (event: MessageEvent) => {
         console.log('🔍 Message received:', {
@@ -331,8 +442,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.error('❌ Google auth error:', event.data.error);
           setLoading(false);
           clearInterval(checkClosed);
+          clearInterval(checkLocalStorage);
           clearTimeout(timeout);
           window.removeEventListener('message', messageListener);
+          
+          // Clean up localStorage
+          localStorage.removeItem('googleAuthResult');
+          localStorage.removeItem('googleAuthTimestamp');
           
           // Close popup if still open
           if (popup && !popup.closed) {

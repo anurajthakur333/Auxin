@@ -69,14 +69,12 @@ const EmployeesAdmin = () => {
     salary: undefined,
     currency: "USD",
     isActive: true,
-    isBanned: false,
     isVerified: false,
   })
   const [employeeIdError, setEmployeeIdError] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<{ type: 'video' | 'document'; url: string } | null>(null)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null)
-  const [employeeToBan, setEmployeeToBan] = useState<Employee | null>(null)
   const [showSalaryHikeModal, setShowSalaryHikeModal] = useState(false)
   const [selectedEmployeeForHike, setSelectedEmployeeForHike] = useState<Employee | null>(null)
   const [salaryHikeData, setSalaryHikeData] = useState({ amount: "", currency: "USD", reason: "" })
@@ -250,7 +248,6 @@ const EmployeesAdmin = () => {
       videoProof: employee.videoProof,
       documentProof: employee.documentProof,
       isActive: employee.isActive,
-      isBanned: employee.isBanned || false,
       isVerified: employee.isVerified || false,
     })
     setShowForm(true)
@@ -275,7 +272,6 @@ const EmployeesAdmin = () => {
       salary: undefined,
       currency: "USD",
       isActive: true,
-      isBanned: false,
       isVerified: false,
     })
   }
@@ -454,62 +450,6 @@ const EmployeesAdmin = () => {
     }
   }
 
-  const handleBan = async () => {
-    if (!employeeToBan?._id) return
-
-    try {
-      const adminToken = localStorage.getItem("adminToken")
-      if (!adminToken) return
-
-      const response = await fetch(`${API_BASE_URL}/api/admin/employees/${employeeToBan._id}/ban`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
-        },
-      })
-
-      if (response.ok) {
-        setMessage({ type: "success", text: "EMPLOYEE BANNED" })
-        setEmployeeToBan(null)
-        fetchEmployees()
-        setTimeout(() => setMessage(null), 3000)
-      } else {
-        const errorData = await response.json()
-        setMessage({ type: "error", text: errorData.error || "FAILED TO BAN EMPLOYEE" })
-        setTimeout(() => setMessage(null), 3000)
-      }
-    } catch (error) {
-      console.error("Ban error:", error)
-      setMessage({ type: "error", text: "NETWORK ERROR" })
-      setTimeout(() => setMessage(null), 3000)
-    }
-  }
-
-  const handleUnban = async (employee: Employee) => {
-    try {
-      const adminToken = localStorage.getItem("adminToken")
-      if (!adminToken) return
-
-      const response = await fetch(`${API_BASE_URL}/api/admin/employees/${employee._id}/unban`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
-        },
-      })
-
-      if (response.ok) {
-        setMessage({ type: "success", text: "EMPLOYEE UNBANNED" })
-        fetchEmployees()
-        setTimeout(() => setMessage(null), 3000)
-      }
-    } catch (error) {
-      console.error("Unban error:", error)
-      setMessage({ type: "error", text: "NETWORK ERROR" })
-      setTimeout(() => setMessage(null), 3000)
-    }
-  }
 
   const handleVerify = async (employee: Employee) => {
     try {
@@ -1531,23 +1471,6 @@ const EmployeesAdmin = () => {
                 >
                   {employee.isActive ? "ACTIVE" : "INACTIVE"}
                       </span>
-                      {employee.isBanned && (
-                        <span
-                          className="aeonik-mono"
-                          style={{
-                            display: "inline-block",
-                            padding: "3px 8px",
-                            fontSize: "9px",
-                            color: "#FF0000",
-                            background: "rgba(255, 0, 0, 0.1)",
-                            border: "1px solid #FF0000",
-                            letterSpacing: "1px",
-                            width: "fit-content",
-                          }}
-                        >
-                          {"BANNED"}
-                        </span>
-                      )}
                       {employee.isVerified && (
                         <span
                           className="aeonik-mono"
@@ -1610,45 +1533,6 @@ const EmployeesAdmin = () => {
                       >
                         {employee.isActive ? "DEACTIVATE" : "ACTIVATE"}
                       </button>
-                      {employee.isBanned ? (
-                        <button
-                          onClick={() => {
-                            playClickSound()
-                            handleUnban(employee)
-                          }}
-                          className="aeonik-mono"
-                          style={{
-                            padding: "5px 10px",
-                            background: "transparent",
-                            border: "1px solid #39FF14",
-                            color: "#39FF14",
-                            fontSize: "9px",
-                            cursor: "pointer",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          {"UNBAN"}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            playClickSound()
-                            setEmployeeToBan(employee)
-                          }}
-                          className="aeonik-mono"
-                          style={{
-                            padding: "5px 10px",
-                            background: "transparent",
-                            border: "1px solid rgba(255, 0, 0, 0.5)",
-                            color: "#FF0000",
-                            fontSize: "9px",
-                            cursor: "pointer",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          {"BAN"}
-                        </button>
-                      )}
                       <button
                         onClick={() => {
                           playClickSound()
@@ -1701,7 +1585,7 @@ const EmployeesAdmin = () => {
                           padding: "5px 10px",
                     background: "transparent",
                           border: "1px solid rgba(255, 0, 0, 0.5)",
-                          color: "#FF0000",
+                    color: "#FF0000",
                           fontSize: "9px",
                           cursor: "pointer",
                           letterSpacing: "1px",
@@ -1715,89 +1599,6 @@ const EmployeesAdmin = () => {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {/* Ban Confirmation Modal */}
-      {employeeToBan && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10000,
-          }}
-          onClick={() => setEmployeeToBan(null)}
-        >
-          <div
-            style={{
-              background: "#111",
-                    border: "1px solid rgba(255, 0, 0, 0.3)",
-              padding: "30px",
-              maxWidth: "400px",
-              width: "90%",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="aeonik-mono" style={{ fontSize: "16px", color: "#FF0000", marginBottom: "15px" }}>
-              {"BAN EMPLOYEE?"}
-            </h3>
-            <p className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", marginBottom: "25px" }}>
-              {`ARE YOU SURE YOU WANT TO BAN "${employeeToBan.name}"? THIS WILL DEACTIVATE THEIR ACCOUNT.`}
-            </p>
-            <div style={{ display: "flex", gap: "15px" }}>
-              <button
-                onClick={() => {
-                  playClickSound()
-                  setEmployeeToBan(null)
-                }}
-                className="aeonik-mono"
-                style={{
-                  flex: 1,
-                  padding: "10px 20px",
-                  background: "transparent",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  color: "#FFF",
-                  fontSize: "12px",
-                  cursor: "pointer",
-                  letterSpacing: "1px",
-                }}
-              >
-                {"CANCEL"}
-              </button>
-              <button
-                onClick={() => {
-                  playClickSound()
-                  handleBan()
-                }}
-                className="aeonik-mono"
-                style={{
-                  flex: 1,
-                  padding: "10px 20px",
-                  background: "transparent",
-                  border: "1px solid #FF0000",
-                    color: "#FF0000",
-                  fontSize: "12px",
-                    cursor: "pointer",
-                    letterSpacing: "1px",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(255, 0, 0, 0.1)"
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent"
-                  }}
-                >
-                {"BAN"}
-                </button>
-              </div>
-            </div>
         </div>
       )}
 
@@ -1941,20 +1742,20 @@ const EmployeesAdmin = () => {
                   border: "1px solid #FFD700",
                   color: "#FFD700",
                   fontSize: "12px",
-                  cursor: "pointer",
-                  letterSpacing: "1px",
-                }}
-                onMouseEnter={(e) => {
+                    cursor: "pointer",
+                    letterSpacing: "1px",
+                  }}
+                  onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(255, 215, 0, 0.1)"
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent"
-                }}
-              >
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent"
+                  }}
+                >
                 {"RECORD HIKE"}
-              </button>
+                </button>
+              </div>
             </div>
-          </div>
         </div>
       )}
 
