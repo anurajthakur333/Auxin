@@ -16,6 +16,7 @@ import RolesAdmin from "./components/RolesAdmin"
 import SubrolesAdmin from "./components/SubrolesAdmin"
 import ClientsAdmin from "./components/ClientsAdmin"
 import BillsAdmin from "./components/BillsAdmin"
+import NotificationsAdmin from "./components/NotificationsAdmin"
 import { useSound } from "../../hooks/useSound"
 import clickSound from "../../assets/Sound/Click1.wav"
 import "../../styles/fonts.css"
@@ -26,7 +27,7 @@ const Admin = () => {
   const lenisRef = useRef<Lenis | null>(null)
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings" | "banned" | "articles" | "categories" | "bookings" | "meeting-categories" | "employees" | "roles" | "subroles" | "clients" | "bills">("analytics")
+  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings" | "banned" | "articles" | "categories" | "bookings" | "meeting-categories" | "employees" | "roles" | "subroles" | "clients" | "bills" | "notifications">("analytics")
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Mock admin check - in production, check user.role === 'admin'
@@ -93,6 +94,8 @@ const Admin = () => {
         return <ClientsAdmin />
       case "bills":
         return <BillsAdmin />
+      case "notifications":
+        return <NotificationsAdmin />
       default:
         return null
     }
@@ -187,7 +190,7 @@ const Admin = () => {
           flexWrap: "wrap",
         }}
       >
-        {(["analytics", "users", "banned", "clients", "projects", "categories", "articles", "settings", "meetings", "meeting-categories", "bookings", "employees", "roles", "subroles", "bills"] as const).map((tab) => (
+        {(["analytics", "users", "banned", "clients", "projects", "categories", "articles", "settings", "meetings", "meeting-categories", "bookings", "employees", "roles", "subroles", "bills", "notifications"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => {
