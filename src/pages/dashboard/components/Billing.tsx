@@ -1,58 +1,167 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { API_BASE_URL, getAuthToken } from "../../../lib/apiConfig"
+import InvoicePDF from "../../../components/InvoicePDF"
+
+interface InvoiceItem {
+  title: string
+  price: number
+  quantity: number
+  subtotal: number
+}
+
+interface CompanyAddress {
+  companyName: string
+  email: string
+  street: string
+  city: string
+  state: string
+  zip: string
+  country: string
+}
+
+interface ClientAddress {
+  name: string
+  email: string
+  address: string
+  gstNumber?: string
+}
+
+interface PaymentMethod {
+  bankName?: string
+  accountHolderName?: string
+  accountNumber?: string
+  routingNumber?: string
+  swiftCode?: string
+  branchAddress?: string
+  accountType?: string
+}
 
 interface Invoice {
   id: string
   invoiceNumber: string
-  amount: string
-  status: "paid" | "pending" | "overdue"
+  date: string
   dueDate: string
-  issueDate: string
-  description: string
-}
-
-interface PaymentMethod {
-  id: string
-  type: "card" | "bank"
-  last4: string
-  brand?: string
-  expiry?: string
+  billTo: ClientAddress
+  companyAddress: CompanyAddress
+  items: InvoiceItem[]
+  discount: number
+  sgst: number
+  cgst: number
+  total: number
+  paymentTerms?: string
+  paymentMethod?: PaymentMethod
+  status: "pending" | "paid" | "overdue"
+  paypalOrderId?: string
 }
 
 const Billing = () => {
-  const [invoices] = useState<Invoice[]>([
-    {
-      id: "1",
-      invoiceNumber: "INV-2024-001",
-      amount: "$15,000",
-      status: "paid",
-      dueDate: "2024-01-15",
-      issueDate: "2024-01-01",
-      description: "WEBSITE REDESIGN PROJECT",
-    },
-    {
-      id: "2",
-      invoiceNumber: "INV-2024-002",
-      amount: "$8,000",
-      status: "pending",
-      dueDate: "2024-02-28",
-      issueDate: "2024-02-10",
-      description: "BRAND IDENTITY PROJECT",
-    },
-    {
-      id: "3",
-      invoiceNumber: "INV-2024-003",
-      amount: "$12,000",
-      status: "overdue",
-      dueDate: "2024-01-20",
-      issueDate: "2024-01-05",
-      description: "MARKETING CAMPAIGN PROJECT",
-    },
-  ])
+  const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
+  const [payingInvoiceId, setPayingInvoiceId] = useState<string | null>(null)
 
-  const [paymentMethods] = useState<PaymentMethod[]>([
-    { id: "1", type: "card", last4: "4242", brand: "VISA", expiry: "12/25" },
-    { id: "2", type: "bank", last4: "1234" },
-  ])
+  useEffect(() => {
+    fetchInvoices()
+    
+    // Check if returning from PayPal payment
+    const checkPaymentReturn = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const invoiceId = urlParams.get('invoiceId')
+      const orderId = urlParams.get('token') || urlParams.get('orderId')
+      
+      // If we have payment params, we're returning from PayPal
+      // PaymentSuccess page will handle the capture, but we should refresh invoices
+      if (invoiceId || orderId) {
+        // Small delay to let PaymentSuccess handle first
+        setTimeout(() => {
+          fetchInvoices()
+        }, 2000)
+      }
+    }
+    
+    checkPaymentReturn()
+  }, [])
+
+  const fetchInvoices = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const token = getAuthToken()
+      if (!token) {
+        setError("Authentication required")
+        setLoading(false)
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/invoices/my-invoices`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch invoices")
+      }
+
+      const data = await response.json()
+      setInvoices(data.invoices || [])
+    } catch (err) {
+      console.error("Error fetching invoices:", err)
+      setError(err instanceof Error ? err.message : "Failed to fetch invoices")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePayInvoice = async (invoice: Invoice) => {
+    try {
+      setPayingInvoiceId(invoice.id)
+
+      const token = getAuthToken()
+      if (!token) {
+        setError("Authentication required")
+        return
+      }
+
+      // Create PayPal order for invoice
+      const response = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount: invoice.total,
+          description: `Invoice ${invoice.invoiceNumber}`,
+          invoiceId: invoice.id,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Failed to create payment order" }))
+        throw new Error(errorData.error || "Failed to create payment order")
+      }
+
+      const data = await response.json()
+
+      if (data.approvalUrl) {
+        // Store invoice ID for later use
+        localStorage.setItem("pendingInvoiceId", invoice.id)
+        localStorage.setItem("pendingOrderId", data.orderId)
+
+        // Redirect to PayPal
+        window.location.href = data.approvalUrl
+      } else {
+        throw new Error("No approval URL received")
+      }
+    } catch (err) {
+      console.error("Error initiating payment:", err)
+      setError(err instanceof Error ? err.message : "Failed to initiate payment")
+      setPayingInvoiceId(null)
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -144,80 +253,27 @@ const Billing = () => {
         ))}
       </div>
 
-      {/* Payment Methods */}
-      <div style={{ marginBottom: "40px" }}>
-        <h4
+      {error && (
+        <div
           className="aeonik-mono"
           style={{
-            fontSize: "clamp(18px, 2vw, 24px)",
-            color: "#FFF",
+            padding: "15px",
+            background: "rgba(255, 107, 107, 0.1)",
+            border: "1px solid #FF6B6B",
+            color: "#FF6B6B",
             marginBottom: "20px",
-            letterSpacing: "-1px",
-            fontWeight: 600,
+            fontSize: "14px",
           }}
         >
-          PAYMENT METHODS
-        </h4>
-        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-          {paymentMethods.map((method) => (
-            <div
-              key={method.id}
-              style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                padding: "20px",
-                borderRadius: "0px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
-                e.currentTarget.style.borderColor = "#39FF14"
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)"
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"
-              }}
-            >
-              <div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
-                  {method.type === "card" ? `${method.brand} •••• ${method.last4}` : `BANK ACCOUNT •••• ${method.last4}`}
-                </div>
-                {method.expiry && (
-                  <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)" }}>
-                    EXPIRES {method.expiry}
-                  </div>
-                )}
-              </div>
-              <button
-                className="aeonik-mono"
-                style={{
-                  fontSize: "12px",
-                  color: "#FF6B6B",
-                  background: "transparent",
-                  border: "1px solid #FF6B6B",
-                  padding: "8px 16px",
-                  borderRadius: "0px",
-                  cursor: "pointer",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255, 107, 107, 0.1)"
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent"
-                }}
-              >
-                REMOVE
-              </button>
-            </div>
-          ))}
+          {error}
         </div>
-      </div>
+      )}
+
+      {loading && (
+        <div className="aeonik-mono" style={{ color: "#FFF", fontSize: "14px", marginBottom: "20px" }}>
+          LOADING INVOICES...
+        </div>
+      )}
 
       {/* Invoices */}
       <div>
@@ -234,73 +290,125 @@ const Billing = () => {
           INVOICES
         </h4>
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-          {invoices.map((invoice) => (
-            <div
-              key={invoice.id}
-              style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                padding: "20px",
-                borderRadius: "0px",
-                transition: "all 0.3s ease",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
-                e.currentTarget.style.borderColor = getStatusColor(invoice.status)
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)"
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"
-              }}
-            >
+          {invoices.length === 0 && !loading ? (
+            <div className="aeonik-mono" style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "14px", padding: "40px", textAlign: "center" }}>
+              NO INVOICES FOUND
+            </div>
+          ) : (
+            invoices.map((invoice) => (
               <div
+                key={invoice.id}
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr",
-                  gap: "20px",
-                  alignItems: "center",
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  padding: "20px",
+                  borderRadius: "0px",
+                  transition: "all 0.3s ease",
+                  cursor: "pointer",
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
+                  e.currentTarget.style.borderColor = getStatusColor(invoice.status)
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)"
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"
+                }}
+                onClick={() => setSelectedInvoice(invoice)}
               >
-                <div>
-                  <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
-                    {invoice.invoiceNumber}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr auto",
+                    gap: "20px",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
+                      {invoice.invoiceNumber}
+                    </div>
+                    <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)" }}>
+                      {invoice.items.length > 0 ? invoice.items[0].title : "INVOICE"}
+                    </div>
                   </div>
-                  <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)" }}>
-                    {invoice.description}
+                  <div className="aeonik-mono" style={{ fontSize: "14px", color: "#39FF14", fontWeight: 600 }}>
+                    ${invoice.total.toFixed(2)}
                   </div>
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "14px", color: "#39FF14", fontWeight: 600 }}>
-                  {invoice.amount}
-                </div>
-                <div>
-                  <div
-                    className="aeonik-mono"
-                    style={{
-                      fontSize: "11px",
-                      color: getStatusColor(invoice.status),
-                      textTransform: "uppercase",
-                      letterSpacing: "1px",
-                      padding: "4px 10px",
-                      border: `1px solid ${getStatusColor(invoice.status)}`,
-                      borderRadius: "0px",
-                      display: "inline-block",
-                    }}
-                  >
-                    {invoice.status}
+                  <div>
+                    <div
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "11px",
+                        color: getStatusColor(invoice.status),
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                        padding: "4px 10px",
+                        border: `1px solid ${getStatusColor(invoice.status)}`,
+                        borderRadius: "0px",
+                        display: "inline-block",
+                      }}
+                    >
+                      {invoice.status}
+                    </div>
                   </div>
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
-                  DUE: {new Date(invoice.dueDate).toLocaleDateString().toUpperCase()}
-                </div>
-                <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
-                  {new Date(invoice.issueDate).toLocaleDateString().toUpperCase()}
+                  <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                    DUE: {new Date(invoice.dueDate).toLocaleDateString().toUpperCase()}
+                  </div>
+                  <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                    {new Date(invoice.date).toLocaleDateString().toUpperCase()}
+                  </div>
+                  <div>
+                    {invoice.status !== "paid" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handlePayInvoice(invoice)
+                        }}
+                        disabled={payingInvoiceId === invoice.id}
+                        className="aeonik-mono"
+                        style={{
+                          padding: "8px 16px",
+                          background: payingInvoiceId === invoice.id ? "rgba(57, 255, 20, 0.3)" : "transparent",
+                          border: "1px solid #39FF14",
+                          color: "#39FF14",
+                          fontSize: "11px",
+                          cursor: payingInvoiceId === invoice.id ? "not-allowed" : "pointer",
+                          borderRadius: "0px",
+                          letterSpacing: "1px",
+                          textTransform: "uppercase",
+                          whiteSpace: "nowrap",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (payingInvoiceId !== invoice.id) {
+                            e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (payingInvoiceId !== invoice.id) {
+                            e.currentTarget.style.background = "transparent"
+                          }
+                        }}
+                      >
+                        {payingInvoiceId === invoice.id ? "PROCESSING..." : "PAY NOW"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
+
+      {selectedInvoice && (
+        <InvoicePDF
+          invoice={selectedInvoice}
+          onClose={() => setSelectedInvoice(null)}
+          onPay={selectedInvoice.status !== "paid" ? () => handlePayInvoice(selectedInvoice) : undefined}
+        />
+      )}
     </>
   )
 }

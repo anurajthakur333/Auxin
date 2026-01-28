@@ -25,21 +25,78 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const capturePayment = async () => {
       try {
-        // Get appointment ID from URL or localStorage
-        const appointmentId = searchParams.get('appointmentId') || localStorage.getItem('pendingAppointmentId');
-        // PayPal returns orderId as 'token' in the URL
+        // Check if this is an invoice payment
+        const invoiceId = searchParams.get('invoiceId') || localStorage.getItem('pendingInvoiceId');
         const orderId = searchParams.get('token') || searchParams.get('orderId') || localStorage.getItem('pendingOrderId');
-        // PayPal also returns PayerID
         const payerId = searchParams.get('PayerID') || searchParams.get('payerId');
 
-        if (!appointmentId || !orderId) {
-          console.error('Missing payment info:', { appointmentId, orderId, url: window.location.href });
+        if (invoiceId) {
+          // Handle invoice payment
+          if (!orderId) {
+            setStatus('error');
+            setMessage('Missing payment information. Please try again.');
+            return;
+          }
+
+          const token = getAuthToken();
+          if (!token) {
+            setStatus('error');
+            setMessage('Authentication required. Please log in again.');
+            return;
+          }
+
+          const response = await fetch(`${API_BASE_URL}/api/paypal/capture-order`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              orderId: orderId.trim(),
+              invoiceId: invoiceId.trim()
+            })
+          });
+
+          const responseText = await response.text();
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch (parseError) {
+            setStatus('error');
+            setMessage(`Server error: ${responseText || 'Invalid response format'}`);
+            return;
+          }
+
+          if (response.ok && data.success) {
+            setStatus('success');
+            setMessage('Payment successful! Your invoice has been paid.');
+            localStorage.removeItem('pendingInvoiceId');
+            localStorage.removeItem('pendingOrderId');
+            
+            // Redirect to billing page after 2 seconds
+            setTimeout(() => {
+              navigate('/dashboard?tab=billing');
+            }, 2000);
+          } else {
+            setStatus('error');
+            setMessage(data.error || data.message || 'Payment verification failed.');
+          }
+          return;
+        }
+
+        // Handle appointment payment (existing logic)
+        const appointmentId = searchParams.get('appointmentId') || localStorage.getItem('pendingAppointmentId');
+        // PayPal returns orderId as 'token' in the URL
+        const appointmentOrderId = orderId || searchParams.get('token') || searchParams.get('orderId') || localStorage.getItem('pendingOrderId');
+
+        if (!appointmentId || !appointmentOrderId) {
+          console.error('Missing payment info:', { appointmentId, orderId: appointmentOrderId, url: window.location.href });
           setStatus('error');
           setMessage('Missing payment information. Please try booking again.');
           return;
         }
         
-        console.log('Capturing payment:', { appointmentId, orderId });
+        console.log('Capturing payment:', { appointmentId, orderId: appointmentOrderId });
         console.log('Full URL params:', Object.fromEntries(searchParams.entries()));
         console.log('LocalStorage pendingAppointmentId:', localStorage.getItem('pendingAppointmentId'));
         console.log('LocalStorage pendingOrderId:', localStorage.getItem('pendingOrderId'));
@@ -102,7 +159,7 @@ const PaymentSuccess = () => {
           categoryName?: string;
           formAnswers?: Record<string, string>;
         } = {
-          orderId: orderId.trim(),
+          orderId: appointmentOrderId.trim(),
           appointmentId: appointmentId.trim(),
           ...categoryData
         };

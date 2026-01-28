@@ -14,23 +14,32 @@ const PaymentCancel = () => {
   const [cancelling, setCancelling] = useState(true);
 
   useEffect(() => {
-    const cancelPendingAppointment = async () => {
+    const cancelPendingPayment = async () => {
       try {
-        // Get appointment ID from URL or localStorage
+        const invoiceId = searchParams.get('invoiceId');
         const appointmentId = searchParams.get('appointmentId') || localStorage.getItem('pendingAppointmentId');
 
+        // Handle invoice cancellation (no action needed, just clear storage)
+        if (invoiceId) {
+          localStorage.removeItem('pendingInvoiceId');
+          localStorage.removeItem('pendingOrderId');
+          setCancelling(false);
+          return;
+        }
+
+        // Handle appointment cancellation
         if (appointmentId) {
           const token = getAuthToken();
           if (token) {
-          // Cancel the pending appointment
-          await fetch(`${API_BASE_URL}/api/paypal/cancel-order`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+            // Cancel the pending appointment
+            await fetch(`${API_BASE_URL}/api/paypal/cancel-order`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ appointmentId })
-          });
+              },
+              body: JSON.stringify({ appointmentId })
+            });
           }
         }
 
@@ -38,14 +47,14 @@ const PaymentCancel = () => {
         localStorage.removeItem('pendingAppointmentId');
         localStorage.removeItem('pendingOrderId');
       } catch (error) {
-        console.error('Error cancelling appointment:', error);
+        console.error('Error cancelling payment:', error);
       } finally {
         setCancelling(false);
       }
     };
 
     if (user) {
-      cancelPendingAppointment();
+      cancelPendingPayment();
     } else {
       setCancelling(false);
     }
@@ -132,30 +141,58 @@ const PaymentCancel = () => {
               <p style={{ color: '#888', marginBottom: '1rem' }}>
                 Your payment was cancelled and no charges were made.
               </p>
-              <p style={{ color: '#666', marginBottom: '2rem', fontSize: '0.9rem' }}>
-                The time slot has been released and is available for booking again.
-              </p>
+              {searchParams.get('invoiceId') ? (
+                <p style={{ color: '#666', marginBottom: '2rem', fontSize: '0.9rem' }}>
+                  You can pay your invoice anytime from the billing section.
+                </p>
+              ) : (
+                <p style={{ color: '#666', marginBottom: '2rem', fontSize: '0.9rem' }}>
+                  The time slot has been released and is available for booking again.
+                </p>
+              )}
 
               <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
-                <button
-                  onClick={() => navigate('/meeting')}
-                  style={{
-                    background: '#39FF14',
-                    color: '#000',
-                    border: 'none',
-                    padding: '1rem 2rem',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    width: '100%',
-                    fontFamily: 'Aeonik, sans-serif',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = '#2ecc11'}
-                  onMouseOut={(e) => e.currentTarget.style.background = '#39FF14'}
-                >
-                  Book Another Time
-                </button>
+                {searchParams.get('invoiceId') ? (
+                  <button
+                    onClick={() => navigate('/dashboard?tab=billing')}
+                    style={{
+                      background: '#39FF14',
+                      color: '#000',
+                      border: 'none',
+                      padding: '1rem 2rem',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontFamily: 'Aeonik, sans-serif',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#2ecc11'}
+                    onMouseOut={(e) => e.currentTarget.style.background = '#39FF14'}
+                  >
+                    Go to Billing
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate('/meeting')}
+                    style={{
+                      background: '#39FF14',
+                      color: '#000',
+                      border: 'none',
+                      padding: '1rem 2rem',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontFamily: 'Aeonik, sans-serif',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = '#2ecc11'}
+                    onMouseOut={(e) => e.currentTarget.style.background = '#39FF14'}
+                  >
+                    Book Another Time
+                  </button>
+                )}
                 
                 <button
                   onClick={() => navigate('/')}

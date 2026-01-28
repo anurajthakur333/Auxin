@@ -424,21 +424,21 @@ const ArticleDetail = () => {
           }
           
           return (
-            <p
-              key={index}
-              className="aeonik-mono"
-              style={{
-                fontSize: "17px",
-                color: "rgba(255, 255, 255, 0.85)",
-                lineHeight: "2",
-                marginBottom: "35px",
-                letterSpacing: "0.3px",
-                maxWidth: "1000px",
+          <p
+            key={index}
+            className="aeonik-mono"
+            style={{
+              fontSize: "17px",
+              color: "rgba(255, 255, 255, 0.85)",
+              lineHeight: "2",
+              marginBottom: "35px",
+              letterSpacing: "0.3px",
+              maxWidth: "1000px",
                 whiteSpace: "pre-wrap",
-              }}
-            >
+            }}
+          >
               {renderParagraphWithLinks(paragraph)}
-            </p>
+          </p>
           )
         })}
 
