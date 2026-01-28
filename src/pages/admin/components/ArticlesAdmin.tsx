@@ -227,7 +227,12 @@ const ArticlesAdmin = () => {
 
       const parsedContent = contentInput
         .split("\n\n")
-        .map((para) => para.trim().toUpperCase())
+        .map((para) => {
+          const trimmed = para.trim()
+          // Don't uppercase if it contains URL patterns
+          const hasUrl = /https?:\/\/|\[.*\]\(.*\)/i.test(trimmed)
+          return hasUrl ? trimmed : trimmed.toUpperCase()
+        })
         .filter((para) => para.length > 0)
 
       const articleData = {
@@ -791,14 +796,31 @@ const ArticlesAdmin = () => {
             <label className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "8px", display: "block" }}>
               {"CONTENT (SEPARATE PARAGRAPHS WITH EMPTY LINE)"}
             </label>
+            <div style={{ marginBottom: "8px" }}>
+              <span className="aeonik-mono" style={{ fontSize: "9px", color: "rgba(255,255,255,0.4)" }}>
+                {"FOR HYPERLINKS: USE [TEXT](URL) FORMAT OR JUST PASTE URL"}
+              </span>
+            </div>
             <textarea
               value={contentInput}
-              onChange={(e) => setContentInput(e.target.value.toUpperCase())}
+              onChange={(e) => {
+                const value = e.target.value
+                // Check if content contains URL patterns or markdown links
+                const hasUrl = /https?:\/\/|\[.*\]\(.*\)/i.test(value)
+                // Only uppercase if no URLs and user is typing (not pasting large blocks)
+                if (hasUrl) {
+                  setContentInput(value)
+                } else {
+                  // Uppercase only if it's a small change (typing), preserve case for large pastes
+                  const isTyping = Math.abs(value.length - contentInput.length) <= 1
+                  setContentInput(isTyping ? value.toUpperCase() : value)
+                }
+              }}
               placeholder="FIRST PARAGRAPH HERE...
 
 SECOND PARAGRAPH HERE...
 
-THIRD PARAGRAPH HERE..."
+FOR LINKS USE: [CLICK HERE](HTTPS://EXAMPLE.COM) OR JUST PASTE: HTTPS://EXAMPLE.COM"
               className="aeonik-mono"
               style={{
                 width: "100%",
@@ -809,6 +831,9 @@ THIRD PARAGRAPH HERE..."
                 fontSize: "14px",
                 minHeight: "200px",
                 resize: "vertical",
+                whiteSpace: "pre-wrap",
+                lineHeight: "1.8",
+                fontFamily: "inherit",
               }}
             />
           </div>

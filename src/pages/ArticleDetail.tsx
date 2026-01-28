@@ -299,22 +299,148 @@ const ArticleDetail = () => {
         )}
 
         {/* Article Content */}
-        {article.content.map((paragraph, index) => (
-          <p
-            key={index}
-            className="aeonik-mono"
-            style={{
-              fontSize: "17px",
-              color: "rgba(255, 255, 255, 0.85)",
-              lineHeight: "2",
-              marginBottom: "35px",
-              letterSpacing: "0.3px",
-              maxWidth: "1000px",
-            }}
-          >
-            {paragraph}
-          </p>
-        ))}
+        {article.content.map((paragraph, index) => {
+          // Function to normalize URL - add protocol if missing
+          const normalizeUrl = (url: string): string => {
+            const trimmed = url.trim()
+            // If it already has http:// or https://, return as is
+            if (/^https?:\/\//i.test(trimmed)) {
+              return trimmed
+            }
+            // Otherwise, add https://
+            return `https://${trimmed}`
+          }
+          
+          // Function to parse and render hyperlinks
+          const renderParagraphWithLinks = (text: string) => {
+            const parts: (string | JSX.Element)[] = []
+            let lastIndex = 0
+            
+            // Match markdown-style links: [text](url)
+            const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
+            let match
+            
+            while ((match = markdownLinkRegex.exec(text)) !== null) {
+              // Add text before the link
+              if (match.index > lastIndex) {
+                parts.push(text.substring(lastIndex, match.index))
+              }
+              
+              // Normalize the URL
+              const normalizedUrl = normalizeUrl(match[2])
+              
+              // Add the link
+              parts.push(
+                <a
+                  key={`link-${index}-${match.index}`}
+                  href={normalizedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "#39FF14",
+                    textDecoration: "none",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#2ecc11"
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#39FF14"
+                  }}
+                >
+                  {match[1]}
+                </a>
+              )
+              
+              lastIndex = match.index + match[0].length
+            }
+            
+            // Match plain URLs: http://, https://, www., or domain.com patterns
+            if (lastIndex === 0) {
+              // Match URLs with protocol, www., or domain patterns (must contain a dot)
+              const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.[a-zA-Z]{2,}[^\s]*)/g
+              let urlMatch
+              let urlLastIndex = 0
+              const urlParts: (string | JSX.Element)[] = []
+              
+              while ((urlMatch = urlRegex.exec(text)) !== null) {
+                // Skip if it's part of a markdown link that was already processed
+                const beforeMatch = text.substring(Math.max(0, urlMatch.index - 2), urlMatch.index)
+                const afterMatch = text.substring(urlMatch.index + urlMatch[0].length, urlMatch.index + urlMatch[0].length + 1)
+                
+                // Check if it's part of a markdown link pattern
+                if (beforeMatch.includes('](') || afterMatch === ')') {
+                  continue
+                }
+                
+                // Add text before the URL
+                if (urlMatch.index > urlLastIndex) {
+                  urlParts.push(text.substring(urlLastIndex, urlMatch.index))
+                }
+                
+                // Normalize the URL
+                const normalizedUrl = normalizeUrl(urlMatch[1])
+                
+                // Add the URL link
+                urlParts.push(
+                  <a
+                    key={`url-${index}-${urlMatch.index}`}
+                    href={normalizedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#39FF14",
+                      textDecoration: "none",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#2ecc11"
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#39FF14"
+                    }}
+                  >
+                    {urlMatch[1]}
+                  </a>
+                )
+                
+                urlLastIndex = urlMatch.index + urlMatch[0].length
+              }
+              
+              // Add remaining text
+              if (urlLastIndex < text.length) {
+                urlParts.push(text.substring(urlLastIndex))
+              }
+              
+              return urlParts.length > 0 ? urlParts : [text]
+            }
+            
+            // Add remaining text after markdown links
+            if (lastIndex < text.length) {
+              parts.push(text.substring(lastIndex))
+            }
+            
+            return parts.length > 0 ? parts : [text]
+          }
+          
+          return (
+            <p
+              key={index}
+              className="aeonik-mono"
+              style={{
+                fontSize: "17px",
+                color: "rgba(255, 255, 255, 0.85)",
+                lineHeight: "2",
+                marginBottom: "35px",
+                letterSpacing: "0.3px",
+                maxWidth: "1000px",
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {renderParagraphWithLinks(paragraph)}
+            </p>
+          )
+        })}
 
         {/* Keywords/Tags */}
         <div
