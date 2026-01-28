@@ -23,6 +23,14 @@ interface Project {
   }
 }
 
+interface Task {
+  id: string
+  title: string
+  description?: string
+  status: "todo" | "in-progress" | "done"
+  dueDate?: string
+}
+
 interface ClientProjectsAdminProps {
   clientId: string
   clientName: string
@@ -55,6 +63,16 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
 
   // Raw input for team members (to preserve commas while typing)
   const [teamInput, setTeamInput] = useState("")
+
+  // Tasks modal state
+  const [tasksProject, setTasksProject] = useState<Project | null>(null)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasksLoading, setTasksLoading] = useState(false)
+  const [tasksError, setTasksError] = useState<string | null>(null)
+  const [newTaskTitle, setNewTaskTitle] = useState("")
+  const [newTaskDescription, setNewTaskDescription] = useState("")
+  const [newTaskStatus, setNewTaskStatus] = useState<Task["status"]>("todo")
+  const [newTaskDueDate, setNewTaskDueDate] = useState("")
 
   useEffect(() => {
     fetchProjects()
@@ -230,7 +248,153 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
     }
   }
 
+  const resetTaskForm = () => {
+    setNewTaskTitle("")
+    setNewTaskDescription("")
+    setNewTaskStatus("todo")
+    setNewTaskDueDate("")
+  }
+
+  const fetchTasksForProject = async (project: Project) => {
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        alert('Admin authentication required')
+        return
+      }
+
+      setTasksProject(project)
+      setTasksLoading(true)
+      setTasksError(null)
+      setTasks([])
+      resetTaskForm()
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/projects/${project.id}/tasks`, {
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        console.error('Failed to fetch tasks:', response.status, text)
+        setTasksError('Failed to load tasks')
+        return
+      }
+
+      const data = await response.json()
+      const formattedTasks: Task[] = (data.tasks || []).map((t: any) => ({
+        id: t.id || t._id,
+        title: t.title,
+        description: t.description,
+        status: t.status || "todo",
+        dueDate: t.dueDate,
+      }))
+      setTasks(formattedTasks)
+    } catch (error) {
+      console.error('Error fetching tasks:', error)
+      setTasksError('Failed to load tasks')
+    } finally {
+      setTasksLoading(false)
+    }
+  }
+
+  const addTask = async () => {
+    if (!tasksProject || !newTaskTitle) return
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        alert('Admin authentication required')
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/projects/${tasksProject.id}/tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({
+          title: newTaskTitle,
+          description: newTaskDescription || undefined,
+          status: newTaskStatus,
+          dueDate: newTaskDueDate || undefined,
+        })
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error((data as any).error || 'Failed to add task')
+      }
+
+      resetTaskForm()
+      await fetchTasksForProject(tasksProject)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to add task')
+    }
+  }
+
+  const updateTaskStatus = async (taskId: string, status: Task["status"]) => {
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        alert('Admin authentication required')
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ status })
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error((data as any).error || 'Failed to update task')
+      }
+
+      if (tasksProject) {
+        await fetchTasksForProject(tasksProject)
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to update task')
+    }
+  }
+
+  const deleteTask = async (taskId: string) => {
+    if (!confirm('Delete this task?')) return
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        alert('Admin authentication required')
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error((data as any).error || 'Failed to delete task')
+      }
+
+      if (tasksProject) {
+        await fetchTasksForProject(tasksProject)
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to delete task')
+    }
+  }
+
   return (
+    <>
     <div
       style={{
         minHeight: "100vh",
@@ -458,6 +622,31 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
                       {project.team.join(", ")}
                     </div>
                   )}
+                </div>
+
+                {/* Tasks Button */}
+                <div style={{ marginTop: "15px", display: "flex", justifyContent: "flex-end" }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      playClickSound()
+                      fetchTasksForProject(project)
+                    }}
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      padding: "6px 14px",
+                      borderRadius: "0px",
+                      cursor: "pointer",
+                      border: "1px solid #39FF14",
+                      color: "#39FF14",
+                      background: "transparent",
+                    }}
+                  >
+                    MANAGE TASKS
+                  </button>
                 </div>
               </div>
             ))}
@@ -716,6 +905,246 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
         )}
       </div>
     </div>
+
+    {/* Tasks Modal */}
+    {tasksProject && (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.9)",
+          zIndex: 10002,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "24px",
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setTasksProject(null)
+            setTasks([])
+            setTasksError(null)
+            resetTaskForm()
+          }
+        }}
+      >
+        <div
+          style={{
+            background: "#000",
+            border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: "0px",
+            width: "100%",
+            maxWidth: "1200px",
+            maxHeight: "90vh",
+            overflow: "auto",
+            padding: "36px",
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+            <div>
+              <h3 className="aeonik-mono" style={{ fontSize: "20px", color: "#FFF", marginBottom: "6px" }}>
+                TASKS – {tasksProject!.name}
+              </h3>
+              {tasksProject!.projectCode && (
+                <div
+                  className="aeonik-mono"
+                  style={{
+                    fontSize: "11px",
+                    color: "rgba(255,255,255,0.6)",
+                    letterSpacing: "3px",
+                  }}
+                >
+                  {tasksProject!.projectCode}
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                playClickSound()
+                setTasksProject(null)
+                setTasks([])
+                setTasksError(null)
+                resetTaskForm()
+              }}
+              className="aeonik-mono"
+              style={{
+                padding: "6px 12px",
+                borderRadius: "0px",
+                border: "1px solid rgba(255,255,255,0.4)",
+                background: "transparent",
+                color: "#FFF",
+                fontSize: "11px",
+                letterSpacing: "1px",
+              }}
+            >
+              CLOSE
+            </button>
+          </div>
+
+          {/* Add Task */}
+          <div
+            style={{
+              marginBottom: "25px",
+              padding: "20px",
+              border: "1px solid rgba(255,255,255,0.1)",
+              background: "rgba(255,255,255,0.02)",
+            }}
+          >
+            <p className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", marginBottom: "10px" }}>
+              ADD TASK
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0, 2fr) repeat(2, minmax(0, 1fr))",
+                gap: "12px",
+                marginBottom: "10px",
+              }}
+            >
+              <Input
+                type="text"
+                placeholder="TASK TITLE"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value.toUpperCase())}
+              />
+              <Input
+                type="date"
+                value={newTaskDueDate}
+                onChange={(e) => setNewTaskDueDate(e.target.value)}
+              />
+              <DropdownMenu
+                value={newTaskStatus}
+                onChange={(v) => setNewTaskStatus(v as Task["status"])}
+                options={[
+                  { value: "todo", label: "TODO" },
+                  { value: "in-progress", label: "IN PROGRESS" },
+                  { value: "done", label: "DONE" },
+                ]}
+              />
+            </div>
+            <textarea
+              value={newTaskDescription}
+              onChange={(e) => setNewTaskDescription(e.target.value.toUpperCase())}
+              placeholder="TASK DESCRIPTION"
+              className="aeonik-mono"
+              style={{
+                width: "100%",
+                padding: "10px",
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                color: "#FFF",
+                fontSize: "12px",
+                minHeight: "60px",
+                marginBottom: "10px",
+              }}
+            />
+            <button
+              onClick={() => {
+                playClickSound()
+                addTask()
+              }}
+              disabled={!newTaskTitle}
+              className="aeonik-mono"
+              style={{
+                padding: "10px 20px",
+                borderRadius: "0px",
+                border: "1px solid #39FF14",
+                background: "#39FF14",
+                color: "#000",
+                fontSize: "12px",
+                letterSpacing: "1px",
+                cursor: newTaskTitle ? "pointer" : "not-allowed",
+              }}
+            >
+              SAVE TASK
+            </button>
+          </div>
+
+          {/* Tasks List */}
+          {tasksLoading ? (
+            <div className="aeonik-mono" style={{ color: "rgba(255,255,255,0.6)" }}>
+              Loading tasks...
+            </div>
+          ) : tasksError ? (
+            <div className="aeonik-mono" style={{ color: "#FF6B6B" }}>
+              {tasksError}
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="aeonik-mono" style={{ color: "rgba(255,255,255,0.5)" }}>
+              No tasks yet for this project.
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {tasks.map((task) => (
+                <div
+                  key={task.id}
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    padding: "12px 16px",
+                    background: "rgba(255,255,255,0.02)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    <div className="aeonik-mono" style={{ fontSize: "13px", color: "#FFF", marginBottom: "4px" }}>
+                      {task.title}
+                    </div>
+                    {task.description && (
+                      <div className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>
+                        {task.description}
+                      </div>
+                    )}
+                    {task.dueDate && (
+                      <div className="aeonik-mono" style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
+                        DUE {new Date(task.dueDate).toLocaleDateString().toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <DropdownMenu
+                      value={task.status}
+                      onChange={(v) => updateTaskStatus(task.id, v as Task["status"])}
+                      options={[
+                        { value: "todo", label: "TODO" },
+                        { value: "in-progress", label: "IN PROGRESS" },
+                        { value: "done", label: "DONE" },
+                      ]}
+                    />
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "10px",
+                        padding: "4px 8px",
+                        borderRadius: "0px",
+                        border: "1px solid #FF6B6B",
+                        background: "transparent",
+                        color: "#FF6B6B",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+    </>
   )
 }
 

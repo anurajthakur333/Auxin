@@ -19,8 +19,20 @@ interface Project {
   }
 }
 
+interface Task {
+  id: string
+  title: string
+  description?: string
+  status: "todo" | "in-progress" | "done"
+  dueDate?: string
+}
+
 const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([])
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasksLoading, setTasksLoading] = useState(false)
+  const [tasksError, setTasksError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchProjects()
@@ -58,6 +70,48 @@ const Projects = () => {
       }
     } catch (error) {
       console.error('Error fetching projects:', error)
+    }
+  }
+
+  const fetchTasksForProject = async (project: Project) => {
+    try {
+      const token = getAuthToken()
+      if (!token) return
+
+      setSelectedProject(project)
+      setTasksLoading(true)
+      setTasksError(null)
+      setTasks([])
+
+      const response = await fetch(`${API_BASE_URL}/api/projects/${project.id}/tasks`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        console.error('Failed to fetch tasks:', response.status, text)
+        setTasksError('Failed to load tasks')
+        return
+      }
+
+      const data = await response.json()
+      const formattedTasks: Task[] = (data.tasks || []).map((t: any) => ({
+        id: t.id || t._id,
+        title: t.title,
+        description: t.description,
+        status: t.status || "todo",
+        dueDate: t.dueDate,
+      }))
+
+      setTasks(formattedTasks)
+    } catch (error) {
+      console.error('Error fetching tasks:', error)
+      setTasksError('Failed to load tasks')
+    } finally {
+      setTasksLoading(false)
     }
   }
 
@@ -578,10 +632,171 @@ const Projects = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Tasks Button */}
+              <div style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end" }}>
+                <button
+                  className="aeonik-mono"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    fetchTasksForProject(project)
+                  }}
+                  style={{
+                    fontSize: "11px",
+                    padding: "8px 16px",
+                    borderRadius: "0px",
+                    border: "1px solid #39FF14",
+                    background: "transparent",
+                    color: "#39FF14",
+                    letterSpacing: "1px",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                  }}
+                >
+                  VIEW TASKS
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
+
+      {/* Tasks Modal */}
+      {selectedProject && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.9)",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+          onClick={() => {
+            setSelectedProject(null)
+            setTasks([])
+            setTasksError(null)
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "900px",
+              maxHeight: "80vh",
+              overflow: "auto",
+              background: "#000",
+              border: "1px solid rgba(255,255,255,0.2)",
+              padding: "30px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+              <div>
+                <h3 className="aeonik-mono" style={{ fontSize: "20px", color: "#FFF", marginBottom: "6px" }}>
+                  TASKS – {selectedProject.name}
+                </h3>
+                {selectedProject.projectCode && (
+                  <div
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      color: "rgba(255,255,255,0.6)",
+                      letterSpacing: "3px",
+                    }}
+                  >
+                    {selectedProject.projectCode}
+                  </div>
+                )}
+              </div>
+              <button
+                className="aeonik-mono"
+                onClick={() => {
+                  setSelectedProject(null)
+                  setTasks([])
+                  setTasksError(null)
+                }}
+                style={{
+                  padding: "6px 12px",
+                  border: "1px solid rgba(255,255,255,0.4)",
+                  background: "transparent",
+                  color: "#FFF",
+                  fontSize: "11px",
+                  letterSpacing: "1px",
+                }}
+              >
+                CLOSE
+              </button>
+            </div>
+
+            {tasksLoading ? (
+              <div className="aeonik-mono" style={{ color: "rgba(255,255,255,0.6)" }}>
+                Loading tasks...
+              </div>
+            ) : tasksError ? (
+              <div className="aeonik-mono" style={{ color: "#FF6B6B" }}>
+                {tasksError}
+              </div>
+            ) : tasks.length === 0 ? (
+              <div className="aeonik-mono" style={{ color: "rgba(255,255,255,0.5)" }}>
+                No tasks for this project yet.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    style={{
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      padding: "12px 16px",
+                      background: "rgba(255,255,255,0.03)",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <div className="aeonik-mono" style={{ fontSize: "13px", color: "#FFF", marginBottom: "4px" }}>
+                        {task.title}
+                      </div>
+                      {task.description && (
+                        <div className="aeonik-mono" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>
+                          {task.description}
+                        </div>
+                      )}
+                      {task.dueDate && (
+                        <div className="aeonik-mono" style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
+                          DUE {new Date(task.dueDate).toLocaleDateString().toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "10px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                        padding: "4px 8px",
+                        borderRadius: "0px",
+                        border: "1px solid rgba(255,255,255,0.3)",
+                        color:
+                          task.status === "done"
+                            ? "#39FF14"
+                            : task.status === "in-progress"
+                            ? "#FFD700"
+                            : "rgba(255,255,255,0.7)",
+                      }}
+                    >
+                      {task.status.replace("-", " ")}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   )
 }
