@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { API_BASE_URL } from "../../../lib/apiConfig"
 import Input from "../../../components/ui/Input"
 import DropdownMenu from "../../../components/ui/DropdownMenu"
@@ -19,6 +20,7 @@ interface Client {
 }
 
 const ClientsAdmin = () => {
+  const navigate = useNavigate()
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -771,6 +773,31 @@ const ClientsAdmin = () => {
                   onClick={(e) => {
                     e.stopPropagation()
                     playClickSound()
+                    navigate(`/admin/client-projects/${client.id}?name=${encodeURIComponent(client.name)}&code=${encodeURIComponent(client.clientCode)}`)
+                  }}
+                  disabled={updatingClientId === client.id}
+                  className="aeonik-mono"
+                  style={{
+                    fontSize: "11px",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                    padding: "4px 10px",
+                    borderRadius: "0px",
+                    cursor: updatingClientId === client.id ? "default" : "pointer",
+                    border: "1px solid #39FF14",
+                    color: "#39FF14",
+                    background: "transparent",
+                    opacity: updatingClientId === client.id ? 0.6 : 1,
+                    transition: "all 0.2s ease",
+                    flexShrink: 0,
+                  }}
+                >
+                  MANAGE
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    playClickSound()
                     toggleBan(client)
                   }}
                   disabled={updatingClientId === client.id}
@@ -1011,6 +1038,7 @@ const ClientsAdmin = () => {
           </div>
         </div>
       )}
+
     </>
   )
 }

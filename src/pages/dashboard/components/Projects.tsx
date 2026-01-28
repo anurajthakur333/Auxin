@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { API_BASE_URL, getAuthToken } from "../../../lib/apiConfig"
 
 interface Project {
   id: string
   name: string
+  projectCode?: string
   category: "branding" | "web-design" | "marketing" | "seo" | "development"
   status: "active" | "pending" | "completed" | "on-hold"
   progress: number
@@ -18,86 +20,46 @@ interface Project {
 }
 
 const Projects = () => {
-  const [projects] = useState<Project[]>([
-    {
-      id: "1",
-      name: "WEBSITE REDESIGN",
-      category: "web-design",
-      status: "active",
-      progress: 65,
-      deadline: "2024-02-15",
-      startDate: "2024-01-01",
-      budget: "$15,000",
-      team: ["JOHN DOE", "JANE SMITH"],
-      description: "COMPLETE OVERHAUL OF CORPORATE WEBSITE WITH MODERN UI/UX DESIGN",
-      tasks: { completed: 13, total: 20 },
-    },
-    {
-      id: "2",
-      name: "BRAND IDENTITY",
-      category: "branding",
-      status: "active",
-      progress: 40,
-      deadline: "2024-02-28",
-      startDate: "2024-01-10",
-      budget: "$8,000",
-      team: ["ALICE JOHNSON"],
-      description: "CREATING COMPREHENSIVE BRAND GUIDELINES AND VISUAL IDENTITY SYSTEM",
-      tasks: { completed: 6, total: 15 },
-    },
-    {
-      id: "3",
-      name: "MARKETING CAMPAIGN",
-      category: "marketing",
-      status: "pending",
-      progress: 10,
-      deadline: "2024-03-10",
-      startDate: "2024-01-20",
-      budget: "$12,000",
-      team: ["BOB WILSON", "CAROL DAVIS"],
-      description: "MULTI-CHANNEL MARKETING CAMPAIGN FOR Q1 PRODUCT LAUNCH",
-      tasks: { completed: 2, total: 18 },
-    },
-    {
-      id: "4",
-      name: "SEO OPTIMIZATION",
-      category: "seo",
-      status: "active",
-      progress: 80,
-      deadline: "2024-02-05",
-      startDate: "2023-12-15",
-      budget: "$5,000",
-      team: ["DAVID LEE"],
-      description: "COMPLETE TECHNICAL SEO AUDIT AND IMPLEMENTATION OF RECOMMENDATIONS",
-      tasks: { completed: 16, total: 20 },
-    },
-    {
-      id: "5",
-      name: "E-COMMERCE PLATFORM",
-      category: "development",
-      status: "on-hold",
-      progress: 25,
-      deadline: "2024-04-01",
-      startDate: "2024-01-05",
-      budget: "$25,000",
-      team: ["EMMA WILSON", "FRANK CHEN", "GRACE PARK"],
-      description: "CUSTOM E-COMMERCE SOLUTION WITH ADVANCED FEATURES",
-      tasks: { completed: 8, total: 32 },
-    },
-    {
-      id: "6",
-      name: "SOCIAL MEDIA STRATEGY",
-      category: "marketing",
-      status: "completed",
-      progress: 100,
-      deadline: "2024-01-20",
-      startDate: "2023-12-01",
-      budget: "$6,000",
-      team: ["HANNAH BROWN"],
-      description: "COMPREHENSIVE SOCIAL MEDIA STRATEGY AND CONTENT CALENDAR",
-      tasks: { completed: 12, total: 12 },
-    },
-  ])
+  const [projects, setProjects] = useState<Project[]>([])
+
+  useEffect(() => {
+    fetchProjects()
+  }, [])
+
+  const fetchProjects = async () => {
+    try {
+      const token = getAuthToken()
+      if (!token) return
+
+      const response = await fetch(`${API_BASE_URL}/api/projects/my-projects`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const formattedProjects = (data.projects || []).map((p: any) => ({
+          id: p.id || p._id,
+          name: p.name,
+          projectCode: p.projectCode,
+          category: p.category || "web-design",
+          status: p.status || "pending",
+          progress: p.progress || 0,
+          deadline: p.deadline ? new Date(p.deadline).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          startDate: p.startDate ? new Date(p.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          budget: p.budget || "$0",
+          team: p.team || [],
+          description: p.description || "",
+          tasks: p.tasks || { completed: 0, total: 0 }
+        }))
+        setProjects(formattedProjects)
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error)
+    }
+  }
 
   const [filter, setFilter] = useState<"all" | Project["status"]>("all")
   const [categoryFilter, setCategoryFilter] = useState<"all" | Project["category"]>("all")
@@ -152,7 +114,10 @@ const Projects = () => {
     total: projects.length,
     active: projects.filter((p) => p.status === "active").length,
     completed: projects.filter((p) => p.status === "completed").length,
-    avgProgress: Math.round(projects.reduce((acc, p) => acc + p.progress, 0) / projects.length),
+    avgProgress:
+      projects.length === 0
+        ? 0
+        : Math.round(projects.reduce((acc, p) => acc + p.progress, 0) / projects.length),
   }
 
   return (
@@ -429,6 +394,21 @@ const Projects = () => {
                   >
                     {project.name}
                   </h3>
+                  {project.projectCode && (
+                    <div
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "10px",
+                        color: "rgba(255,255,255,0.6)",
+                        padding: "4px 8px",
+                        border: "1px solid rgba(255,255,255,0.3)",
+                        borderRadius: "0px",
+                        letterSpacing: "2px",
+                      }}
+                    >
+                      {project.projectCode}
+                    </div>
+                  )}
                   <div
                     className="aeonik-mono"
                     style={{

@@ -12,6 +12,7 @@ import Meeting from './pages/Meeting';
 import Login from './pages/Login';
 import AdminLogin from './pages/admin/AdminLogin';
 import Admin from './pages/admin/Admin';
+import ClientProjectsPage from './pages/admin/ClientProjectsPage';
 import EmployeeLogin from './pages/EmployeeLogin';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import Signup from './pages/Signup';
@@ -62,6 +63,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<Admin />} />
+            <Route path="/admin/client-projects/:clientId" element={<ClientProjectsPage />} />
             <Route path="/employee/login" element={<EmployeeLogin />} />
             <Route 
               path="/employee/dashboard" 

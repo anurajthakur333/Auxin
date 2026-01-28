@@ -4,6 +4,7 @@ import { API_BASE_URL, getAuthToken } from "../../../lib/apiConfig"
 interface Project {
   id: string
   name: string
+  projectCode?: string
   status: "active" | "pending" | "completed"
   progress: number
   deadline: string
@@ -30,19 +31,44 @@ interface Notification {
 
 const Overview = () => {
 
-  // Mock data - replace with actual API calls
-  const [projects] = useState<Project[]>([
-    { id: "1", name: "WEBSITE REDESIGN", status: "active", progress: 65, deadline: "2024-02-15" },
-    { id: "2", name: "BRAND IDENTITY", status: "active", progress: 40, deadline: "2024-02-28" },
-    { id: "3", name: "MARKETING CAMPAIGN", status: "pending", progress: 10, deadline: "2024-03-10" },
-  ])
+  const [projects, setProjects] = useState<Project[]>([])
 
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [requestingLinkId, setRequestingLinkId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchAppointments()
+    fetchProjects()
   }, [])
+
+  const fetchProjects = async () => {
+    try {
+      const token = getAuthToken()
+      if (!token) return
+
+      const response = await fetch(`${API_BASE_URL}/api/projects/my-projects`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const formattedProjects = (data.projects || []).map((p: any) => ({
+          id: p.id || p._id,
+          name: p.name,
+          projectCode: p.projectCode,
+          status: p.status,
+          progress: p.progress || 0,
+          deadline: p.deadline ? new Date(p.deadline).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+        }))
+        setProjects(formattedProjects.filter((p: Project) => p.status === "active").slice(0, 3))
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error)
+    }
+  }
 
   const fetchAppointments = async () => {
     try {
