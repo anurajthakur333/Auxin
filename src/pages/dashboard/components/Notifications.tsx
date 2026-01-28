@@ -16,6 +16,25 @@ const Notifications = () => {
 
   useEffect(() => {
     fetchNotifications()
+    
+    // Refresh notifications every 30 seconds
+    const interval = setInterval(() => {
+      fetchNotifications()
+    }, 30000)
+    
+    // Refresh when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchNotifications()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
 
   const fetchNotifications = async () => {
@@ -199,52 +218,52 @@ const Notifications = () => {
       {/* Filters */}
       <div style={{ marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "15px" }}>
         <div>
-          <p
-            className="aeonik-mono"
-            style={{
-              fontSize: "12px",
-              color: "rgba(255, 255, 255, 0.5)",
-              marginBottom: "10px",
-              letterSpacing: "1px",
-            }}
-          >
-            FILTER
-          </p>
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            {(["all", "unread", "read"] as const).map((filterType) => (
-              <button
-                key={filterType}
-                onClick={() => setFilter(filterType)}
-                className="aeonik-mono"
-                style={{
-                  fontSize: "12px",
-                  color: filter === filterType ? "#000" : "#FFF",
-                  background: filter === filterType ? "#39FF14" : "rgba(255, 255, 255, 0.05)",
-                  border: `1px solid ${filter === filterType ? "#39FF14" : "rgba(255, 255, 255, 0.2)"}`,
-                  padding: "8px 16px",
-                  borderRadius: "0px",
-                  cursor: "pointer",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  if (filter !== filterType) {
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"
-                    e.currentTarget.style.borderColor = "#39FF14"
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (filter !== filterType) {
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
-                  }
-                }}
-              >
-                {filterType}
-              </button>
-            ))}
-          </div>
+        <p
+          className="aeonik-mono"
+          style={{
+            fontSize: "12px",
+            color: "rgba(255, 255, 255, 0.5)",
+            marginBottom: "10px",
+            letterSpacing: "1px",
+          }}
+        >
+          FILTER
+        </p>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          {(["all", "unread", "read"] as const).map((filterType) => (
+            <button
+              key={filterType}
+              onClick={() => setFilter(filterType)}
+              className="aeonik-mono"
+              style={{
+                fontSize: "12px",
+                color: filter === filterType ? "#000" : "#FFF",
+                background: filter === filterType ? "#39FF14" : "rgba(255, 255, 255, 0.05)",
+                border: `1px solid ${filter === filterType ? "#39FF14" : "rgba(255, 255, 255, 0.2)"}`,
+                padding: "8px 16px",
+                borderRadius: "0px",
+                cursor: "pointer",
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (filter !== filterType) {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"
+                  e.currentTarget.style.borderColor = "#39FF14"
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (filter !== filterType) {
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                }
+              }}
+            >
+              {filterType}
+            </button>
+          ))}
+        </div>
         </div>
         {unreadCount > 0 && (
           <button
