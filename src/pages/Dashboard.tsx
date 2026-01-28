@@ -13,9 +13,20 @@ import Lenis from "lenis"
 
 const Dashboard = () => {
   const lenisRef = useRef<Lenis | null>(null)
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const [activeTab, setActiveTab] = useState<"overview" | "projects" | "notifications" | "billing">("overview")
   const playClickSound = useSound(clickSound, { volume: 0.3 })
+
+  // Refresh user data on mount to get latest clientCode
+  useEffect(() => {
+    refreshUser()
+  }, [])
+
+  // Debug: Log user data
+  useEffect(() => {
+    console.log('🔍 Dashboard - Current user data:', user)
+    console.log('🔍 Dashboard - Client code:', user?.clientCode)
+  }, [user])
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -99,6 +110,28 @@ const Dashboard = () => {
             DASHBOARD
           </ScrambleText>
         </h1>
+        
+        {/* Client Code Display */}
+        {user?.clientCode ? (
+          <div
+            className="aeonik-mono"
+            style={{
+              fontSize: "14px",
+              color: "rgba(255, 255, 255, 0.4)",
+              letterSpacing: "3px",
+              fontWeight: 500,
+              padding: "8px 16px",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              background: "rgba(255, 255, 255, 0.02)",
+              borderRadius: "0px",
+              alignSelf: "flex-start",
+              marginTop: "10px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {user.clientCode}
+          </div>
+        ) : null}
       </div>
 
       {/* Welcome Section */}

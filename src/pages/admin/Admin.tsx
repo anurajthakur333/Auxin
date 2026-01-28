@@ -14,6 +14,7 @@ import MeetingCategoriesAdmin from "./components/MeetingCategoriesAdmin"
 import EmployeesAdmin from "./components/EmployeesAdmin"
 import RolesAdmin from "./components/RolesAdmin"
 import SubrolesAdmin from "./components/SubrolesAdmin"
+import ClientsAdmin from "./components/ClientsAdmin"
 import { useSound } from "../../hooks/useSound"
 import clickSound from "../../assets/Sound/Click1.wav"
 import "../../styles/fonts.css"
@@ -24,7 +25,7 @@ const Admin = () => {
   const lenisRef = useRef<Lenis | null>(null)
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings" | "banned" | "articles" | "categories" | "bookings" | "meeting-categories" | "employees" | "roles" | "subroles">("analytics")
+  const [activeTab, setActiveTab] = useState<"users" | "projects" | "analytics" | "settings" | "meetings" | "banned" | "articles" | "categories" | "bookings" | "meeting-categories" | "employees" | "roles" | "subroles" | "clients">("analytics")
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Mock admin check - in production, check user.role === 'admin'
@@ -87,6 +88,8 @@ const Admin = () => {
         return <RolesAdmin />
       case "subroles":
         return <SubrolesAdmin />
+      case "clients":
+        return <ClientsAdmin />
       default:
         return null
     }
@@ -181,7 +184,7 @@ const Admin = () => {
           flexWrap: "wrap",
         }}
       >
-        {(["analytics", "users", "banned", "projects", "categories", "articles", "settings", "meetings", "meeting-categories", "bookings", "employees", "roles", "subroles"] as const).map((tab) => (
+        {(["analytics", "users", "banned", "clients", "projects", "categories", "articles", "settings", "meetings", "meeting-categories", "bookings", "employees", "roles", "subroles"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => {

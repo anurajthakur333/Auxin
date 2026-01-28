@@ -7,6 +7,7 @@ interface User {
   name: string;
   avatar?: string;
   isEmailVerified: boolean;
+  clientCode?: string | null;
 }
 
 interface AuthContextType {
@@ -15,6 +16,7 @@ interface AuthContextType {
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   googleLogin: () => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
   loading: boolean;
 }
 
@@ -53,7 +55,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             avatar: userData.avatar,
             isEmailVerified: userData.isEmailVerified !== undefined 
               ? userData.isEmailVerified 
-              : true
+              : true,
+            clientCode: userData.clientCode || null
           };
           
           console.log('✅ Processing Google auth redirect fallback:', user);
@@ -110,6 +113,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           sessionStorage.removeItem('token');
           return;
         }
+        console.log('✅ User data from verify:', data.user);
+        console.log('✅ Client code in response:', data.user?.clientCode);
+        console.log('✅ Full user object keys:', Object.keys(data.user || {}));
         setUser(data.user);
         // Token is already stored in the correct storage, no need to re-store
       } else {
@@ -122,6 +128,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       sessionStorage.removeItem('token');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshUser = async () => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const responseText = await response.text();
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            return;
+          }
+          console.log('✅ Refreshed user data:', data.user);
+          console.log('✅ Client code:', data.user?.clientCode);
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error('Failed to refresh user:', error);
+      }
     }
   };
 
@@ -275,7 +310,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                   avatar: message.user.avatar,
                   isEmailVerified: message.user.isEmailVerified !== undefined 
                     ? message.user.isEmailVerified 
-                    : true
+                    : true,
+                  clientCode: message.user.clientCode || null
                 };
                 const token = message.token;
                 
@@ -401,7 +437,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             avatar: event.data.user.avatar,
             isEmailVerified: event.data.user.isEmailVerified !== undefined 
               ? event.data.user.isEmailVerified 
-              : true // Google OAuth users are auto-verified
+              : true, // Google OAuth users are auto-verified
+            clientCode: event.data.user.clientCode || null
           };
           const token = event.data.token;
           
@@ -477,6 +514,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signup,
     googleLogin,
     logout,
+    refreshUser,
     loading
   };
 

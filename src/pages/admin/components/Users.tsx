@@ -17,6 +17,7 @@ interface User {
   hasPassword: boolean
   password: string | null
   isBanned: boolean
+  clientCode?: string | null
 }
 
 interface UsersProps {
@@ -32,6 +33,10 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
   const [confirmAction, setConfirmAction] = useState<"clearFilters" | "exportCSV" | null>(null)
   const [showBannedUsers, setShowBannedUsers] = useState(showBannedByDefault)
+  const [userToMakeClient, setUserToMakeClient] = useState<User | null>(null)
+  const [clientCode, setClientCode] = useState("")
+  const [clientCodeError, setClientCodeError] = useState<string | null>(null)
+  const [makingClient, setMakingClient] = useState(false)
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   
   // Filter states
@@ -297,6 +302,108 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
 
   const cancelDeleteDialog = () => {
     setUserToDelete(null)
+  }
+
+  const openMakeClientDialog = (user: User) => {
+    setUserToMakeClient(user)
+    setClientCode("")
+    setClientCodeError(null)
+  }
+
+  const cancelMakeClientDialog = () => {
+    setUserToMakeClient(null)
+    setClientCode("")
+    setClientCodeError(null)
+  }
+
+  const validateClientCode = (code: string): boolean => {
+    // Must be exactly 5 capital alphabetic characters
+    const codeRegex = /^[A-Z]{5}$/
+    if (!codeRegex.test(code)) {
+      setClientCodeError("CODE MUST BE EXACTLY 5 CAPITAL LETTERS (A-Z)")
+      return false
+    }
+    setClientCodeError(null)
+    return true
+  }
+
+  const checkClientCodeUnique = async (code: string): Promise<boolean> => {
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) return false
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/clients/check-code/${code}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        return !data.exists // Returns true if code is available (doesn't exist)
+      }
+      return false
+    } catch (err) {
+      console.error('Error checking client code:', err)
+      return false
+    }
+  }
+
+  const makeClient = async () => {
+    if (!userToMakeClient) return
+
+    const trimmedCode = clientCode.trim().toUpperCase()
+    
+    if (!validateClientCode(trimmedCode)) {
+      return
+    }
+
+    const isUnique = await checkClientCodeUnique(trimmedCode)
+    if (!isUnique) {
+      setClientCodeError("THIS CODE IS ALREADY IN USE. PLEASE CHOOSE A DIFFERENT CODE.")
+      return
+    }
+
+    try {
+      setMakingClient(true)
+      setClientCodeError(null)
+
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        setClientCodeError('ADMIN AUTHENTICATION REQUIRED')
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/users/${userToMakeClient.id}/make-client`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ clientCode: trimmedCode })
+      })
+
+      const data = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(data?.error || `Failed to make client (${response.status})`)
+      }
+
+      // Update local list
+      setUsers(prev =>
+        prev.map(u => (u.id === userToMakeClient.id ? { ...u, clientCode: trimmedCode } : u))
+      )
+
+      cancelMakeClientDialog()
+      fetchUsers() // Refresh to get updated data
+    } catch (err) {
+      console.error('Error making client:', err)
+      setClientCodeError(err instanceof Error ? err.message : 'FAILED TO MAKE CLIENT')
+    } finally {
+      setMakingClient(false)
+    }
   }
 
   const confirmDeleteDialog = async () => {
@@ -891,6 +998,33 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
               wordBreak: "break-word",
               whiteSpace: "normal"
             }}>
+              {!user.clientCode && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playClickSound();
+                    openMakeClientDialog(user);
+                  }}
+                  disabled={makingClient}
+                  className="aeonik-mono"
+                  style={{
+                    fontSize: "11px",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                    padding: "4px 10px",
+                    borderRadius: "0px",
+                    cursor: makingClient ? "default" : "pointer",
+                    border: "1px solid #3B82F6",
+                    color: "#3B82F6",
+                    background: "transparent",
+                    opacity: makingClient ? 0.6 : 1,
+                    transition: "all 0.2s ease",
+                    flexShrink: 0
+                  }}
+                >
+                  MAKE CLIENT
+                </button>
+              )}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1611,6 +1745,33 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
                   >
                 {user.isBanned ? "UNBAN" : "BAN"}
                   </button>
+                  {!user.clientCode && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playClickSound();
+                        openMakeClientDialog(user);
+                      }}
+                      disabled={makingClient}
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                        padding: "4px 10px",
+                        borderRadius: "0px",
+                        cursor: makingClient ? "default" : "pointer",
+                        border: "1px solid #3B82F6",
+                        color: "#3B82F6",
+                        background: "transparent",
+                        opacity: makingClient ? 0.6 : 1,
+                        transition: "all 0.2s ease",
+                        flexShrink: 0
+                      }}
+                    >
+                      MAKE CLIENT
+                    </button>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1913,6 +2074,194 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
           }}
         >
           No users match the current filters
+        </div>
+      )}
+
+      {/* Make Client Dialog */}
+      {userToMakeClient && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "500px",
+              backgroundColor: "#000000",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              padding: "30px",
+              borderRadius: "0px",
+              boxShadow: "0 0 0 1px rgba(255,255,255,0.05)",
+            }}
+          >
+            <div style={{ marginBottom: "20px" }}>
+              <h3
+                className="aeonik-mono"
+                style={{
+                  fontSize: "18px",
+                  color: "#FFFFFF",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  margin: 0,
+                  marginBottom: "10px",
+                }}
+              >
+                MAKE CLIENT
+              </h3>
+              <p
+                className="aeonik-mono"
+                style={{
+                  fontSize: "12px",
+                  lineHeight: 1.6,
+                  color: "rgba(255,255,255,0.7)",
+                  marginBottom: "15px",
+                }}
+              >
+                ASSIGN A UNIQUE 5-DIGIT CAPITAL ALPHABETIC CODE FOR{" "}
+                <span style={{ color: "#3B82F6" }}>
+                  {userToMakeClient.name.toUpperCase()} ({userToMakeClient.email.toUpperCase()})
+                </span>
+              </p>
+              
+              <div style={{ marginBottom: "15px" }}>
+                <label
+                  className="aeonik-mono"
+                  style={{
+                    fontSize: "11px",
+                    color: "rgba(255,255,255,0.6)",
+                    marginBottom: "8px",
+                    display: "block",
+                  }}
+                >
+                  CLIENT CODE (5 CAPITAL LETTERS)
+                </label>
+                <Input
+                  type="text"
+                  value={clientCode}
+                  onChange={(e) => {
+                    const value = e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 5)
+                    setClientCode(value)
+                    setClientCodeError(null)
+                  }}
+                  placeholder="ABCDE"
+                  style={{
+                    fontSize: "16px",
+                    letterSpacing: "3px",
+                    textTransform: "uppercase",
+                    fontFamily: "monospace",
+                  }}
+                />
+                {clientCodeError && (
+                  <p
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      color: "#FF6B6B",
+                      marginTop: "8px",
+                      marginBottom: 0,
+                    }}
+                  >
+                    {clientCodeError}
+                  </p>
+                )}
+                {clientCode.length === 5 && !clientCodeError && (
+                  <p
+                    className="aeonik-mono"
+                    style={{
+                      fontSize: "11px",
+                      color: "#39FF14",
+                      marginTop: "8px",
+                      marginBottom: 0,
+                    }}
+                  >
+                    CODE FORMAT VALID
+                  </p>
+                )}
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "12px",
+                marginTop: "20px",
+              }}
+            >
+              <button
+                onClick={() => {
+                  playClickSound()
+                  cancelMakeClientDialog()
+                }}
+                disabled={makingClient}
+                className="aeonik-mono"
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  background: "transparent",
+                  color: "#FFFFFF",
+                  fontSize: "12px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  cursor: makingClient ? "default" : "pointer",
+                  transition: "all 0.2s ease",
+                  opacity: makingClient ? 0.6 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (!makingClient) {
+                    e.currentTarget.style.borderColor = "#FFFFFF"
+                    e.currentTarget.style.color = "#FFFFFF"
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!makingClient) {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)"
+                    e.currentTarget.style.color = "#FFFFFF"
+                  }
+                }}
+              >
+                CANCEL
+              </button>
+              <button
+                onClick={() => {
+                  playClickSound()
+                  makeClient()
+                }}
+                disabled={makingClient || clientCode.length !== 5}
+                className="aeonik-mono"
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "0px",
+                  border: "1px solid #3B82F6",
+                  background: "transparent",
+                  color: "#3B82F6",
+                  fontSize: "12px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  cursor: makingClient || clientCode.length !== 5 ? "default" : "pointer",
+                  opacity: makingClient || clientCode.length !== 5 ? 0.6 : 1,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (!makingClient && clientCode.length === 5) {
+                    e.currentTarget.style.background = "rgba(59,130,246,0.15)"
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent"
+                }}
+              >
+                {makingClient ? "ASSIGNING..." : "ASSIGN CODE"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
