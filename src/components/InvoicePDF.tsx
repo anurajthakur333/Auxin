@@ -1,5 +1,4 @@
 import { useRef } from "react"
-import { API_BASE_URL, getAuthToken } from "../lib/apiConfig"
 
 interface InvoiceItem {
   title: string

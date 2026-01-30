@@ -1,9 +1,19 @@
 import { useState, useEffect } from "react"
-import { API_BASE_URL, getAuthToken } from "../../../lib/apiConfig"
+import { API_BASE_URL } from "../../../lib/apiConfig"
 import Input from "../../../components/ui/Input"
 import DatePicker from "../../../components/ui/DatePicker"
 import { useSound } from "../../../hooks/useSound"
 import clickSound from "../../../assets/Sound/Click1.wav"
+
+interface BillingInfo {
+  phone?: string
+  address?: string
+  city?: string
+  state?: string
+  country?: string
+  zip?: string
+  gstNumber?: string
+}
 
 interface Client {
   id: string
@@ -11,6 +21,7 @@ interface Client {
   email: string
   clientCode: string
   status: string
+  billingInfo?: BillingInfo
 }
 
 interface InvoiceItem {
@@ -62,7 +73,6 @@ interface Project {
 const BillsAdmin = () => {
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   const [activeView, setActiveView] = useState<"create" | "list">("create")
-  const [loading, setLoading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -96,6 +106,8 @@ const BillsAdmin = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [projectCodeError, setProjectCodeError] = useState<string | null>(null)
   const [fetchingProject, setFetchingProject] = useState(false)
+  const [clientProjects, setClientProjects] = useState<Project[]>([])
+  const [fetchingClientProjects, setFetchingClientProjects] = useState(false)
   const [discount, setDiscount] = useState<number>(0)
   const [sgst, setSgst] = useState<number>(0)
   const [cgst, setCgst] = useState<number>(0)
@@ -110,14 +122,33 @@ const BillsAdmin = () => {
     accountType: "",
   })
 
+  // Fetch client's projects when client is selected
   useEffect(() => {
-    // Auto-fill billTo when client is found
+    if (selectedClient?.id) {
+      fetchClientProjects(selectedClient.id)
+    } else {
+      setClientProjects([])
+    }
+  }, [selectedClient])
+
+  useEffect(() => {
+    // Auto-fill billTo when client is found (including billing info)
     if (selectedClient) {
+      const billing = selectedClient.billingInfo || {}
+      // Build full address from billing info
+      const fullAddress = [
+        billing.address,
+        billing.city,
+        billing.state,
+        billing.zip,
+        billing.country
+      ].filter(Boolean).join(", ")
+      
       setBillTo({
         name: selectedClient.name,
         email: selectedClient.email,
-        address: "",
-        gstNumber: "",
+        address: fullAddress || "",
+        gstNumber: billing.gstNumber || "",
       })
     }
   }, [selectedClient])
@@ -177,19 +208,50 @@ const BillsAdmin = () => {
     }
   }
 
+  const fetchClientProjects = async (clientId: string) => {
+    try {
+      setFetchingClientProjects(true)
+      const adminToken = localStorage.getItem("adminToken")
+      if (!adminToken) return
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/projects/client/${clientId}`, {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setClientProjects(data.projects || [])
+      } else {
+        setClientProjects([])
+      }
+    } catch (err) {
+      console.error("Error fetching client projects:", err)
+      setClientProjects([])
+    } finally {
+      setFetchingClientProjects(false)
+    }
+  }
+
   const handleClientCodeChange = (value: string) => {
-    const trimmedValue = value.trim().toUpperCase().replace(/[^A-Z]/g, "").slice(0, 5)
-    setClientCode(trimmedValue)
+    const upperValue = value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 5)
+    setClientCode(upperValue)
     
-    // Clear previous client selection
-    if (trimmedValue.length < 5) {
+    // Clear previous client selection only if code changed significantly
+    if (upperValue.length < 5) {
       setSelectedClient(null)
       setClientCodeError(null)
+      setClientProjects([])
+      // Also clear project selection when client changes
+      setProjectCode("")
+      setSelectedProject(null)
+      setProjectCodeError(null)
     }
     
     // Fetch client when code is complete (5 letters)
-    if (trimmedValue.length === 5) {
-      fetchClientByCode(trimmedValue)
+    if (upperValue.length === 5) {
+      fetchClientByCode(upperValue)
     }
   }
 
@@ -261,18 +323,26 @@ const BillsAdmin = () => {
   }
 
   const handleProjectCodeChange = (value: string) => {
-    const trimmedValue = value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6)
-    setProjectCode(trimmedValue)
+    const upperValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6)
+    setProjectCode(upperValue)
     
     // Clear previous project selection
-    if (trimmedValue.length < 6) {
+    if (upperValue.length < 6) {
       setSelectedProject(null)
       setProjectCodeError(null)
     }
     
-    // Fetch project when code is complete (6 characters)
-    if (trimmedValue.length === 6) {
-      fetchProjectByCode(trimmedValue)
+    // Check project when code is complete (6 characters)
+    if (upperValue.length === 6) {
+      // First check in local clientProjects
+      const localProject = clientProjects.find(p => p.projectCode === upperValue)
+      if (localProject) {
+        setSelectedProject(localProject)
+        setProjectCodeError(null)
+      } else {
+        // If not found locally, fetch from API
+        fetchProjectByCode(upperValue)
+      }
     }
   }
 
@@ -318,6 +388,10 @@ const BillsAdmin = () => {
       setError("Please enter a valid client code")
       return
     }
+    if (!selectedProject || !projectCode || projectCode.length !== 6) {
+      setError("Please enter a valid 6-character project code")
+      return
+    }
     if (!date || !dueDate) {
       setError("Please select date and due date")
       return
@@ -345,7 +419,8 @@ const BillsAdmin = () => {
 
       const requestBody = {
         clientId: selectedClient.id,
-        projectCode: projectCode.trim() || undefined,
+        projectCode: projectCode.trim(),
+        projectId: selectedProject?.id,
         date,
         dueDate,
         billTo,
@@ -629,7 +704,6 @@ const BillsAdmin = () => {
                 SEARCH
               </label>
               <Input
-                label=""
                 value={invoiceSearchQuery}
                 onChange={(e) => setInvoiceSearchQuery(e.target.value)}
                 placeholder="SEARCH BY INVOICE #, CLIENT, PROJECT CODE..."
@@ -928,12 +1002,8 @@ const BillsAdmin = () => {
             ENTER THE 5-LETTER CLIENT CODE (E.G., ABCDE). CLIENT DETAILS WILL BE DISPLAYED BELOW WHEN FOUND.
           </p>
           <Input
-            label=""
             value={clientCode}
-            onChange={(e) => {
-              handleClientCodeChange(e.target.value)
-              playClickSound()
-            }}
+            onChange={(e) => handleClientCodeChange(e.target.value)}
             placeholder="ABCDE"
             maxLength={5}
             style={{
@@ -986,10 +1056,10 @@ const BillsAdmin = () => {
           )}
         </div>
 
-        {/* Project Code (Optional) */}
+        {/* Project Selection (Required) */}
         <div style={{ marginBottom: "30px" }}>
           <label className="aeonik-mono" style={{ display: "block", marginBottom: "10px", fontSize: "14px" }}>
-            PROJECT CODE
+            SELECT PROJECT *
           </label>
           <p
             className="aeonik-mono"
@@ -1000,24 +1070,88 @@ const BillsAdmin = () => {
               lineHeight: "1.5"
             }}
           >
-            OPTIONAL: ENTER THE 6-CHARACTER PROJECT CODE TO LINK THIS INVOICE TO A SPECIFIC PROJECT FOR BUDGET TRACKING.
+            {selectedClient 
+              ? "SELECT A PROJECT FROM THE DROPDOWN OR ENTER THE 6-CHARACTER PROJECT CODE MANUALLY."
+              : "FIRST SELECT A CLIENT TO SEE THEIR PROJECTS."}
           </p>
-          <Input
-            label=""
-            value={projectCode}
-            onChange={(e) => {
-              handleProjectCodeChange(e.target.value)
-              playClickSound()
-            }}
-            placeholder="E.G., IOIOSD (OPTIONAL)"
-            maxLength={6}
-            style={{
-              textTransform: "uppercase",
-              letterSpacing: "2px",
-              fontSize: "16px",
-              fontFamily: "AeonikMono-Regular, monospace",
-            }}
-          />
+          
+          {/* Project Dropdown - only show when client is selected */}
+          {selectedClient && (
+            <div style={{ marginBottom: "15px" }}>
+              {fetchingClientProjects ? (
+                <p className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                  LOADING PROJECTS...
+                </p>
+              ) : clientProjects.length > 0 ? (
+                <select
+                  value={selectedProject?.id || ""}
+                  onChange={(e) => {
+                    const project = clientProjects.find(p => p.id === e.target.value)
+                    if (project) {
+                      setSelectedProject(project)
+                      setProjectCode(project.projectCode)
+                      setProjectCodeError(null)
+                    } else {
+                      setSelectedProject(null)
+                      setProjectCode("")
+                    }
+                    playClickSound()
+                  }}
+                  className="aeonik-mono"
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    color: "white",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    outline: "none",
+                  }}
+                >
+                  <option value="" style={{ background: "#1a1a1a" }}>-- SELECT A PROJECT --</option>
+                  {clientProjects.map((project) => (
+                    <option 
+                      key={project.id} 
+                      value={project.id}
+                      style={{ background: "#1a1a1a" }}
+                    >
+                      {project.projectCode} - {project.name} ({project.category.toUpperCase()})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                  NO PROJECTS FOUND FOR THIS CLIENT. CREATE A PROJECT FIRST OR ENTER CODE MANUALLY.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Manual project code input */}
+          <div style={{ marginTop: selectedClient ? "10px" : "0" }}>
+            {selectedClient && (
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                OR ENTER PROJECT CODE MANUALLY:
+              </label>
+            )}
+            <Input
+              value={projectCode}
+              onChange={(e) => handleProjectCodeChange(e.target.value)}
+              placeholder={selectedClient ? "E.G., IOIOSD" : "SELECT CLIENT FIRST"}
+              maxLength={6}
+              disabled={!selectedClient}
+              style={{
+                textTransform: "uppercase",
+                letterSpacing: "2px",
+                fontSize: "16px",
+                fontFamily: "AeonikMono-Regular, monospace",
+                opacity: selectedClient ? 1 : 0.5,
+              }}
+              required
+            />
+          </div>
+          
           {fetchingProject && (
             <p className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)", marginTop: "8px" }}>
               FETCHING PROJECT...
@@ -1040,7 +1174,7 @@ const BillsAdmin = () => {
               }}
             >
               <div style={{ marginBottom: "8px", color: "#39FF14", fontWeight: 600 }}>
-                PROJECT FOUND
+                PROJECT SELECTED
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", color: "rgba(255, 255, 255, 0.9)" }}>
                 <div>
@@ -1183,52 +1317,79 @@ const BillsAdmin = () => {
             ENTER YOUR COMPANY'S BILLING ADDRESS. THIS WILL APPEAR AS THE SENDER'S ADDRESS ON THE INVOICE.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                COMPANY NAME *
+              </label>
+              <Input
+                value={companyAddress.companyName}
+                onChange={(e) => setCompanyAddress({ ...companyAddress, companyName: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                EMAIL *
+              </label>
+              <Input
+                type="email"
+                value={companyAddress.email}
+                onChange={(e) => setCompanyAddress({ ...companyAddress, email: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          <div style={{ marginBottom: "15px" }}>
+            <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+              STREET ADDRESS *
+            </label>
             <Input
-              label="COMPANY NAME"
-              value={companyAddress.companyName}
-              onChange={(e) => setCompanyAddress({ ...companyAddress, companyName: e.target.value })}
-              required
-            />
-            <Input
-              label="EMAIL"
-              type="email"
-              value={companyAddress.email}
-              onChange={(e) => setCompanyAddress({ ...companyAddress, email: e.target.value })}
+              value={companyAddress.street}
+              onChange={(e) => setCompanyAddress({ ...companyAddress, street: e.target.value })}
               required
             />
           </div>
-          <Input
-            label="STREET ADDRESS"
-            value={companyAddress.street}
-            onChange={(e) => setCompanyAddress({ ...companyAddress, street: e.target.value })}
-            required
-            style={{ marginBottom: "15px" }}
-          />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "15px" }}>
-            <Input
-              label="CITY"
-              value={companyAddress.city}
-              onChange={(e) => setCompanyAddress({ ...companyAddress, city: e.target.value })}
-              required
-            />
-            <Input
-              label="STATE"
-              value={companyAddress.state}
-              onChange={(e) => setCompanyAddress({ ...companyAddress, state: e.target.value })}
-              required
-            />
-            <Input
-              label="ZIP"
-              value={companyAddress.zip}
-              onChange={(e) => setCompanyAddress({ ...companyAddress, zip: e.target.value })}
-              required
-            />
-            <Input
-              label="COUNTRY"
-              value={companyAddress.country}
-              onChange={(e) => setCompanyAddress({ ...companyAddress, country: e.target.value })}
-              required
-            />
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                CITY *
+              </label>
+              <Input
+                value={companyAddress.city}
+                onChange={(e) => setCompanyAddress({ ...companyAddress, city: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                STATE *
+              </label>
+              <Input
+                value={companyAddress.state}
+                onChange={(e) => setCompanyAddress({ ...companyAddress, state: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                ZIP *
+              </label>
+              <Input
+                value={companyAddress.zip}
+                onChange={(e) => setCompanyAddress({ ...companyAddress, zip: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                COUNTRY *
+              </label>
+              <Input
+                value={companyAddress.country}
+                onChange={(e) => setCompanyAddress({ ...companyAddress, country: e.target.value })}
+                required
+              />
+            </div>
           </div>
         </div>
 
@@ -1457,46 +1618,74 @@ const BillsAdmin = () => {
             OPTIONAL: ENTER BANK ACCOUNT DETAILS OR OTHER PAYMENT METHOD INFORMATION FOR WIRE TRANSFERS OR DIRECT DEPOSITS.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
-            <Input
-              label="BANK NAME"
-              value={paymentMethod.bankName}
-              onChange={(e) => setPaymentMethod({ ...paymentMethod, bankName: e.target.value })}
-            />
-            <Input
-              label="ACCOUNT HOLDER NAME"
-              value={paymentMethod.accountHolderName}
-              onChange={(e) => setPaymentMethod({ ...paymentMethod, accountHolderName: e.target.value })}
-            />
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                BANK NAME
+              </label>
+              <Input
+                value={paymentMethod.bankName}
+                onChange={(e) => setPaymentMethod({ ...paymentMethod, bankName: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                ACCOUNT HOLDER NAME
+              </label>
+              <Input
+                value={paymentMethod.accountHolderName}
+                onChange={(e) => setPaymentMethod({ ...paymentMethod, accountHolderName: e.target.value })}
+              />
+            </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
-            <Input
-              label="ACCOUNT NUMBER"
-              value={paymentMethod.accountNumber}
-              onChange={(e) => setPaymentMethod({ ...paymentMethod, accountNumber: e.target.value })}
-            />
-            <Input
-              label="ROUTING NUMBER"
-              value={paymentMethod.routingNumber}
-              onChange={(e) => setPaymentMethod({ ...paymentMethod, routingNumber: e.target.value })}
-            />
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                ACCOUNT NUMBER
+              </label>
+              <Input
+                value={paymentMethod.accountNumber}
+                onChange={(e) => setPaymentMethod({ ...paymentMethod, accountNumber: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                ROUTING NUMBER
+              </label>
+              <Input
+                value={paymentMethod.routingNumber}
+                onChange={(e) => setPaymentMethod({ ...paymentMethod, routingNumber: e.target.value })}
+              />
+            </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                SWIFT CODE
+              </label>
+              <Input
+                value={paymentMethod.swiftCode}
+                onChange={(e) => setPaymentMethod({ ...paymentMethod, swiftCode: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+                ACCOUNT TYPE
+              </label>
+              <Input
+                value={paymentMethod.accountType}
+                onChange={(e) => setPaymentMethod({ ...paymentMethod, accountType: e.target.value })}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}>
+              BRANCH ADDRESS
+            </label>
             <Input
-              label="SWIFT CODE"
-              value={paymentMethod.swiftCode}
-              onChange={(e) => setPaymentMethod({ ...paymentMethod, swiftCode: e.target.value })}
-            />
-            <Input
-              label="ACCOUNT TYPE"
-              value={paymentMethod.accountType}
-              onChange={(e) => setPaymentMethod({ ...paymentMethod, accountType: e.target.value })}
+              value={paymentMethod.branchAddress}
+              onChange={(e) => setPaymentMethod({ ...paymentMethod, branchAddress: e.target.value })}
             />
           </div>
-          <Input
-            label="BRANCH ADDRESS"
-            value={paymentMethod.branchAddress}
-            onChange={(e) => setPaymentMethod({ ...paymentMethod, branchAddress: e.target.value })}
-          />
         </div>
 
         {/* Submit Button */}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import ScrambleText from "../components/Scramble"
 import { useAuth } from "../contexts/AuthContext"
 import { useSound } from "../hooks/useSound"
@@ -13,6 +14,7 @@ import Lenis from "lenis"
 
 const Dashboard = () => {
   const lenisRef = useRef<Lenis | null>(null)
+  const navigate = useNavigate()
   const { user, refreshUser } = useAuth()
   const [activeTab, setActiveTab] = useState<"overview" | "projects" | "notifications" | "billing">("overview")
   const playClickSound = useSound(clickSound, { volume: 0.3 })
@@ -111,27 +113,58 @@ const Dashboard = () => {
           </ScrambleText>
         </h1>
         
-        {/* Client Code Display */}
-        {user?.clientCode ? (
-          <div
+        {/* Right side - Client Code & Home Button */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px", marginTop: "10px" }}>
+          {/* Client Code Display */}
+          {user?.clientCode && (
+            <div
+              className="aeonik-mono"
+              style={{
+                fontSize: "14px",
+                color: "rgba(255, 255, 255, 0.4)",
+                letterSpacing: "3px",
+                fontWeight: 500,
+                padding: "8px 16px",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                background: "rgba(255, 255, 255, 0.02)",
+                borderRadius: "0px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {user.clientCode}
+            </div>
+          )}
+          
+          {/* Go Back to Home Button */}
+          <button
+            onClick={() => {
+              playClickSound()
+              navigate("/")
+            }}
             className="aeonik-mono"
             style={{
-              fontSize: "14px",
-              color: "rgba(255, 255, 255, 0.4)",
-              letterSpacing: "3px",
+              fontSize: "12px",
+              color: "#39FF14",
+              letterSpacing: "1px",
               fontWeight: 500,
               padding: "8px 16px",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              background: "rgba(255, 255, 255, 0.02)",
+              border: "1px solid #39FF14",
+              background: "transparent",
               borderRadius: "0px",
-              alignSelf: "flex-start",
-              marginTop: "10px",
+              cursor: "pointer",
               whiteSpace: "nowrap",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent"
             }}
           >
-            {user.clientCode}
-          </div>
-        ) : null}
+            ← BACK TO HOME
+          </button>
+        </div>
       </div>
 
       {/* Welcome Section */}
