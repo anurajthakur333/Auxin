@@ -32,6 +32,7 @@ interface Notification {
 const Overview = () => {
 
   const [projects, setProjects] = useState<Project[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
 
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [requestingLinkId, setRequestingLinkId] = useState<string | null>(null)
@@ -39,6 +40,7 @@ const Overview = () => {
   useEffect(() => {
     fetchAppointments()
     fetchProjects()
+    fetchNotifications()
   }, [])
 
   const fetchProjects = async () => {
@@ -273,11 +275,32 @@ const Overview = () => {
     return `${hour12}:${minutes} ${ampm}`
   }
 
-  const [notifications] = useState<Notification[]>([
-    { id: "1", message: "NEW PROJECT MILESTONE COMPLETED", time: "2 HOURS AGO", read: false },
-    { id: "2", message: "MEETING SCHEDULED FOR TOMORROW", time: "5 HOURS AGO", read: false },
-    { id: "3", message: "PAYMENT RECEIVED", time: "1 DAY AGO", read: true },
-  ])
+  const fetchNotifications = async () => {
+    try {
+      const token = getAuthToken()
+      if (!token) return
+
+      const response = await fetch(`${API_BASE_URL}/api/notifications?limit=3`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const formattedNotifications = (data.notifications || []).map((n: any) => ({
+          id: n.id || n._id,
+          message: n.message,
+          time: n.time || 'JUST NOW',
+          read: n.read || false,
+        }))
+        setNotifications(formattedNotifications)
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error)
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {

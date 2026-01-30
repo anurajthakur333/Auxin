@@ -23,6 +23,15 @@ interface Project {
   }
 }
 
+interface Invoice {
+  id: string
+  invoiceNumber: string
+  projectCode?: string
+  total: number
+  status: "pending" | "paid" | "overdue"
+  date: string
+}
+
 interface Task {
   id: string
   title: string
@@ -44,6 +53,8 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
   const [error, setError] = useState<string | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
+  const [projectInvoices, setProjectInvoices] = useState<Map<string, Invoice[]>>(new Map())
+  const [showInvoicesProject, setShowInvoicesProject] = useState<Project | null>(null)
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Form states
@@ -117,11 +128,53 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
       }))
 
       setProjects(normalizedProjects)
+      
+      // Fetch invoices for each project with a projectCode
+      fetchInvoicesForProjects(normalizedProjects)
     } catch (err) {
       console.error('Error fetching projects:', err)
       setError(err instanceof Error ? err.message : 'Failed to fetch projects')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchInvoicesForProjects = async (projectsList: Project[]) => {
+    try {
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) return
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/invoices`, {
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      if (!response.ok) return
+
+      const data = await response.json()
+      const allInvoices: Invoice[] = (data.invoices || []).map((inv: any) => ({
+        id: inv.id || inv._id,
+        invoiceNumber: inv.invoiceNumber,
+        projectCode: inv.projectCode,
+        total: inv.total,
+        status: inv.status,
+        date: inv.date,
+      }))
+
+      // Group invoices by projectCode
+      const invoiceMap = new Map<string, Invoice[]>()
+      projectsList.forEach(project => {
+        if (project.projectCode) {
+          const linkedInvoices = allInvoices.filter(inv => inv.projectCode === project.projectCode)
+          if (linkedInvoices.length > 0) {
+            invoiceMap.set(project.id, linkedInvoices)
+          }
+        }
+      })
+      setProjectInvoices(invoiceMap)
+    } catch (err) {
+      console.error('Error fetching invoices:', err)
     }
   }
 
@@ -624,8 +677,125 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
                   )}
                 </div>
 
+                {/* Billing Summary */}
+                {projectInvoices.has(project.id) && (
+                  <div
+                    style={{
+                      marginTop: "15px",
+                      padding: "12px",
+                      background: "rgba(255, 215, 0, 0.05)",
+                      border: "1px solid rgba(255, 215, 0, 0.2)",
+                    }}
+                  >
+                    <div
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "11px",
+                        color: "#FFD700",
+                        marginBottom: "8px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center"
+                      }}
+                    >
+                      <span>LINKED INVOICES ({projectInvoices.get(project.id)?.length})</span>
+                      <span>
+                        TOTAL: ${projectInvoices.get(project.id)?.reduce((sum, inv) => sum + inv.total, 0).toFixed(2)}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      {projectInvoices.get(project.id)?.slice(0, 3).map(inv => (
+                        <div
+                          key={inv.id}
+                          className="aeonik-mono"
+                          style={{
+                            fontSize: "10px",
+                            padding: "4px 8px",
+                            background: inv.status === 'paid' ? 'rgba(57, 255, 20, 0.1)' : 
+                                       inv.status === 'overdue' ? 'rgba(255, 107, 107, 0.1)' : 
+                                       'rgba(255, 215, 0, 0.1)',
+                            border: `1px solid ${inv.status === 'paid' ? '#39FF14' : 
+                                    inv.status === 'overdue' ? '#FF6B6B' : '#FFD700'}`,
+                            color: inv.status === 'paid' ? '#39FF14' : 
+                                   inv.status === 'overdue' ? '#FF6B6B' : '#FFD700',
+                          }}
+                        >
+                          {inv.invoiceNumber}: ${inv.total.toFixed(2)} ({inv.status.toUpperCase()})
+                        </div>
+                      ))}
+                      {(projectInvoices.get(project.id)?.length || 0) > 3 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            playClickSound()
+                            setShowInvoicesProject(project)
+                          }}
+                          className="aeonik-mono"
+                          style={{
+                            fontSize: "10px",
+                            padding: "4px 8px",
+                            background: "transparent",
+                            border: "1px solid rgba(255, 255, 255, 0.3)",
+                            color: "rgba(255, 255, 255, 0.7)",
+                            cursor: "pointer"
+                          }}
+                        >
+                          +{(projectInvoices.get(project.id)?.length || 0) - 3} MORE
+                        </button>
+                      )}
+                    </div>
+                    {project.budget && (
+                      <div
+                        className="aeonik-mono"
+                        style={{
+                          marginTop: "10px",
+                          fontSize: "10px",
+                          color: "rgba(255, 255, 255, 0.6)"
+                        }}
+                      >
+                        BUDGET: {project.budget} | BILLED: ${projectInvoices.get(project.id)?.reduce((sum, inv) => sum + inv.total, 0).toFixed(2)}
+                        {project.budget && (
+                          <span style={{ 
+                            marginLeft: "10px",
+                            color: (parseFloat(project.budget.replace(/[^0-9.-]+/g,"")) || 0) < 
+                                   (projectInvoices.get(project.id)?.reduce((sum, inv) => sum + inv.total, 0) || 0)
+                              ? '#FF6B6B' : '#39FF14'
+                          }}>
+                            ({(parseFloat(project.budget.replace(/[^0-9.-]+/g,"")) || 0) >= 
+                              (projectInvoices.get(project.id)?.reduce((sum, inv) => sum + inv.total, 0) || 0)
+                              ? 'WITHIN BUDGET' : 'OVER BUDGET'})
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Tasks Button */}
-                <div style={{ marginTop: "15px", display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ marginTop: "15px", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                  {projectInvoices.has(project.id) && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        playClickSound()
+                        setShowInvoicesProject(project)
+                      }}
+                      className="aeonik-mono"
+                      style={{
+                        fontSize: "11px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                        padding: "6px 14px",
+                        borderRadius: "0px",
+                        cursor: "pointer",
+                        border: "1px solid #FFD700",
+                        color: "#FFD700",
+                        background: "transparent",
+                      }}
+                    >
+                      VIEW INVOICES
+                    </button>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
@@ -650,6 +820,145 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Invoices Modal */}
+        {showInvoicesProject && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(0, 0, 0, 0.95)",
+              zIndex: 10001,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "20px"
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowInvoicesProject(null)
+              }
+            }}
+          >
+            <div
+              style={{
+                background: "#0A0A0A",
+                border: "1px solid #FFD700",
+                padding: "30px",
+                width: "100%",
+                maxWidth: "600px",
+                maxHeight: "80vh",
+                overflow: "auto"
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+                <h3 className="aeonik-mono" style={{ fontSize: "18px", color: "#FFD700", margin: 0 }}>
+                  INVOICES FOR {showInvoicesProject.name}
+                  {showInvoicesProject.projectCode && (
+                    <span style={{ fontSize: "14px", color: "#39FF14", marginLeft: "10px" }}>
+                      ({showInvoicesProject.projectCode})
+                    </span>
+                  )}
+                </h3>
+                <button
+                  onClick={() => setShowInvoicesProject(null)}
+                  className="aeonik-mono"
+                  style={{
+                    fontSize: "20px",
+                    background: "transparent",
+                    border: "none",
+                    color: "#FFF",
+                    cursor: "pointer"
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {showInvoicesProject.budget && (
+                <div
+                  className="aeonik-mono"
+                  style={{
+                    marginBottom: "20px",
+                    padding: "15px",
+                    background: "rgba(255, 215, 0, 0.05)",
+                    border: "1px solid rgba(255, 215, 0, 0.2)",
+                    fontSize: "13px"
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+                    <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>PROJECT BUDGET:</span>
+                    <span style={{ color: "#FFD700" }}>{showInvoicesProject.budget}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+                    <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>TOTAL BILLED:</span>
+                    <span style={{ color: "#FFF" }}>
+                      ${projectInvoices.get(showInvoicesProject.id)?.reduce((sum, inv) => sum + inv.total, 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>REMAINING:</span>
+                    <span style={{ 
+                      color: (parseFloat(showInvoicesProject.budget.replace(/[^0-9.-]+/g,"")) || 0) >= 
+                             (projectInvoices.get(showInvoicesProject.id)?.reduce((sum, inv) => sum + inv.total, 0) || 0)
+                        ? '#39FF14' : '#FF6B6B'
+                    }}>
+                      ${((parseFloat(showInvoicesProject.budget.replace(/[^0-9.-]+/g,"")) || 0) - 
+                         (projectInvoices.get(showInvoicesProject.id)?.reduce((sum, inv) => sum + inv.total, 0) || 0)).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {projectInvoices.get(showInvoicesProject.id)?.map(inv => (
+                  <div
+                    key={inv.id}
+                    className="aeonik-mono"
+                    style={{
+                      padding: "15px",
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: `1px solid ${inv.status === 'paid' ? 'rgba(57, 255, 20, 0.3)' : 
+                              inv.status === 'overdue' ? 'rgba(255, 107, 107, 0.3)' : 
+                              'rgba(255, 215, 0, 0.3)'}`,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center"
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
+                        {inv.invoiceNumber}
+                      </div>
+                      <div style={{ fontSize: "11px", color: "rgba(255, 255, 255, 0.5)" }}>
+                        {new Date(inv.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
+                        ${inv.total.toFixed(2)}
+                      </div>
+                      <div style={{ 
+                        fontSize: "10px", 
+                        padding: "3px 8px",
+                        background: inv.status === 'paid' ? 'rgba(57, 255, 20, 0.1)' : 
+                                   inv.status === 'overdue' ? 'rgba(255, 107, 107, 0.1)' : 
+                                   'rgba(255, 215, 0, 0.1)',
+                        color: inv.status === 'paid' ? '#39FF14' : 
+                               inv.status === 'overdue' ? '#FF6B6B' : '#FFD700',
+                      }}>
+                        {inv.status.toUpperCase()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 

@@ -10,6 +10,7 @@ interface Client {
   name: string
   email: string
   clientCode: string
+  status: string
 }
 
 interface InvoiceItem {
@@ -46,6 +47,18 @@ interface PaymentMethod {
   accountType: string
 }
 
+interface Project {
+  id: string
+  name: string
+  projectCode: string
+  category: string
+  status: string
+  budget?: string
+  progress: number
+  deadline: string
+  startDate: string
+}
+
 const BillsAdmin = () => {
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   const [activeView, setActiveView] = useState<"create" | "list">("create")
@@ -79,6 +92,10 @@ const BillsAdmin = () => {
   const [items, setItems] = useState<InvoiceItem[]>([
     { title: "", price: 0, quantity: 1, subtotal: 0 },
   ])
+  const [projectCode, setProjectCode] = useState<string>("")
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [projectCodeError, setProjectCodeError] = useState<string | null>(null)
+  const [fetchingProject, setFetchingProject] = useState(false)
   const [discount, setDiscount] = useState<number>(0)
   const [sgst, setSgst] = useState<number>(0)
   const [cgst, setCgst] = useState<number>(0)
@@ -176,6 +193,89 @@ const BillsAdmin = () => {
     }
   }
 
+  const fetchProjectByCode = async (code: string) => {
+    const trimmedCode = code.trim().toUpperCase()
+    
+    // Validate format: exactly 6 capital letters
+    const codeRegex = /^[A-Z]{6}$/
+    if (!codeRegex.test(trimmedCode)) {
+      if (trimmedCode.length > 0 && trimmedCode.length < 6) {
+        setProjectCodeError(null) // Don't show error while typing
+      } else if (trimmedCode.length > 6) {
+        setProjectCodeError("PROJECT CODE MUST BE EXACTLY 6 CAPITAL LETTERS (A-Z)")
+      }
+      setSelectedProject(null)
+      return
+    }
+
+    try {
+      setFetchingProject(true)
+      setProjectCodeError(null)
+      const adminToken = localStorage.getItem("adminToken")
+      if (!adminToken) {
+        setError("Admin authentication required")
+        return
+      }
+
+      // Fetch all projects and find the one with matching code
+      const response = await fetch(`${API_BASE_URL}/api/admin/projects`, {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      })
+
+      if (!response.ok) {
+        setProjectCodeError("FAILED TO FETCH PROJECTS")
+        setSelectedProject(null)
+        return
+      }
+
+      const data = await response.json()
+      const projects = data.projects || []
+      const foundProject = projects.find((p: any) => p.projectCode === trimmedCode)
+      
+      if (foundProject) {
+        setSelectedProject({
+          id: foundProject.id || foundProject._id,
+          name: foundProject.name,
+          projectCode: foundProject.projectCode,
+          category: foundProject.category,
+          status: foundProject.status,
+          budget: foundProject.budget,
+          progress: foundProject.progress || 0,
+          deadline: foundProject.deadline,
+          startDate: foundProject.startDate,
+        })
+        setProjectCodeError(null)
+      } else {
+        setProjectCodeError("PROJECT NOT FOUND")
+        setSelectedProject(null)
+      }
+    } catch (err) {
+      console.error("Error fetching project:", err)
+      setProjectCodeError("FAILED TO FETCH PROJECT")
+      setSelectedProject(null)
+    } finally {
+      setFetchingProject(false)
+    }
+  }
+
+  const handleProjectCodeChange = (value: string) => {
+    const trimmedValue = value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6)
+    setProjectCode(trimmedValue)
+    
+    // Clear previous project selection
+    if (trimmedValue.length < 6) {
+      setSelectedProject(null)
+      setProjectCodeError(null)
+    }
+    
+    // Fetch project when code is complete (6 characters)
+    if (trimmedValue.length === 6) {
+      fetchProjectByCode(trimmedValue)
+    }
+  }
+
   const addItem = () => {
     setItems([...items, { title: "", price: 0, quantity: 1, subtotal: 0 }])
     playClickSound()
@@ -245,6 +345,7 @@ const BillsAdmin = () => {
 
       const requestBody = {
         clientId: selectedClient.id,
+        projectCode: projectCode.trim() || undefined,
         date,
         dueDate,
         billTo,
@@ -284,6 +385,9 @@ const BillsAdmin = () => {
       setClientCode("")
       setSelectedClient(null)
       setClientCodeError(null)
+      setProjectCode("")
+      setSelectedProject(null)
+      setProjectCodeError(null)
       setDate("")
       setDueDate("")
       setBillTo({ name: "", email: "", address: "", gstNumber: "" })
@@ -313,6 +417,8 @@ const BillsAdmin = () => {
   const [invoices, setInvoices] = useState<any[]>([])
   const [loadingInvoices, setLoadingInvoices] = useState(false)
   const [deletingInvoiceId, setDeletingInvoiceId] = useState<string | null>(null)
+  const [invoiceSearchQuery, setInvoiceSearchQuery] = useState<string>("")
+  const [invoiceStatusFilter, setInvoiceStatusFilter] = useState<string>("all")
 
   const fetchInvoices = async () => {
     try {
@@ -516,6 +622,93 @@ const BillsAdmin = () => {
             </div>
           )}
 
+          {/* Search Filters */}
+          <div style={{ marginBottom: "25px", display: "flex", gap: "15px", flexWrap: "wrap", alignItems: "flex-end" }}>
+            <div style={{ flex: 1, minWidth: "250px" }}>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                SEARCH
+              </label>
+              <Input
+                label=""
+                value={invoiceSearchQuery}
+                onChange={(e) => setInvoiceSearchQuery(e.target.value)}
+                placeholder="SEARCH BY INVOICE #, CLIENT, PROJECT CODE..."
+                style={{ marginBottom: 0 }}
+              />
+            </div>
+            <div style={{ minWidth: "180px" }}>
+              <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                STATUS
+              </label>
+              <select
+                value={invoiceStatusFilter}
+                onChange={(e) => {
+                  setInvoiceStatusFilter(e.target.value)
+                  playClickSound()
+                }}
+                className="aeonik-mono"
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#FFF",
+                  fontSize: "14px",
+                  borderRadius: "0px",
+                }}
+              >
+                <option value="all">ALL STATUS</option>
+                <option value="pending">PENDING</option>
+                <option value="paid">PAID</option>
+                <option value="overdue">OVERDUE</option>
+              </select>
+            </div>
+            {(invoiceSearchQuery || invoiceStatusFilter !== "all") && (
+              <button
+                onClick={() => {
+                  setInvoiceSearchQuery("")
+                  setInvoiceStatusFilter("all")
+                  playClickSound()
+                }}
+                className="aeonik-mono"
+                style={{
+                  padding: "12px 20px",
+                  background: "transparent",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  color: "#FFF",
+                  fontSize: "12px",
+                  cursor: "pointer",
+                  borderRadius: "0px",
+                  letterSpacing: "1px",
+                }}
+              >
+                CLEAR FILTERS
+              </button>
+            )}
+          </div>
+
+          {/* Results Count */}
+          {!loadingInvoices && invoices.length > 0 && (
+            <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", marginBottom: "15px" }}>
+              {(() => {
+                const count = invoices.filter((invoice) => {
+                  if (invoiceStatusFilter !== "all" && invoice.status !== invoiceStatusFilter) return false
+                  if (invoiceSearchQuery) {
+                    const query = invoiceSearchQuery.toLowerCase()
+                    return (
+                      (invoice.invoiceNumber || "").toLowerCase().includes(query) ||
+                      (invoice.clientId?.name || "").toLowerCase().includes(query) ||
+                      (invoice.clientId?.email || "").toLowerCase().includes(query) ||
+                      (invoice.projectCode || "").toLowerCase().includes(query)
+                    )
+                  }
+                  return true
+                }).length
+                return `SHOWING ${count} OF ${invoices.length} INVOICES`
+              })()}
+            </div>
+          )}
+
           {loadingInvoices && (
             <div className="aeonik-mono" style={{ color: "#FFF", fontSize: "14px", marginBottom: "20px" }}>
               LOADING INVOICES...
@@ -530,7 +723,41 @@ const BillsAdmin = () => {
 
           {!loadingInvoices && invoices.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-              {invoices.map((invoice) => (
+              {(() => {
+                const filteredInvoices = invoices.filter((invoice) => {
+                  // Status filter
+                  if (invoiceStatusFilter !== "all" && invoice.status !== invoiceStatusFilter) {
+                    return false
+                  }
+                  
+                  // Search filter
+                  if (invoiceSearchQuery) {
+                    const query = invoiceSearchQuery.toLowerCase()
+                    const invoiceNumber = (invoice.invoiceNumber || "").toLowerCase()
+                    const clientName = (invoice.clientId?.name || "").toLowerCase()
+                    const clientEmail = (invoice.clientId?.email || "").toLowerCase()
+                    const projectCode = (invoice.projectCode || "").toLowerCase()
+                    
+                    return (
+                      invoiceNumber.includes(query) ||
+                      clientName.includes(query) ||
+                      clientEmail.includes(query) ||
+                      projectCode.includes(query)
+                    )
+                  }
+                  
+                  return true
+                })
+
+                if (filteredInvoices.length === 0) {
+                  return (
+                    <div className="aeonik-mono" style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "14px", padding: "40px", textAlign: "center" }}>
+                      NO INVOICES MATCH YOUR FILTERS
+                    </div>
+                  )
+                }
+
+                return filteredInvoices.map((invoice) => (
                 <div
                   key={invoice.id || invoice._id}
                   style={{
@@ -560,6 +787,11 @@ const BillsAdmin = () => {
                     <div>
                       <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
                         {invoice.invoiceNumber}
+                        {invoice.projectCode && (
+                          <span style={{ marginLeft: "10px", color: "#39FF14", fontSize: "12px" }}>
+                            PROJECT: {invoice.projectCode}
+                          </span>
+                        )}
                       </div>
                       <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)" }}>
                         {invoice.clientId?.name || invoice.clientId?.email || "CLIENT"}
@@ -626,7 +858,8 @@ const BillsAdmin = () => {
                     </button>
                   </div>
                 </div>
-              ))}
+              ))
+              })()}
             </div>
           )}
         </div>
@@ -747,6 +980,88 @@ const BillsAdmin = () => {
                 </div>
                 <div>
                   <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>STATUS:</span> {selectedClient.status.toUpperCase()}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Project Code (Optional) */}
+        <div style={{ marginBottom: "30px" }}>
+          <label className="aeonik-mono" style={{ display: "block", marginBottom: "10px", fontSize: "14px" }}>
+            PROJECT CODE
+          </label>
+          <p
+            className="aeonik-mono"
+            style={{
+              fontSize: "12px",
+              color: "rgba(255, 255, 255, 0.6)",
+              marginBottom: "15px",
+              lineHeight: "1.5"
+            }}
+          >
+            OPTIONAL: ENTER THE 6-CHARACTER PROJECT CODE TO LINK THIS INVOICE TO A SPECIFIC PROJECT FOR BUDGET TRACKING.
+          </p>
+          <Input
+            label=""
+            value={projectCode}
+            onChange={(e) => {
+              handleProjectCodeChange(e.target.value)
+              playClickSound()
+            }}
+            placeholder="E.G., IOIOSD (OPTIONAL)"
+            maxLength={6}
+            style={{
+              textTransform: "uppercase",
+              letterSpacing: "2px",
+              fontSize: "16px",
+              fontFamily: "AeonikMono-Regular, monospace",
+            }}
+          />
+          {fetchingProject && (
+            <p className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)", marginTop: "8px" }}>
+              FETCHING PROJECT...
+            </p>
+          )}
+          {projectCodeError && (
+            <p className="aeonik-mono" style={{ fontSize: "12px", color: "#FF6B6B", marginTop: "8px" }}>
+              {projectCodeError}
+            </p>
+          )}
+          {selectedProject && (
+            <div
+              className="aeonik-mono"
+              style={{
+                marginTop: "15px",
+                padding: "15px",
+                background: "rgba(57, 255, 20, 0.05)",
+                border: "1px solid rgba(57, 255, 20, 0.3)",
+                fontSize: "13px",
+              }}
+            >
+              <div style={{ marginBottom: "8px", color: "#39FF14", fontWeight: 600 }}>
+                PROJECT FOUND
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", color: "rgba(255, 255, 255, 0.9)" }}>
+                <div>
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>NAME:</span> {selectedProject.name}
+                </div>
+                <div>
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>CODE:</span> {selectedProject.projectCode}
+                </div>
+                <div>
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>CATEGORY:</span> {selectedProject.category.toUpperCase()}
+                </div>
+                <div>
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>STATUS:</span> {selectedProject.status.toUpperCase()}
+                </div>
+                {selectedProject.budget && (
+                  <div>
+                    <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>BUDGET:</span> {selectedProject.budget}
+                  </div>
+                )}
+                <div>
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>PROGRESS:</span> {selectedProject.progress}%
                 </div>
               </div>
             </div>

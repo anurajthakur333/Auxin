@@ -293,14 +293,84 @@ const NotificationsAdmin = () => {
             SEARCH FOR CLIENTS BY NAME, EMAIL, OR CLIENT CODE. SELECT ONE OR MORE CLIENTS TO SEND THE NOTIFICATION TO.
           </p>
 
-          {/* Search Input */}
-          <div style={{ marginBottom: "15px" }}>
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="SEARCH BY NAME, EMAIL, OR CLIENT CODE..."
-              style={{ marginBottom: 0 }}
-            />
+          {/* Search Input and Select All */}
+          <div style={{ display: "flex", gap: "15px", marginBottom: "15px", alignItems: "flex-end", flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: "250px" }}>
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="SEARCH BY NAME, EMAIL, OR CLIENT CODE..."
+                style={{ marginBottom: 0 }}
+              />
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedClientIds(clients.map((c) => c.id))
+                  playClickSound()
+                }}
+                disabled={clients.length === 0 || selectedClientIds.length === clients.length}
+                className="aeonik-mono"
+                style={{
+                  padding: "12px 20px",
+                  background: selectedClientIds.length === clients.length ? "rgba(57, 255, 20, 0.2)" : "transparent",
+                  border: "1px solid #39FF14",
+                  color: "#39FF14",
+                  fontSize: "12px",
+                  cursor: selectedClientIds.length === clients.length ? "not-allowed" : "pointer",
+                  borderRadius: "0px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                  transition: "all 0.3s ease",
+                  opacity: selectedClientIds.length === clients.length ? 0.5 : 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedClientIds.length !== clients.length) {
+                    e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedClientIds.length !== clients.length) {
+                    e.currentTarget.style.background = "transparent"
+                  }
+                }}
+              >
+                SELECT ALL
+              </button>
+              {selectedClientIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedClientIds([])
+                    playClickSound()
+                  }}
+                  className="aeonik-mono"
+                  style={{
+                    padding: "12px 20px",
+                    background: "transparent",
+                    border: "1px solid #FF6B6B",
+                    color: "#FF6B6B",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    borderRadius: "0px",
+                    letterSpacing: "1px",
+                    textTransform: "uppercase",
+                    whiteSpace: "nowrap",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255, 107, 107, 0.1)"
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent"
+                  }}
+                >
+                  CLEAR ALL
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Selected Clients */}
