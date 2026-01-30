@@ -162,7 +162,11 @@ const Navbar = () => {
     { label: 'MEETINGS', ariaLabel: 'Book a meeting', link: '/meeting' },
     ...(user 
       ? [
-          { label: 'DASHBOARD', ariaLabel: 'Go to dashboard', link: '/dashboard' },
+          // Only show Dashboard link if user is a client (has clientCode)
+          ...(user.clientCode 
+            ? [{ label: 'DASHBOARD', ariaLabel: 'Go to dashboard', link: '/dashboard' }]
+            : []
+          ),
           { label: 'PROFILE', ariaLabel: 'Open profile menu', link: '#profile' },
           { 
             label: 'LOGOUT', 

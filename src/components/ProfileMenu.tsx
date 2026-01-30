@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/ProfileMenu.css';
 
 interface ProfileMenuProps {
@@ -13,6 +14,7 @@ const ANIMATION_DURATION = 1000;
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const { user } = useAuth();
   
   // Handle escape key to close menu
   useEffect(() => {
@@ -52,15 +54,21 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ isOpen, onClose, onLogout }) 
     }
   };
 
+  // Only show client-specific items (DASHBOARD, MY PROJECTS, NOTIFICATIONS, BILLING) if user is a client
+  const isClient = !!user?.clientCode;
+  
   const menuItems = [
-    { label: 'SUPPORT', href: '/support' },                    // 7 ▂
-    { label: 'MESSAGES', href: '/messages' },                  // 8 ▃
-    { label: 'DASHBOARD', href: '/dashboard' },                // 9 ▄
-    { label: 'MY PROJECTS', href: '/projects' },               // 11 ▅
-    { label: 'NOTIFICATIONS', href: '/notifications' },        // 13 ▇ ← PEAK
-    { label: 'MY PROJECTS', href: '/projects' },               // 11 ▅
-    { label: 'MESSAGES', href: '/messages' },                  // 8 ▃
-    { label: 'BILLING', href: '/billing' },                    // 7 ▂
+    { label: 'SUPPORT', href: '/support' },
+    { label: 'MESSAGES', href: '/messages' },
+    // Client-only items
+    ...(isClient ? [
+      { label: 'DASHBOARD', href: '/dashboard' },
+      { label: 'MY PROJECTS', href: '/dashboard' },
+      { label: 'NOTIFICATIONS', href: '/dashboard' },
+      { label: 'MY PROJECTS', href: '/dashboard' },
+    ] : []),
+    { label: 'MESSAGES', href: '/messages' },
+    ...(isClient ? [{ label: 'BILLING', href: '/dashboard' }] : []),
   ];
 
   const handleLogout = () => {

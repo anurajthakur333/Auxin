@@ -10,7 +10,7 @@ interface Project {
   name: string
   projectCode?: string
   description?: string
-  category: "branding" | "web-design" | "marketing" | "seo" | "development"
+  category: string
   status: "active" | "pending" | "completed" | "on-hold"
   progress: number
   deadline: string
@@ -21,6 +21,14 @@ interface Project {
     completed: number
     total: number
   }
+}
+
+interface ProjectCategory {
+  id: string
+  name: string
+  slug: string
+  color?: string
+  isActive: boolean
 }
 
 interface Invoice {
@@ -55,6 +63,7 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
   const [editingProject, setEditingProject] = useState<Project | null>(null)
   const [projectInvoices, setProjectInvoices] = useState<Map<string, Invoice[]>>(new Map())
   const [showInvoicesProject, setShowInvoicesProject] = useState<Project | null>(null)
+  const [categories, setCategories] = useState<ProjectCategory[]>([])
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Form states
@@ -62,7 +71,7 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
     name: "",
     projectCode: "",
     description: "",
-    category: "web-design" as Project["category"],
+    category: "",
     status: "pending" as Project["status"],
     progress: 0,
     deadline: "",
@@ -87,7 +96,20 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
 
   useEffect(() => {
     fetchProjects()
+    fetchCategories()
   }, [clientId])
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/project-categories`)
+      if (response.ok) {
+        const data = await response.json()
+        setCategories(data.categories || [])
+      }
+    } catch (err) {
+      console.error('Error fetching categories:', err)
+    }
+  }
 
   const fetchProjects = async () => {
     try {
@@ -184,7 +206,7 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
       name: "",
       projectCode: "",
       description: "",
-      category: "web-design",
+      category: categories.length > 0 ? categories[0].slug : "",
       status: "pending",
       progress: 0,
       deadline: "",
@@ -1062,15 +1084,17 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
                     </label>
                     <DropdownMenu
                       value={formData.category}
-                      onChange={(value) => setFormData({ ...formData, category: value as Project["category"] })}
-                      options={[
-                        { value: "branding", label: "BRANDING" },
-                        { value: "web-design", label: "WEB DESIGN" },
-                        { value: "marketing", label: "MARKETING" },
-                        { value: "seo", label: "SEO" },
-                        { value: "development", label: "DEVELOPMENT" }
-                      ]}
+                      onChange={(value) => setFormData({ ...formData, category: value })}
+                      options={categories.length > 0 
+                        ? categories.map(cat => ({ value: cat.slug, label: cat.name.toUpperCase() }))
+                        : [{ value: "", label: "NO CATEGORIES AVAILABLE" }]
+                      }
                     />
+                    {categories.length === 0 && (
+                      <p className="aeonik-mono" style={{ fontSize: "10px", color: "#FFD700", marginTop: "5px" }}>
+                        ADD CATEGORIES IN PROJECT CATEGORIES TAB
+                      </p>
+                    )}
                   </div>
 
                   <div>

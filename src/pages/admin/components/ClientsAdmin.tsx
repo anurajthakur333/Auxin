@@ -24,10 +24,13 @@ const ClientsAdmin = () => {
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [updatingClientId, setUpdatingClientId] = useState<string | null>(null)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
   const [editingClientCode, setEditingClientCode] = useState("")
   const [clientCodeError, setClientCodeError] = useState<string | null>(null)
+  const [deletingClientId, setDeletingClientId] = useState<string | null>(null)
+  const [convertingClientId, setConvertingClientId] = useState<string | null>(null)
   const playClickSound = useSound(clickSound, { volume: 0.3 })
 
   // Filter states
@@ -75,6 +78,120 @@ const ClientsAdmin = () => {
       setError(err instanceof Error ? err.message : 'Failed to fetch clients')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const convertToUser = async (client: Client) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to convert "${client.name}" (${client.clientCode}) to a regular user?\n\n` +
+      `• They will LOSE dashboard access\n` +
+      `• Their projects, invoices, and notifications will be KEPT\n` +
+      `• This action can be reversed by assigning a new client code`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setConvertingClientId(client.id)
+      setError(null)
+
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        setError('Admin authentication required')
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/clients/${client.id}/convert-to-user`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to convert client' }))
+        throw new Error(errorData.error || 'Failed to convert client to user')
+      }
+
+      setSuccess(`"${client.name}" has been converted to a regular user and removed from clients list`)
+      fetchClients()
+      setTimeout(() => setSuccess(null), 5000)
+    } catch (err) {
+      console.error('Error converting client:', err)
+      setError(err instanceof Error ? err.message : 'Failed to convert client to user')
+    } finally {
+      setConvertingClientId(null)
+    }
+  }
+
+  const deleteClient = async (client: Client) => {
+    const confirmed = window.confirm(
+      `⚠️ DANGER: Are you sure you want to DELETE "${client.name}" (${client.clientCode})?\n\n` +
+      `This will PERMANENTLY delete:\n` +
+      `• The user account\n` +
+      `• All ${client.projects} projects\n` +
+      `• All tasks within those projects\n` +
+      `• All invoices\n` +
+      `• All notifications\n` +
+      `• All appointments\n\n` +
+      `THIS ACTION CANNOT BE UNDONE!`
+    )
+
+    if (!confirmed) return
+
+    // Double confirmation for safety
+    const doubleConfirmed = window.confirm(
+      `FINAL CONFIRMATION\n\n` +
+      `Type "DELETE" in the next prompt to confirm deletion of "${client.name}"`
+    )
+
+    if (!doubleConfirmed) return
+
+    const userInput = window.prompt(`Type "DELETE" to confirm deletion of ${client.name}:`)
+    if (userInput !== "DELETE") {
+      setError('Deletion cancelled - confirmation text did not match')
+      return
+    }
+
+    try {
+      setDeletingClientId(client.id)
+      setError(null)
+
+      const adminToken = localStorage.getItem('adminToken')
+      if (!adminToken) {
+        setError('Admin authentication required')
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/clients/${client.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to delete client' }))
+        throw new Error(errorData.error || 'Failed to delete client')
+      }
+
+      const data = await response.json()
+      setSuccess(
+        `Client "${client.name}" deleted successfully.\n` +
+        `Deleted: ${data.deletedData?.projects || 0} projects, ` +
+        `${data.deletedData?.tasks || 0} tasks, ` +
+        `${data.deletedData?.invoices || 0} invoices, ` +
+        `${data.deletedData?.notifications || 0} notifications`
+      )
+      fetchClients()
+      setTimeout(() => setSuccess(null), 8000)
+    } catch (err) {
+      console.error('Error deleting client:', err)
+      setError(err instanceof Error ? err.message : 'Failed to delete client')
+    } finally {
+      setDeletingClientId(null)
     }
   }
 
@@ -506,6 +623,24 @@ const ClientsAdmin = () => {
         </div>
       )}
 
+      {success && (
+        <div
+          className="aeonik-mono"
+          style={{
+            padding: "20px",
+            background: "rgba(57, 255, 20, 0.1)",
+            border: "1px solid #39FF14",
+            borderRadius: "0px",
+            color: "#39FF14",
+            fontSize: "14px",
+            marginBottom: "20px",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {success}
+        </div>
+      )}
+
       {!loading && !error && clients.length === 0 && (
         <div
           className="aeonik-mono"
@@ -818,6 +953,58 @@ const ClientsAdmin = () => {
                   }}
                 >
                   {client.isBanned ? "UNBAN" : "BAN"}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    playClickSound()
+                    convertToUser(client)
+                  }}
+                  disabled={convertingClientId === client.id || deletingClientId === client.id}
+                  className="aeonik-mono"
+                  title="Convert to regular user - keeps data but removes dashboard access"
+                  style={{
+                    fontSize: "11px",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                    padding: "4px 10px",
+                    borderRadius: "0px",
+                    cursor: convertingClientId === client.id ? "default" : "pointer",
+                    border: "1px solid #FFD700",
+                    color: "#FFD700",
+                    background: convertingClientId === client.id ? "rgba(255, 215, 0, 0.1)" : "transparent",
+                    opacity: convertingClientId === client.id ? 0.6 : 1,
+                    transition: "all 0.2s ease",
+                    flexShrink: 0,
+                  }}
+                >
+                  {convertingClientId === client.id ? "..." : "REMOVE CLIENT"}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    playClickSound()
+                    deleteClient(client)
+                  }}
+                  disabled={deletingClientId === client.id || convertingClientId === client.id}
+                  className="aeonik-mono"
+                  title="Delete client and ALL associated data (projects, invoices, notifications)"
+                  style={{
+                    fontSize: "11px",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                    padding: "4px 10px",
+                    borderRadius: "0px",
+                    cursor: deletingClientId === client.id ? "default" : "pointer",
+                    border: "1px solid #FF0000",
+                    color: "#FF0000",
+                    background: deletingClientId === client.id ? "rgba(255, 0, 0, 0.1)" : "transparent",
+                    opacity: deletingClientId === client.id ? 0.6 : 1,
+                    transition: "all 0.2s ease",
+                    flexShrink: 0,
+                  }}
+                >
+                  {deletingClientId === client.id ? "DELETING..." : "DELETE ALL"}
                 </button>
               </div>
             </div>

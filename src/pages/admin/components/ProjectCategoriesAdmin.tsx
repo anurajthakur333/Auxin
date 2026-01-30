@@ -6,13 +6,16 @@ import clickSound from "../../../assets/Sound/Click1.wav"
 
 interface Category {
   id: string
-  _id?: string
   name: string
+  slug: string
   description?: string
+  color: string
   isActive: boolean
+  createdAt?: string
+  updatedAt?: string
 }
 
-const CategoriesAdmin = () => {
+const ProjectCategoriesAdmin = () => {
   const playClickSound = useSound(clickSound, { volume: 0.3 })
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,6 +28,7 @@ const CategoriesAdmin = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    color: "#39FF14",
     isActive: true,
   })
   const [submitting, setSubmitting] = useState(false)
@@ -45,7 +49,7 @@ const CategoriesAdmin = () => {
         return
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/admin/categories`, {
+      const response = await fetch(`${API_BASE_URL}/api/project-categories/admin/all`, {
         headers: {
           Authorization: `Bearer ${adminToken}`,
         },
@@ -70,6 +74,7 @@ const CategoriesAdmin = () => {
     setFormData({
       name: "",
       description: "",
+      color: "#39FF14",
       isActive: true,
     })
     setShowAddModal(true)
@@ -81,6 +86,7 @@ const CategoriesAdmin = () => {
     setFormData({
       name: category.name,
       description: category.description || "",
+      color: category.color || "#39FF14",
       isActive: category.isActive,
     })
     setShowAddModal(true)
@@ -105,13 +111,12 @@ const CategoriesAdmin = () => {
         return
       }
 
-      const categoryId = editingCategory?.id || editingCategory?._id
       const url = editingCategory
-        ? `${API_BASE_URL}/api/admin/categories/${categoryId}`
-        : `${API_BASE_URL}/api/admin/categories`
+        ? `${API_BASE_URL}/api/project-categories/admin/${editingCategory.id}`
+        : `${API_BASE_URL}/api/project-categories/admin`
 
       const response = await fetch(url, {
-        method: editingCategory ? "PUT" : "POST",
+        method: editingCategory ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
@@ -153,7 +158,7 @@ const CategoriesAdmin = () => {
         return
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/admin/categories/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/project-categories/admin/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${adminToken}`,
@@ -185,18 +190,13 @@ const CategoriesAdmin = () => {
         return
       }
 
-      const categoryId = category.id || category._id
-      const response = await fetch(`${API_BASE_URL}/api/admin/categories/${categoryId}`, {
-        method: "PUT",
+      const response = await fetch(`${API_BASE_URL}/api/project-categories/admin/${category.id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
-        body: JSON.stringify({ 
-          name: category.name,
-          description: category.description,
-          isActive: !category.isActive 
-        }),
+        body: JSON.stringify({ isActive: !category.isActive }),
       })
 
       if (!response.ok) {
@@ -210,6 +210,52 @@ const CategoriesAdmin = () => {
       setError(err instanceof Error ? err.message : "Failed to update category")
     }
   }
+
+  const handleSeedDefaults = async () => {
+    try {
+      setLoading(true)
+      const adminToken = localStorage.getItem("adminToken")
+      if (!adminToken) {
+        setError("Admin authentication required")
+        return
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/project-categories/admin/seed`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to seed categories")
+      }
+
+      const data = await response.json()
+      setSuccess(`Seeded categories: ${data.created.length} created, ${data.skipped.length} skipped`)
+      fetchCategories()
+      
+      setTimeout(() => setSuccess(null), 5000)
+    } catch (err) {
+      console.error("Error seeding categories:", err)
+      setError(err instanceof Error ? err.message : "Failed to seed categories")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const predefinedColors = [
+    "#39FF14", // Neon green
+    "#FF6B6B", // Red
+    "#4ECDC4", // Teal
+    "#FFE66D", // Yellow
+    "#95E1D3", // Mint
+    "#A8E6CF", // Light green
+    "#DDA0DD", // Plum
+    "#87CEEB", // Sky blue
+    "#F0E68C", // Khaki
+    "#FFB6C1", // Light pink
+  ]
 
   return (
     <div style={{ color: "#FFF" }}>
@@ -225,26 +271,47 @@ const CategoriesAdmin = () => {
             fontWeight: 600,
           }}
         >
-          ARTICLE CATEGORIES
+          PROJECT CATEGORIES
         </h3>
-        <button
-          onClick={handleAdd}
-          className="aeonik-mono"
-          style={{
-            padding: "10px 20px",
-            background: "#39FF14",
-            border: "none",
-            color: "#000",
-            fontSize: "12px",
-            cursor: "pointer",
-            borderRadius: "0px",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-            fontWeight: 600,
-          }}
-        >
-          + ADD CATEGORY
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          {categories.length === 0 && (
+            <button
+              onClick={handleSeedDefaults}
+              className="aeonik-mono"
+              style={{
+                padding: "10px 20px",
+                background: "transparent",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+                color: "#FFF",
+                fontSize: "12px",
+                cursor: "pointer",
+                borderRadius: "0px",
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+              }}
+            >
+              SEED DEFAULTS
+            </button>
+          )}
+          <button
+            onClick={handleAdd}
+            className="aeonik-mono"
+            style={{
+              padding: "10px 20px",
+              background: "#39FF14",
+              border: "none",
+              color: "#000",
+              fontSize: "12px",
+              cursor: "pointer",
+              borderRadius: "0px",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            + ADD CATEGORY
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -299,127 +366,148 @@ const CategoriesAdmin = () => {
             border: "1px dashed rgba(255, 255, 255, 0.2)",
           }}
         >
-          NO CATEGORIES FOUND. ADD YOUR FIRST CATEGORY.
+          NO CATEGORIES FOUND. ADD YOUR FIRST CATEGORY OR SEED DEFAULTS.
         </div>
       )}
 
       {/* Categories List */}
       {!loading && categories.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {categories.map((category) => {
-            const categoryId = category.id || category._id
-            return (
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "15px",
+                padding: "15px 20px",
+                background: "rgba(255, 255, 255, 0.03)",
+                border: `1px solid ${category.isActive ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 107, 107, 0.3)"}`,
+                opacity: category.isActive ? 1 : 0.6,
+                transition: "all 0.3s ease",
+              }}
+            >
+              {/* Color indicator */}
               <div
-                key={categoryId}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "15px",
-                  padding: "15px 20px",
-                  background: "rgba(255, 255, 255, 0.03)",
-                  border: `1px solid ${category.isActive ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 107, 107, 0.3)"}`,
-                  opacity: category.isActive ? 1 : 0.6,
-                  transition: "all 0.3s ease",
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                  background: category.color || "#39FF14",
+                  flexShrink: 0,
                 }}
-              >
-                {/* Name and description */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+              />
+
+              {/* Name and description */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  className="aeonik-mono"
+                  style={{
+                    fontSize: "14px",
+                    color: "#FFF",
+                    marginBottom: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  {category.name}
+                  {!category.isActive && (
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        padding: "2px 6px",
+                        background: "rgba(255, 107, 107, 0.2)",
+                        color: "#FF6B6B",
+                      }}
+                    >
+                      INACTIVE
+                    </span>
+                  )}
+                </div>
+                {category.description && (
                   <div
                     className="aeonik-mono"
                     style={{
-                      fontSize: "14px",
-                      color: "#FFF",
-                      marginBottom: "4px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
+                      fontSize: "12px",
+                      color: "rgba(255, 255, 255, 0.5)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    {category.name}
-                    {!category.isActive && (
-                      <span
-                        style={{
-                          fontSize: "10px",
-                          padding: "2px 6px",
-                          background: "rgba(255, 107, 107, 0.2)",
-                          color: "#FF6B6B",
-                        }}
-                      >
-                        INACTIVE
-                      </span>
-                    )}
+                    {category.description}
                   </div>
-                  {category.description && (
-                    <div
-                      className="aeonik-mono"
-                      style={{
-                        fontSize: "12px",
-                        color: "rgba(255, 255, 255, 0.5)",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {category.description}
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
-                  <button
-                    onClick={() => handleToggleActive(category)}
-                    className="aeonik-mono"
-                    style={{
-                      padding: "6px 12px",
-                      background: "transparent",
-                      border: `1px solid ${category.isActive ? "#FFD700" : "#39FF14"}`,
-                      color: category.isActive ? "#FFD700" : "#39FF14",
-                      fontSize: "10px",
-                      cursor: "pointer",
-                      borderRadius: "0px",
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    {category.isActive ? "DISABLE" : "ENABLE"}
-                  </button>
-                  <button
-                    onClick={() => handleEdit(category)}
-                    className="aeonik-mono"
-                    style={{
-                      padding: "6px 12px",
-                      background: "transparent",
-                      border: "1px solid rgba(255, 255, 255, 0.3)",
-                      color: "#FFF",
-                      fontSize: "10px",
-                      cursor: "pointer",
-                      borderRadius: "0px",
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    EDIT
-                  </button>
-                  <button
-                    onClick={() => handleDelete(categoryId!)}
-                    disabled={deletingId === categoryId}
-                    className="aeonik-mono"
-                    style={{
-                      padding: "6px 12px",
-                      background: deletingId === categoryId ? "rgba(255, 107, 107, 0.2)" : "transparent",
-                      border: "1px solid #FF6B6B",
-                      color: "#FF6B6B",
-                      fontSize: "10px",
-                      cursor: deletingId === categoryId ? "not-allowed" : "pointer",
-                      borderRadius: "0px",
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    {deletingId === categoryId ? "..." : "DELETE"}
-                  </button>
-                </div>
+                )}
               </div>
-            )
-          })}
+
+              {/* Slug */}
+              <div
+                className="aeonik-mono"
+                style={{
+                  fontSize: "11px",
+                  color: "rgba(255, 255, 255, 0.4)",
+                  padding: "4px 8px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                }}
+              >
+                {category.slug}
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                <button
+                  onClick={() => handleToggleActive(category)}
+                  className="aeonik-mono"
+                  style={{
+                    padding: "6px 12px",
+                    background: "transparent",
+                    border: `1px solid ${category.isActive ? "#FFD700" : "#39FF14"}`,
+                    color: category.isActive ? "#FFD700" : "#39FF14",
+                    fontSize: "10px",
+                    cursor: "pointer",
+                    borderRadius: "0px",
+                    letterSpacing: "1px",
+                  }}
+                >
+                  {category.isActive ? "DISABLE" : "ENABLE"}
+                </button>
+                <button
+                  onClick={() => handleEdit(category)}
+                  className="aeonik-mono"
+                  style={{
+                    padding: "6px 12px",
+                    background: "transparent",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                    color: "#FFF",
+                    fontSize: "10px",
+                    cursor: "pointer",
+                    borderRadius: "0px",
+                    letterSpacing: "1px",
+                  }}
+                >
+                  EDIT
+                </button>
+                <button
+                  onClick={() => handleDelete(category.id)}
+                  disabled={deletingId === category.id}
+                  className="aeonik-mono"
+                  style={{
+                    padding: "6px 12px",
+                    background: deletingId === category.id ? "rgba(255, 107, 107, 0.2)" : "transparent",
+                    border: "1px solid #FF6B6B",
+                    color: "#FF6B6B",
+                    fontSize: "10px",
+                    cursor: deletingId === category.id ? "not-allowed" : "pointer",
+                    borderRadius: "0px",
+                    letterSpacing: "1px",
+                  }}
+                >
+                  {deletingId === category.id ? "..." : "DELETE"}
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -488,7 +576,7 @@ const CategoriesAdmin = () => {
                   label=""
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="E.G., TECHNOLOGY"
+                  placeholder="E.G., WEB DESIGN"
                   required
                   style={{ marginBottom: 0 }}
                 />
@@ -517,6 +605,51 @@ const CategoriesAdmin = () => {
                 />
               </div>
 
+              <div style={{ marginBottom: "20px" }}>
+                <label className="aeonik-mono" style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
+                  COLOR
+                </label>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "10px" }}>
+                  {predefinedColors.map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => {
+                        setFormData({ ...formData, color })
+                        playClickSound()
+                      }}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        background: color,
+                        border: formData.color === color ? "3px solid #FFF" : "2px solid transparent",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <input
+                    type="color"
+                    value={formData.color}
+                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      border: "none",
+                      borderRadius: "0px",
+                      cursor: "pointer",
+                      background: "transparent",
+                    }}
+                  />
+                  <span className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)" }}>
+                    OR PICK CUSTOM COLOR
+                  </span>
+                </div>
+              </div>
+
               <div style={{ marginBottom: "25px" }}>
                 <label
                   className="aeonik-mono"
@@ -535,7 +668,7 @@ const CategoriesAdmin = () => {
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                     style={{ width: "18px", height: "18px" }}
                   />
-                  ACTIVE (VISIBLE TO USERS)
+                  ACTIVE (VISIBLE IN DROPDOWNS)
                 </label>
               </div>
 
@@ -590,4 +723,4 @@ const CategoriesAdmin = () => {
   )
 }
 
-export default CategoriesAdmin
+export default ProjectCategoriesAdmin

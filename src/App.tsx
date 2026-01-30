@@ -27,6 +27,7 @@ import Articles from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
+import ClientProtectedRoute from './components/ClientProtectedRoute';
 import EmployeeProtectedRoute from './components/EmployeeProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import AuthNavigationHandler from './components/AuthNavigationHandler';
@@ -91,9 +92,9 @@ export default function App() {
             <Route 
               path="/dashboard" 
               element={
-                <ProtectedRoute>
+                <ClientProtectedRoute>
                   <Dashboard />
-                </ProtectedRoute>
+                </ClientProtectedRoute>
               } 
             />
             <Route 
