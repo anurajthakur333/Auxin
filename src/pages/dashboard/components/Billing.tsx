@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { API_BASE_URL, getAuthToken } from "../../../lib/apiConfig"
-import InvoicePDF from "../../../components/InvoicePDF"
 import Input from "../../../components/ui/Input"
 
 interface BillingInfo {
@@ -66,11 +66,11 @@ interface Invoice {
 }
 
 const Billing = () => {
+  const navigate = useNavigate()
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [payingInvoiceId, setPayingInvoiceId] = useState<string | null>(null)
   
   // Billing info state
@@ -614,7 +614,7 @@ const Billing = () => {
                 e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)"
                 e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"
               }}
-                onClick={() => setSelectedInvoice(invoice)}
+                onClick={() => navigate(`/invoice/${invoice.id}`)}
             >
               <div
                 style={{
@@ -702,13 +702,6 @@ const Billing = () => {
         </div>
       </div>
 
-      {selectedInvoice && (
-        <InvoicePDF
-          invoice={selectedInvoice}
-          onClose={() => setSelectedInvoice(null)}
-          onPay={selectedInvoice.status !== "paid" ? () => handlePayInvoice(selectedInvoice) : undefined}
-        />
-      )}
     </>
   )
 }
