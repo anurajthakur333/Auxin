@@ -220,15 +220,17 @@ const InvoiceView = () => {
 
   if (loading) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        background: "#000",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#39FF14",
-        fontFamily: "AeonikMono-Regular, monospace",
-      }}>
+      <div 
+        className="aeonik-regular"
+        style={{
+          minHeight: "100vh",
+          background: "#000",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#39FF14",
+        }}
+      >
         LOADING INVOICE...
       </div>
     )
@@ -236,27 +238,29 @@ const InvoiceView = () => {
 
   if (error || !invoice) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        background: "#000",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "20px",
-        color: "#FF6B6B",
-        fontFamily: "AeonikMono-Regular, monospace",
-      }}>
+      <div 
+        className="aeonik-regular"
+        style={{
+          minHeight: "100vh",
+          background: "#000",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "20px",
+          color: "#FF6B6B",
+        }}
+      >
         <div>{error || "Invoice not found"}</div>
         <button
           onClick={() => navigate("/dashboard?tab=billing")}
+          className="aeonik-regular"
           style={{
             padding: "12px 24px",
             background: "#39FF14",
             color: "#000",
             border: "none",
             cursor: "pointer",
-            fontFamily: "AeonikMono-Regular, monospace",
           }}
         >
           BACK TO BILLING
@@ -268,24 +272,28 @@ const InvoiceView = () => {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#000",
+      background: "rgb(30, 30, 30)",
+      backdropFilter: "blur(10px)",
       padding: "40px",
       paddingBottom: "120px",
+      overflow: "hidden",
     }}>
       <div
         ref={invoiceRef}
+        className="aeonik-regular"
         style={{
           maxWidth: "900px",
           margin: "0 auto",
           background: "#000",
           padding: "60px",
+          position: "relative",
         }}
       >
         {/* Header */}
         <div style={{ marginBottom: "40px" }}>
-          <h1
+          <h1 className="aeonik-regular"
             style={{
-              fontSize: "clamp(90px, 18vw, 205px)",
+              fontSize: "clamp(90px, 18vw, 207px)",
               color: "#39FF14",
               fontWeight: 700,
               letterSpacing: "-4px",
@@ -300,7 +308,7 @@ const InvoiceView = () => {
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div style={{ fontSize: "17px", color: "#FFF", fontFamily: "",lineHeight: ""}}>
-            &nbsp; INVOICE NO : <span style={{ color: "#39FF14" }}>#{invoice.invoiceNumber}</span>
+          INVOICE NO : <span style={{ color: "#39FF14" }}>#{invoice.invoiceNumber}</span>
             </div>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: "17px", color: "#FFF", marginBottom: "8px", fontFamily: "" }}>
@@ -343,18 +351,18 @@ const InvoiceView = () => {
         {/* Items Table */}
         <div style={{ marginBottom: "30px" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead className="aeonik-light">
+            <thead className="aeonik-regular">
               <tr>
-                <th style={{ textAlign: "left", padding: "15px", borderBottom: "2px solid #39FF14", color: "#FFF", fontSize: "15px", textTransform: "uppercase", letterSpacing: "1px", fontFamily: "aeonik" }}>
+                <th style={{ textAlign: "left", padding: "px", borderBottom: "1px solid #39FF14", color: "#FFF", fontSize: "17px", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "normal" }}>
                   DESCRIPTION
                 </th>
-                <th style={{ textAlign: "right", padding: "15px", borderBottom: "2px solid #39FF14", color: "#FFF", fontSize: "15px", textTransform: "uppercase", letterSpacing: "1px", fontFamily: "" }}>
+                <th style={{ textAlign: "right", padding: "15px", borderBottom: "1px solid #39FF14", color: "#FFF", fontSize: "17px", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "normal" }}>
                   PRICE
                 </th>
-                <th style={{ textAlign: "right", padding: "15px", borderBottom: "2px solid #39FF14", color: "#FFF", fontSize: "15px", textTransform: "uppercase", letterSpacing: "1px", fontFamily: "" }}>
+                <th style={{ textAlign: "right", padding: "15px", borderBottom: "1px solid #39FF14", color: "#FFF", fontSize: "17px", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "normal" }}>
                   QUANTITY
                 </th>
-                <th style={{ textAlign: "right", padding: "15px", borderBottom: "2px solid #39FF14", color: "#FFF", fontSize: "15px", textTransform: "uppercase", letterSpacing: "1px", fontFamily: "" }}>
+                <th style={{ textAlign: "right", padding: "0px", borderBottom: "1px solid #39FF14", color: "#FFF", fontSize: "17px", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "normal" }}>
                   SUBTOTAL
                 </th>
               </tr>
@@ -362,7 +370,7 @@ const InvoiceView = () => {
             <tbody>
               {invoice.items.map((item, index) => (
                 <tr key={index}>
-                  <td style={{ padding: "15px", borderBottom: "", color: "#FFF", fontSize: "17px", fontFamily: "" }}>
+                  <td style={{ padding: "0px", borderBottom: "", color: "#FFF", fontSize: "17px", fontFamily: "" }}>
                     {index + 1}. {item.title}
                   </td>
                   <td style={{ padding: "15px", borderBottom: "", color: "#39FF14", fontSize: "17px", textAlign: "right", fontFamily: "" }}>
@@ -371,7 +379,7 @@ const InvoiceView = () => {
                   <td style={{ padding: "15px", borderBottom: "", color: "#FFF", fontSize: "17px", textAlign: "right", fontFamily: "" }}>
                     {item.quantity}
                   </td>
-                  <td style={{ padding: "15px", borderBottom: "", color: "#39FF14", fontSize: "17px", textAlign: "right", fontFamily: "" }}>
+                  <td style={{ padding: "0px", borderBottom: "", color: "#39FF14", fontSize: "17px", textAlign: "right", fontFamily: "" }}>
                     ${item.subtotal.toFixed(2)}
                   </td>
                 </tr>
@@ -381,82 +389,110 @@ const InvoiceView = () => {
          
         </div>
 
-        {/* Totals with Background */}
+        {/* Section with SVG Background extending outside container */}
         <div 
           style={{ 
             marginTop: "30px", 
             position: "relative",
-            backgroundImage: "url('/invoie.svg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            padding: "40px",
-            minHeight: "300px",
           }}
         >
-          <div style={{ position: "relative", zIndex: 1, marginLeft: "auto", maxWidth: "300px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: 600, fontFamily: "" }}>
+          {/* SVG Background - extends outside container to the left */}
+          <img 
+            src="/invoice.svg" 
+            alt=""
+            style={{
+              position: "absolute",
+              left: "-60px",
+              top: "54px",
+              height: "115%",
+              minHeight: "500px",
+              width: "auto",
+              objectFit: "contain",
+              objectPosition: "left center",
+              pointerEvents: "none",
+              zIndex: 0,
+            }}
+          />
+          
+          {/* Totals Content */}
+          <div style={{ position: "relative", zIndex: 1, marginLeft: "auto", maxWidth: "300px", padding: "40px 0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: "normal" }}>
                 DISCOUNT
               </span>
-              <span style={{ fontSize: "17px", color: "#39FF14", fontFamily: "" }}>
-                ${invoice.discount.toFixed(2)}
+              <span style={{ fontSize: "17px", color: "#39FF14" }}>
+                {invoice.discount}
               </span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: 600, fontFamily: "" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: "normal" }}>
                 SGST
               </span>
-              <span style={{ fontSize: "17px", color: "#39FF14", fontFamily: "" }}>
-                ${invoice.sgst.toFixed(2)}
+              <span style={{ fontSize: "17px", color: "#39FF14" }}>
+                {invoice.sgst}
               </span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: 600, fontFamily: "" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: "normal" }}>
                 CGST
               </span>
-              <span style={{ fontSize: "17px", color: "#39FF14", fontFamily: "" }}>
-                ${invoice.cgst.toFixed(2)}
+              <span style={{ fontSize: "17px", color: "#39FF14" }}>
+                {invoice.cgst}
               </span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "25px", paddingTop: "20px", borderTop: "" }}>
-                <span style={{ fontSize: "17px", color: "#FFF", fontFamily: "" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px", paddingTop: "20px" }}>
+              <span style={{ fontSize: "17px", color: "#FFF", fontWeight: 600 }}>
                 TOTAL
               </span>
-              <span style={{ fontSize: "px", color: "#39FF14", fontFamily: "" }}>
+              <span style={{ fontSize: "20px", color: "#39FF14", fontWeight: 600 }}>
                 ${invoice.total.toFixed(2)}
               </span>
             </div>
           </div>
+          
+          <div style={{ height: "1px", background: "#39FF14", position: "relative", zIndex: 1 }} />
+
+          {/* Payment Terms */}
+          {invoice.paymentTerms && (
+            <div style={{ padding: "30px 0", position: "relative", zIndex: 1 }}>
+              <div style={{ fontSize: "18px", color: "#FFF", lineHeight: "1.8" }}>
+                {invoice.paymentTerms}
+              </div>
+            </div>
+          )}
+
+          {/* Payment Method */}
+          {invoice.paymentMethod && Object.values(invoice.paymentMethod).some((v) => v) && (
+            <div style={{ paddingTop: "20px", position: "relative", zIndex: 1 }}>
+              <div style={{ fontSize: "22px", color: "#FFF", marginBottom: "20px", fontWeight: "normal" }}>
+                PAYMENT METHOD :
+              </div>
+              <div style={{ fontSize: "17px", lineHeight: "1.8" }}>
+                {invoice.paymentMethod.bankName && (
+                  <div><span style={{ color: "#FFF" }}>BANK NAME:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.bankName}</span></div>
+                )}
+                {invoice.paymentMethod.accountHolderName && (
+                  <div><span style={{ color: "#FFF" }}>ACCOUNT HOLDER NAME:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.accountHolderName}</span></div>
+                )}
+                {invoice.paymentMethod.accountNumber && (
+                  <div><span style={{ color: "#FFF" }}>ACCOUNT NUMBER:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.accountNumber}</span></div>
+                )}
+                {invoice.paymentMethod.routingNumber && (
+                  <div><span style={{ color: "#FFF" }}>ROUTING NUMBER:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.routingNumber}</span></div>
+                )}
+                {invoice.paymentMethod.swiftCode && (
+                  <div><span style={{ color: "#FFF" }}>SWIFT CODE:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.swiftCode}</span></div>
+                )}
+                {invoice.paymentMethod.branchAddress && (
+                  <div><span style={{ color: "#FFF" }}>BRANCH ADDRESS:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.branchAddress}</span></div>
+                )}
+                {invoice.paymentMethod.accountType && (
+                  <div><span style={{ color: "#FFF" }}>ACCOUNT TYPE:</span> <span style={{ color: "#39FF14" }}>{invoice.paymentMethod.accountType}</span></div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-        <div style={{ height: "2px", background: "#39FF14", marginTop: "0px" }} />
-
-        {/* Payment Terms */}
-        {invoice.paymentTerms && (
-          <div style={{ marginTop: "40px", padding: "20px", background: "rgba(57, 255, 20, 0.05)", borderLeft: "4px solid #39FF14" }}>
-            <div style={{ fontSize: "17px", color: "#FFF", lineHeight: "1.8", fontFamily: "" }}>
-              * {invoice.paymentTerms}
-            </div>
-          </div>
-        )}
-
-        {/* Payment Method */}
-        {invoice.paymentMethod && Object.values(invoice.paymentMethod).some((v) => v) && (
-          <div style={{ marginTop: "40px" }}>
-            <div style={{ fontSize: "14px", color: "#FFF", marginBottom: "20px", fontWeight: 600, fontFamily: "AeonikMono-Regular, monospace" }}>
-              PAYMENT METHOD :
-            </div>
-            <div style={{ fontSize: "14px", color: "#39FF14", lineHeight: "1.8", fontFamily: "AeonikMono-Regular, monospace" }}>
-              {invoice.paymentMethod.bankName && <div>BANK NAME: {invoice.paymentMethod.bankName}</div>}
-              {invoice.paymentMethod.accountHolderName && <div>ACCOUNT HOLDER NAME: {invoice.paymentMethod.accountHolderName}</div>}
-              {invoice.paymentMethod.accountNumber && <div>ACCOUNT NUMBER: {invoice.paymentMethod.accountNumber}</div>}
-              {invoice.paymentMethod.routingNumber && <div>ROUTING NUMBER: {invoice.paymentMethod.routingNumber}</div>}
-              {invoice.paymentMethod.swiftCode && <div>SWIFT CODE: {invoice.paymentMethod.swiftCode}</div>}
-              {invoice.paymentMethod.branchAddress && <div>BRANCH ADDRESS: {invoice.paymentMethod.branchAddress}</div>}
-              {invoice.paymentMethod.accountType && <div>ACCOUNT TYPE: {invoice.paymentMethod.accountType}</div>}
-            </div>
-          </div>
-        )}
 
         {/* Status Badge */}
         <div style={{ marginTop: "40px", textAlign: "center" }}>
@@ -468,7 +504,6 @@ const InvoiceView = () => {
               fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: "2px",
-              fontFamily: "AeonikMono-Regular, monospace",
               background: invoice.status === "paid" ? "rgba(57, 255, 20, 0.2)" : invoice.status === "overdue" ? "rgba(255, 107, 107, 0.2)" : "rgba(255, 193, 7, 0.2)",
               color: invoice.status === "paid" ? "#39FF14" : invoice.status === "overdue" ? "#FF6B6B" : "#FFC107",
               border: `1px solid ${invoice.status === "paid" ? "#39FF14" : invoice.status === "overdue" ? "#FF6B6B" : "#FFC107"}`,
@@ -492,10 +527,13 @@ const InvoiceView = () => {
           gap: "15px",
           background: "linear-gradient(transparent, rgba(0,0,0,0.95))",
           zIndex: 100,
+          backdropFilter: "blur(10px)",
+          borderTop: "1px solid rgb(60, 60, 60)",
         }}
       >
         <button
           onClick={() => navigate("/dashboard?tab=billing")}
+          className="aeonik-regular"
           style={{
             padding: "12px 24px",
             background: "transparent",
@@ -505,7 +543,6 @@ const InvoiceView = () => {
             cursor: "pointer",
             letterSpacing: "1px",
             textTransform: "uppercase",
-            fontFamily: "AeonikMono-Regular, monospace",
           }}
         >
           ← BACK
@@ -514,6 +551,7 @@ const InvoiceView = () => {
           <button
             onClick={handlePay}
             disabled={paying}
+            className="aeonik-regular"
             style={{
               padding: "12px 24px",
               background: "#39FF14",
@@ -524,7 +562,6 @@ const InvoiceView = () => {
               letterSpacing: "1px",
               textTransform: "uppercase",
               fontWeight: 600,
-              fontFamily: "AeonikMono-Regular, monospace",
               opacity: paying ? 0.7 : 1,
             }}
           >
@@ -533,6 +570,7 @@ const InvoiceView = () => {
         )}
         <button
           onClick={downloadPDF}
+          className="aeonik-regular"
           style={{
             padding: "12px 24px",
             background: "transparent",
@@ -542,7 +580,6 @@ const InvoiceView = () => {
             cursor: "pointer",
             letterSpacing: "1px",
             textTransform: "uppercase",
-            fontFamily: "AeonikMono-Regular, monospace",
           }}
         >
           DOWNLOAD PDF

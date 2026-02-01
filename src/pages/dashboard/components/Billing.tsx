@@ -50,6 +50,7 @@ interface PaymentMethod {
 interface Invoice {
   id: string
   invoiceNumber: string
+  projectCode?: string
   date: string
   dueDate: string
   billTo: ClientAddress
@@ -627,6 +628,11 @@ const Billing = () => {
                 <div>
                   <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF", marginBottom: "5px" }}>
                     {invoice.invoiceNumber}
+                    {invoice.projectCode && (
+                      <span style={{ marginLeft: "10px", color: "#39FF14", fontSize: "12px" }}>
+                        PROJECT: {invoice.projectCode}
+                      </span>
+                    )}
                   </div>
                   <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)" }}>
                       {invoice.items.length > 0 ? invoice.items[0].title : "INVOICE"}

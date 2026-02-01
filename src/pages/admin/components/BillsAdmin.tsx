@@ -76,6 +76,7 @@ const BillsAdmin = () => {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [editingInvoice, setEditingInvoice] = useState<any | null>(null)
 
   // Form data
   const [clientCode, setClientCode] = useState<string>("")
@@ -133,7 +134,8 @@ const BillsAdmin = () => {
 
   useEffect(() => {
     // Auto-fill billTo when client is found (including billing info)
-    if (selectedClient) {
+    // But only when NOT editing an existing invoice
+    if (selectedClient && !editingInvoice) {
       const billing = selectedClient.billingInfo || {}
       // Build full address from billing info
       const fullAddress = [
@@ -151,7 +153,7 @@ const BillsAdmin = () => {
         gstNumber: billing.gstNumber || "",
       })
     }
-  }, [selectedClient])
+  }, [selectedClient, editingInvoice])
 
   useEffect(() => {
     // Recalculate item subtotals
@@ -222,7 +224,12 @@ const BillsAdmin = () => {
 
       if (response.ok) {
         const data = await response.json()
-        setClientProjects(data.projects || [])
+        // Normalize project IDs
+        const normalizedProjects = (data.projects || []).map((p: any) => ({
+          ...p,
+          id: p.id || p._id,
+        }))
+        setClientProjects(normalizedProjects)
       } else {
         setClientProjects([])
       }
@@ -565,6 +572,232 @@ const BillsAdmin = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeView])
 
+  const handleEditInvoice = (invoice: any) => {
+    setEditingInvoice(invoice)
+    
+    // Populate form with invoice data
+    setClientCode(invoice.clientId?.clientCode || "")
+    setSelectedClient(invoice.clientId ? {
+      id: invoice.clientId._id || invoice.clientId.id,
+      name: invoice.clientId.name || "",
+      email: invoice.clientId.email || "",
+      clientCode: invoice.clientId.clientCode || "",
+      status: invoice.clientId.status || "active",
+      billingInfo: invoice.clientId.billingInfo,
+    } : null)
+    
+    // Set project code
+    const pCode = invoice.projectCode || ""
+    setProjectCode(pCode)
+    
+    // Handle projectId - it might be an object or just an ID string
+    if (invoice.projectId) {
+      const projectIdValue = typeof invoice.projectId === 'string' 
+        ? invoice.projectId 
+        : (invoice.projectId._id || invoice.projectId.id)
+      
+      // If projectId is an object with details, use them
+      if (typeof invoice.projectId === 'object' && invoice.projectId.name) {
+        setSelectedProject({
+          id: projectIdValue,
+          name: invoice.projectId.name || "",
+          projectCode: pCode,
+          category: invoice.projectId.category || "",
+          status: invoice.projectId.status || "",
+          budget: invoice.projectId.budget,
+          progress: invoice.projectId.progress || 0,
+          deadline: invoice.projectId.deadline || "",
+          startDate: invoice.projectId.startDate || "",
+        })
+      } else {
+        // projectId is just an ID, create a minimal project object
+        // The user will need to select from dropdown or the project will be fetched
+        setSelectedProject({
+          id: projectIdValue,
+          name: "",
+          projectCode: pCode,
+          category: "",
+          status: "",
+          budget: undefined,
+          progress: 0,
+          deadline: "",
+          startDate: "",
+        })
+      }
+    } else {
+      setSelectedProject(null)
+    }
+    
+    setDate(invoice.date ? invoice.date.split("T")[0] : "")
+    setDueDate(invoice.dueDate ? invoice.dueDate.split("T")[0] : "")
+    
+    setBillTo({
+      name: invoice.billTo?.name || "",
+      email: invoice.billTo?.email || "",
+      address: invoice.billTo?.address || "",
+      gstNumber: invoice.billTo?.gstNumber || "",
+    })
+    
+    setCompanyAddress({
+      companyName: invoice.companyAddress?.companyName || "Auxin Media Digital",
+      email: invoice.companyAddress?.email || "auxinmediadigital@gmail.com",
+      street: invoice.companyAddress?.street || "",
+      city: invoice.companyAddress?.city || "",
+      state: invoice.companyAddress?.state || "",
+      zip: invoice.companyAddress?.zip || "",
+      country: invoice.companyAddress?.country || "",
+    })
+    
+    setItems(invoice.items?.length > 0 ? invoice.items : [{ title: "", price: 0, quantity: 1, subtotal: 0 }])
+    setDiscount(invoice.discount || 0)
+    setSgst(invoice.sgst || 0)
+    setCgst(invoice.cgst || 0)
+    setPaymentTerms(invoice.paymentTerms || "")
+    setPaymentMethod({
+      bankName: invoice.paymentMethod?.bankName || "",
+      accountHolderName: invoice.paymentMethod?.accountHolderName || "",
+      accountNumber: invoice.paymentMethod?.accountNumber || "",
+      routingNumber: invoice.paymentMethod?.routingNumber || "",
+      swiftCode: invoice.paymentMethod?.swiftCode || "",
+      branchAddress: invoice.paymentMethod?.branchAddress || "",
+      accountType: invoice.paymentMethod?.accountType || "",
+    })
+    
+    setActiveView("create")
+    playClickSound()
+  }
+
+  const handleUpdateInvoice = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingInvoice) return
+    
+    setError(null)
+    setSuccess(null)
+
+    // Validation
+    if (!selectedClient || !clientCode) {
+      setError("Please enter a valid client code")
+      return
+    }
+    if (!selectedProject || !projectCode || projectCode.length !== 6) {
+      setError("Please enter a valid 6-character project code")
+      return
+    }
+    if (!date || !dueDate) {
+      setError("Please select date and due date")
+      return
+    }
+    if (!billTo.name || !billTo.email || !billTo.address) {
+      setError("Please fill in all bill to fields")
+      return
+    }
+    if (items.some((item) => !item.title || item.price <= 0 || item.quantity <= 0)) {
+      setError("Please fill in all item fields correctly")
+      return
+    }
+
+    try {
+      setSubmitting(true)
+      const adminToken = localStorage.getItem("adminToken")
+      if (!adminToken) {
+        setError("Admin authentication required")
+        return
+      }
+
+      const invoiceId = editingInvoice.id || editingInvoice._id
+      const requestBody = {
+        clientId: selectedClient.id,
+        projectCode: projectCode.trim(),
+        projectId: selectedProject?.id,
+        date,
+        dueDate,
+        billTo,
+        companyAddress,
+        items,
+        discount,
+        sgst,
+        cgst,
+        paymentTerms: paymentTerms || undefined,
+        paymentMethod: Object.values(paymentMethod).some((v) => v) ? paymentMethod : undefined,
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/admin/invoices/${invoiceId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Failed to update invoice" }))
+        throw new Error(errorData.error || "Failed to update invoice")
+      }
+
+      setSuccess("Invoice updated successfully!")
+      setEditingInvoice(null)
+      
+      // Reset form
+      setClientCode("")
+      setSelectedClient(null)
+      setProjectCode("")
+      setSelectedProject(null)
+      setDate("")
+      setDueDate("")
+      setBillTo({ name: "", email: "", address: "", gstNumber: "" })
+      setItems([{ title: "", price: 0, quantity: 1, subtotal: 0 }])
+      setDiscount(0)
+      setSgst(0)
+      setCgst(0)
+      setPaymentTerms("")
+      setPaymentMethod({
+        bankName: "",
+        accountHolderName: "",
+        accountNumber: "",
+        routingNumber: "",
+        swiftCode: "",
+        branchAddress: "",
+        accountType: "",
+      })
+      
+      // Switch to list view and refresh
+      setActiveView("list")
+    } catch (err) {
+      console.error("Error updating invoice:", err)
+      setError(err instanceof Error ? err.message : "Failed to update invoice")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingInvoice(null)
+    // Reset form
+    setClientCode("")
+    setSelectedClient(null)
+    setProjectCode("")
+    setSelectedProject(null)
+    setDate("")
+    setDueDate("")
+    setBillTo({ name: "", email: "", address: "", gstNumber: "" })
+    setItems([{ title: "", price: 0, quantity: 1, subtotal: 0 }])
+    setDiscount(0)
+    setSgst(0)
+    setCgst(0)
+    setPaymentTerms("")
+    setPaymentMethod({
+      bankName: "",
+      accountHolderName: "",
+      accountNumber: "",
+      routingNumber: "",
+      swiftCode: "",
+      branchAddress: "",
+      accountType: "",
+    })
+    playClickSound()
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "paid":
@@ -897,39 +1130,66 @@ const BillsAdmin = () => {
                     <div className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
                       {invoice.date ? new Date(invoice.date).toLocaleDateString().toUpperCase() : "N/A"}
                     </div>
-                    <button
-                      onClick={() => {
-                        playClickSound()
-                        handleDeleteInvoice(invoice.id || invoice._id)
-                      }}
-                      disabled={deletingInvoiceId === (invoice.id || invoice._id)}
-                      className="aeonik-mono"
-                      style={{
-                        padding: "8px 16px",
-                        background: deletingInvoiceId === (invoice.id || invoice._id) ? "rgba(255, 107, 107, 0.3)" : "transparent",
-                        border: "1px solid #FF6B6B",
-                        color: "#FF6B6B",
-                        fontSize: "11px",
-                        cursor: deletingInvoiceId === (invoice.id || invoice._id) ? "not-allowed" : "pointer",
-                        borderRadius: "0px",
-                        letterSpacing: "1px",
-                        textTransform: "uppercase",
-                        whiteSpace: "nowrap",
-                        transition: "all 0.3s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (deletingInvoiceId !== (invoice.id || invoice._id)) {
-                          e.currentTarget.style.background = "rgba(255, 107, 107, 0.1)"
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (deletingInvoiceId !== (invoice.id || invoice._id)) {
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button
+                        onClick={() => handleEditInvoice(invoice)}
+                        className="aeonik-mono"
+                        style={{
+                          padding: "8px 16px",
+                          background: "transparent",
+                          border: "1px solid #39FF14",
+                          color: "#39FF14",
+                          fontSize: "11px",
+                          cursor: "pointer",
+                          borderRadius: "0px",
+                          letterSpacing: "1px",
+                          textTransform: "uppercase",
+                          whiteSpace: "nowrap",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
+                        }}
+                        onMouseLeave={(e) => {
                           e.currentTarget.style.background = "transparent"
-                        }
-                      }}
-                    >
-                      {deletingInvoiceId === (invoice.id || invoice._id) ? "DELETING..." : "DELETE"}
-                    </button>
+                        }}
+                      >
+                        EDIT
+                      </button>
+                      <button
+                        onClick={() => {
+                          playClickSound()
+                          handleDeleteInvoice(invoice.id || invoice._id)
+                        }}
+                        disabled={deletingInvoiceId === (invoice.id || invoice._id)}
+                        className="aeonik-mono"
+                        style={{
+                          padding: "8px 16px",
+                          background: deletingInvoiceId === (invoice.id || invoice._id) ? "rgba(255, 107, 107, 0.3)" : "transparent",
+                          border: "1px solid #FF6B6B",
+                          color: "#FF6B6B",
+                          fontSize: "11px",
+                          cursor: deletingInvoiceId === (invoice.id || invoice._id) ? "not-allowed" : "pointer",
+                          borderRadius: "0px",
+                          letterSpacing: "1px",
+                          textTransform: "uppercase",
+                          whiteSpace: "nowrap",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (deletingInvoiceId !== (invoice.id || invoice._id)) {
+                            e.currentTarget.style.background = "rgba(255, 107, 107, 0.1)"
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (deletingInvoiceId !== (invoice.id || invoice._id)) {
+                            e.currentTarget.style.background = "transparent"
+                          }
+                        }}
+                      >
+                        {deletingInvoiceId === (invoice.id || invoice._id) ? "DELETING..." : "DELETE"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -939,18 +1199,40 @@ const BillsAdmin = () => {
         </div>
       ) : (
         <div>
-          <h3
-            className="aeonik-mono"
-            style={{
-              fontSize: "clamp(20px, 2.5vw, 28px)",
-              color: "#FFF",
-              marginBottom: "25px",
-              letterSpacing: "-1px",
-              fontWeight: 600,
-            }}
-          >
-            CREATE INVOICE
-          </h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+            <h3
+              className="aeonik-mono"
+              style={{
+                fontSize: "clamp(20px, 2.5vw, 28px)",
+                color: "#FFF",
+                letterSpacing: "-1px",
+                fontWeight: 600,
+                margin: 0,
+              }}
+            >
+              {editingInvoice ? `EDIT INVOICE - ${editingInvoice.invoiceNumber}` : "CREATE INVOICE"}
+            </h3>
+            {editingInvoice && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="aeonik-mono"
+                style={{
+                  padding: "10px 20px",
+                  background: "transparent",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  color: "#FFF",
+                  fontSize: "12px",
+                  cursor: "pointer",
+                  borderRadius: "0px",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                }}
+              >
+                CANCEL EDIT
+              </button>
+            )}
+          </div>
 
       {error && (
         <div
@@ -984,7 +1266,7 @@ const BillsAdmin = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={editingInvoice ? handleUpdateInvoice : handleSubmit}>
         {/* Client Selection */}
         <div style={{ marginBottom: "30px" }}>
           <label className="aeonik-mono" style={{ display: "block", marginBottom: "10px", fontSize: "14px" }}>
@@ -1084,9 +1366,10 @@ const BillsAdmin = () => {
                 </p>
               ) : clientProjects.length > 0 ? (
                 <select
-                  value={selectedProject?.id || ""}
+                  value={projectCode || ""}
                   onChange={(e) => {
-                    const project = clientProjects.find(p => p.id === e.target.value)
+                    const selectedCode = e.target.value
+                    const project = clientProjects.find(p => p.projectCode === selectedCode)
                     if (project) {
                       setSelectedProject(project)
                       setProjectCode(project.projectCode)
@@ -1112,11 +1395,11 @@ const BillsAdmin = () => {
                   <option value="" style={{ background: "#1a1a1a" }}>-- SELECT A PROJECT --</option>
                   {clientProjects.map((project) => (
                     <option 
-                      key={project.id} 
-                      value={project.id}
+                      key={project.id || project.projectCode} 
+                      value={project.projectCode}
                       style={{ background: "#1a1a1a" }}
                     >
-                      {project.projectCode} - {project.name} ({project.category.toUpperCase()})
+                      {project.projectCode} - {project.name} ({project.category?.toUpperCase() || 'N/A'})
                     </option>
                   ))}
                 </select>
@@ -1689,35 +1972,66 @@ const BillsAdmin = () => {
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="aeonik-mono"
-          style={{
-            padding: "15px 30px",
-            background: submitting ? "rgba(57, 255, 20, 0.3)" : "transparent",
-            border: "1px solid #39FF14",
-            color: "#39FF14",
-            fontSize: "14px",
-            cursor: submitting ? "not-allowed" : "pointer",
-            borderRadius: "0px",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            if (!submitting) {
-              e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!submitting) {
-              e.currentTarget.style.background = "transparent"
-            }
-          }}
-        >
-          {submitting ? "CREATING..." : "CREATE INVOICE"}
-        </button>
+        <div style={{ display: "flex", gap: "15px" }}>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="aeonik-mono"
+            style={{
+              padding: "15px 30px",
+              background: submitting ? "rgba(57, 255, 20, 0.3)" : "transparent",
+              border: "1px solid #39FF14",
+              color: "#39FF14",
+              fontSize: "14px",
+              cursor: submitting ? "not-allowed" : "pointer",
+              borderRadius: "0px",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              if (!submitting) {
+                e.currentTarget.style.background = "rgba(57, 255, 20, 0.1)"
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!submitting) {
+                e.currentTarget.style.background = "transparent"
+              }
+            }}
+          >
+            {submitting 
+              ? (editingInvoice ? "UPDATING..." : "CREATING...") 
+              : (editingInvoice ? "UPDATE INVOICE" : "CREATE INVOICE")}
+          </button>
+          {editingInvoice && (
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="aeonik-mono"
+              style={{
+                padding: "15px 30px",
+                background: "transparent",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+                color: "#FFF",
+                fontSize: "14px",
+                cursor: "pointer",
+                borderRadius: "0px",
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.5)"
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)"
+              }}
+            >
+              CANCEL
+            </button>
+          )}
+        </div>
       </form>
         </div>
       )}

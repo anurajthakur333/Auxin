@@ -6,8 +6,15 @@ interface SystemStat {
   value: string | number
 }
 
+interface Project {
+  id: string
+  status: "active" | "pending" | "completed" | "on-hold"
+}
+
 const Analytics = () => {
   const [totalUsers, setTotalUsers] = useState<number | null>(null)
+  const [totalProjects, setTotalProjects] = useState<number | null>(null)
+  const [activeProjects, setActiveProjects] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchTotalUsers = async () => {
@@ -37,12 +44,42 @@ const Analytics = () => {
       }
     }
 
+    const fetchProjects = async () => {
+      try {
+        const adminToken = localStorage.getItem("adminToken")
+        if (!adminToken) {
+          return
+        }
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/projects`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+        })
+
+        if (!response.ok) {
+          return
+        }
+
+        const data = await response.json()
+        const projectsArray: Project[] = Array.isArray(data.projects) ? data.projects : []
+        setTotalProjects(projectsArray.length)
+        setActiveProjects(projectsArray.filter(p => p.status === "active").length)
+      } catch {
+        // Silent fail for analytics; avoid blocking dashboard
+      }
+    }
+
     fetchTotalUsers()
+    fetchProjects()
   }, [])
 
   const systemStats: SystemStat[] = [
     { label: "TOTAL USERS", value: totalUsers ?? "—" },
-    { label: "ACTIVE PROJECTS", value: 28 },
+    { label: "TOTAL PROJECTS", value: totalProjects ?? "—" },
+    { label: "ACTIVE PROJECTS", value: activeProjects ?? "—" },
     { label: "MONTHLY REVENUE", value: "$285K" },
     { label: "COMPLETION RATE", value: "94%" },
   ]
