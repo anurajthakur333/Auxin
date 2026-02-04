@@ -849,18 +849,7 @@ const Signup: React.FC = () => {
               SIGN UP WITH GOOGLE
             </button>
 
-            <p
-              className="aeonik-mono"
-              style={{
-                color: '#888',
-                fontSize: '0.8rem',
-                lineHeight: 1.6,
-                textAlign: 'center',
-                marginBottom: '1rem'
-              }}
-            >
-              USE YOUR GOOGLE ACCOUNT FOR QUICK ACCESS. NO PASSWORD NEEDED.
-            </p>
+         
 
             {/* Login Link */}
             <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>

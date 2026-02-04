@@ -15,6 +15,7 @@ const Login: React.FC = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   const { login, googleLogin, user } = useAuth();
   const navigate = useNavigate();
@@ -123,6 +124,24 @@ const Login: React.FC = () => {
     } catch (error) {
       console.error('Setup error:', error);
     }
+  }, []);
+
+  // Track viewport width for responsive inline styles
+  useEffect(() => {
+    const checkMobile = () => {
+      try {
+        setIsMobile(window.innerWidth <= 693);
+      } catch (error) {
+        console.error('Viewport check error:', error);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -348,14 +367,17 @@ const Login: React.FC = () => {
               marginBottom: '2rem'
             }} />
 
-            {/* Horizontal layout: left = email/password, right = Google login */}
-            <div style={{
-              display: 'flex',
-              gap: '2rem',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap'
-            }}>
+            {/* Layout: left = email/password, right = Google login */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? '1rem' : '2rem',
+                alignItems: isMobile ? 'stretch' : 'flex-start',
+                justifyContent: 'space-between',
+                flexWrap: isMobile ? 'nowrap' : 'wrap',
+              }}
+            >
               {/* Left side: Email and Password fields */}
               <div style={{ flex: 1, minWidth: '260px' }}>
                 {/* Email Field */}
@@ -637,7 +659,15 @@ const Login: React.FC = () => {
               </div>
 
               {/* Right side: Google login */}
-              <div style={{ flex: 1, minWidth: '260px', paddingTop: '30px', paddingBottom: '30px' }}>
+              <div
+                style={{
+                  flex: 1,
+                  minWidth: isMobile ? '100%' : '250px',
+                  paddingTop: '0px',
+                  paddingBottom: isMobile ? '0px' : '30px',
+                  marginTop: isMobile ? '0rem' : '0rem',
+                }}
+              >
                 {/* Google Login Button */}
                 <button
                   type="button"
@@ -660,7 +690,8 @@ const Login: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.5rem'
+                    gap: '0.5rem',
+                    marginTop: isMobile ? 0 : '1.82rem',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#39FF14';
@@ -680,21 +711,16 @@ const Login: React.FC = () => {
                   LOGIN WITH GOOGLE
                 </button>
 
-                <p
-                  className="aeonik-mono"
-                  style={{
-                    color: '#888',
-                    fontSize: '0.8rem',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  USE YOUR GOOGLE ACCOUNT FOR QUICK ACCESS. NO PASSWORD NEEDED.
-                </p>
+        
               </div>
             </div>
 
             {/* Forgot Password */}
-            <div style={{ marginTop: '1.5rem', marginBottom: '1rem' }}>
+            <div style={{ 
+              marginTop: '1.5rem', 
+              marginBottom: '1rem',
+              textAlign: isMobile ? 'center' : 'left'
+            }}>
               <Link 
                 to="/forgot-password" 
                 className="aeonik-mono"
@@ -702,9 +728,9 @@ const Login: React.FC = () => {
                   color: '#39FF14', 
                   textDecoration: 'none',
                   fontSize: '0.9rem',
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  alignItems: 'flex-start'
+                  display: isMobile ? 'inline-block' : 'flex',
+                  justifyContent: isMobile ? 'center' : 'flex-start',
+                  alignItems: isMobile ? 'center' : 'flex-start'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.textDecoration = 'underline';
@@ -718,27 +744,24 @@ const Login: React.FC = () => {
             </div>
 
             {/* Sign Up Link */}
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
               <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem', display: 'flex' }}>
-                DON'T HAVE AN ACCOUNT?{' '}
+                {' '}
               </span>
-              <Link 
-                to="/signup" 
-                className="aeonik-mono"
-                style={{ 
-                  color: '#39FF14', 
-                  textDecoration: 'none',
-                  fontSize: '0.9rem',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.textDecoration = 'underline';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.textDecoration = 'none';
-                }}
-              >
-                CREATE ACCOUNT
-              </Link>
+              <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
+                DON'T HAVE AN ACCOUNT?{' '}
+                <Link 
+                  to="/signup" 
+                  className="aeonik-mono"
+                  style={{ 
+                    color: '#39FF14', 
+                    textDecoration: 'underline',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  CREATE ACCOUNT
+                </Link>
+              </span>
             </div>
           </form>
         </div>
