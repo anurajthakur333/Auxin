@@ -659,10 +659,10 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
                       <div
                         style={{
                           width: "100%",
-                          padding: "6px 8px",
-                          background: "rgba(0, 0, 0, 0.9)",
+                          padding: "6px 0",
+                          background: "transparent",
                           borderRadius: "0px",
-                          border: "1px solid rgba(255, 255, 255, 0.12)",
+                          border: "none",
                           display: "flex",
                           gap: "2px",
                         }}
