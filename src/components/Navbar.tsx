@@ -121,6 +121,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(true);
   const [navWidth, setNavWidth] = useState(1920);
+  const [isMobile, setIsMobile] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuth();
   const playClickSound = useSound(clickSound, { volume: 0.3});
@@ -140,6 +141,17 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Detect mobile viewport to hide bottom navbar on small screens
+  useEffect(() => {
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    updateIsMobile();
+    window.addEventListener("resize", updateIsMobile);
+    return () => window.removeEventListener("resize", updateIsMobile);
   }, []);
 
   // Track navbar width for LiquidGlass
@@ -202,7 +214,8 @@ const Navbar = () => {
         onMenuClose={() => playClickSound()}
       />
       
-      {/* Bottom Navbar */}
+      {/* Bottom Navbar (desktop / larger screens only) */}
+      {!isMobile && (
       <div 
         ref={navRef}
         className="navbar navbar-expand-xxl fixed-bottom" 
@@ -294,6 +307,7 @@ const Navbar = () => {
       </div>
       </div>
     </div>
+    )}
     </>
   );
 };
