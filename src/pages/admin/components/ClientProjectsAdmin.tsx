@@ -652,16 +652,40 @@ const ClientProjectsAdmin = ({ clientId, clientName, clientCode, onClose }: Clie
                       {project.progress}%
                     </span>
                   </div>
-                  <div style={{ width: "100%", height: "4px", background: "rgba(255,255,255,0.1)", borderRadius: "0px" }}>
-                    <div
-                      style={{
-                        width: `${project.progress}%`,
-                        height: "100%",
-                        background: getStatusColor(project.status),
-                        transition: "width 0.3s ease"
-                      }}
-                    />
-                  </div>
+                  {(() => {
+                    const totalSegments = 50;
+                    const activeSegments = Math.round((project.progress / 100) * totalSegments);
+                    return (
+                      <div
+                        style={{
+                          width: "100%",
+                          padding: "6px 8px",
+                          background: "rgba(0, 0, 0, 0.9)",
+                          borderRadius: "0px",
+                          border: "1px solid rgba(255, 255, 255, 0.12)",
+                          display: "flex",
+                          gap: "2px",
+                        }}
+                      >
+                        {Array.from({ length: totalSegments }).map((_, index) => {
+                          const filled = index < activeSegments;
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                flex: 1,
+                                height: "40px",
+                                borderRadius: "0px",
+                                background: filled ? "#39FF14" : "rgba(255, 255, 255, 0.18)",
+                                opacity: filled ? 1 : 0.7,
+                                transition: "background 0.3s ease, opacity 0.3s ease",
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "15px", flexWrap: "wrap" }}>

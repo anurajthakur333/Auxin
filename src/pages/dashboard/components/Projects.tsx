@@ -419,12 +419,10 @@ const Projects = () => {
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"
                 e.currentTarget.style.borderColor = getStatusColor(project.status)
-                e.currentTarget.style.transform = "translateY(-5px)"
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)"
                 e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"
-                e.currentTarget.style.transform = "translateY(0)"
               }}
             >
               {/* Header */}
