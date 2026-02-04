@@ -473,7 +473,7 @@ const Overview = () => {
                   </div>
                 </div>
 
-                {/* Progress Bar */}
+                {/* Progress Bar - segmented UI to match projects grid */}
                 <div style={{ marginTop: "15px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
                     <span className="aeonik-mono" style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.6)" }}>
@@ -483,24 +483,40 @@ const Overview = () => {
                       {project.progress}%
                     </span>
                   </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "6px",
-                      background: "rgba(255, 255, 255, 0.1)",
-                      borderRadius: "0px",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${project.progress}%`,
-                        height: "100%",
-                        background: "#39FF14",
-                        transition: "width 0.5s ease",
-                      }}
-                    />
-                  </div>
+                  {(() => {
+                    const totalSegments = 50;
+                    const activeSegments = Math.round((project.progress / 100) * totalSegments);
+                    return (
+                      <div
+                        style={{
+                          width: "100%",
+                          padding: "4px 0",
+                          background: "transparent",
+                          borderRadius: "0px",
+                          border: "none",
+                          display: "flex",
+                          gap: "3px",
+                        }}
+                      >
+                        {Array.from({ length: totalSegments }).map((_, index) => {
+                          const filled = index < activeSegments;
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                flex: 1,
+                                height: "100px",
+                                borderRadius: "0px",
+                                background: filled ? "#39FF14" : "rgba(255, 255, 255, 0.25)",
+                                opacity: filled ? 1 : 0.8,
+                                transition: "background 0.3s ease, opacity 0.3s ease",
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
