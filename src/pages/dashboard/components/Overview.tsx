@@ -358,37 +358,7 @@ const Overview = () => {
           </div>
         </div>
 
-        {/* Upcoming Meetings Stat */}
-        <div
-          style={{
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            padding: "30px",
-            borderRadius: "0px",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(57, 255, 20, 0.05)"
-            e.currentTarget.style.borderColor = "#39FF14"
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)"
-            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"
-          }}
-        >
-          <div
-            className="aeonik-mono"
-            style={{ fontSize: "clamp(32px, 4vw, 48px)", color: "#39FF14", fontWeight: 600, lineHeight: "1" }}
-          >
-            {appointments.length}
-          </div>
-          <div
-            className="aeonik-mono"
-            style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", marginTop: "10px", letterSpacing: "1px" }}
-          >
-            UPCOMING MEETINGS
-          </div>
-        </div>
+        {/* Upcoming Meetings Stat - hidden for now */}
 
         {/* Notifications Stat */}
         <div
@@ -537,7 +507,8 @@ const Overview = () => {
           </div>
         </div>
 
-        {/* Upcoming Meetings Section */}
+        {/* Upcoming Meetings Section - hidden for now */}
+        {false && (
         <div>
           <h2
             className="aeonik-mono"
@@ -727,6 +698,7 @@ const Overview = () => {
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* Recent Notifications */}

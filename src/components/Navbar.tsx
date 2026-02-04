@@ -166,38 +166,47 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  const menuItems = [
+  // Base menu items (used differently on mobile vs desktop)
+  const baseMenuItems = [
     { label: 'HOME', ariaLabel: 'Go to home page', link: '/' },
     { label: 'EXPERIENCE', ariaLabel: 'View experience section', link: '/#experience' },
     { label: 'ARTICLES', ariaLabel: 'View articles page', link: '/articles' },
     { label: 'ABOUT US', ariaLabel: 'Learn about us', link: '/#about' },
     { label: 'MEETINGS', ariaLabel: 'Book a meeting', link: '/meeting' },
-    ...(user 
-      ? [
-          // Only show Dashboard link if user is a client (has clientCode)
-          ...(user.clientCode 
-            ? [{ label: 'DASHBOARD', ariaLabel: 'Go to dashboard', link: '/dashboard' }]
-            : []
-          ),
-          { label: 'PROFILE', ariaLabel: 'Open profile menu', link: '#profile' },
-          { 
-            label: 'LOGOUT', 
-            ariaLabel: 'Logout from your account', 
-            link: '#',
-            onClick: () => {
-              playClickSound();
-              logout();
-              navigate('/');
-            }
-          }
-        ]
-      : [{ label: 'LOGIN', ariaLabel: 'Login to your account', link: '/login' }]
-    ),
   ];
+
+  const authItems = user
+    ? [
+        ...(user.clientCode
+          ? [{ label: 'DASHBOARD', ariaLabel: 'Go to dashboard', link: '/dashboard' }]
+          : []),
+        { label: 'PROFILE', ariaLabel: 'View profile', link: '/profile' },
+        {
+          label: 'LOGOUT',
+          ariaLabel: 'Logout from your account',
+          link: '#',
+          onClick: () => {
+            playClickSound();
+            logout();
+            navigate('/');
+          },
+        },
+      ]
+    : [{ label: 'LOGIN', ariaLabel: 'Login to your account', link: '/login' }];
+
+  // On mobile: show all links in the menu (no bottom navbar).
+  // On desktop: hide the links that already exist in the bottom navbar.
+  const menuItems = isMobile
+    ? [...baseMenuItems, ...authItems]
+    : [
+        // Only HOME plus auth-related items on desktop menu
+        baseMenuItems[0],
+        ...authItems,
+      ];
 
   return (
     <>
-      {/* StaggeredMenu at top */}
+      {/* StaggeredMenu at top (all screens) */}
       <StaggeredMenu
         position="right"
         items={menuItems}

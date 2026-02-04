@@ -26,6 +26,7 @@ import Dashboard from './pages/Dashboard';
 import Articles from './pages/Articles';
 import ArticleDetail from './pages/ArticleDetail';
 import NotFound from './pages/NotFound';
+import Profile from './pages/Profile';
 import InvoiceView from './pages/InvoiceView';
 import ProtectedRoute from './components/ProtectedRoute';
 import ClientProtectedRoute from './components/ClientProtectedRoute';
@@ -97,6 +98,14 @@ export default function App() {
                   <Dashboard />
                 </ClientProtectedRoute>
               } 
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
             />
             <Route 
               path="/invoice/:invoiceId" 
