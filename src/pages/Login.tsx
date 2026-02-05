@@ -301,6 +301,13 @@ const Login: React.FC = () => {
               max-width: 100% !important;
             }
           }
+          /* On narrow screens, put CREATE ACCOUNT on its own line under the question */
+          @media (max-width: 500px) {
+            .login-signup-link {
+              display: block !important;
+              margin-top: 0.25rem;
+            }
+          }
         `}
       </style>
 
@@ -765,18 +772,19 @@ const Login: React.FC = () => {
 
             {/* Sign Up Link */}
             <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-              <span className="aeonik-mono" style={{ color: '#888', fontSize: isExtraSmall ? '0.8rem' : '0.9rem', display: 'flex' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: isExtraSmall ? '0.8rem' : '0.9rem', display: 'flex', justifyContent: 'center' }}>
                 {' '}
               </span>
               <span className="aeonik-mono" style={{ fontSize: isExtraSmall ? '0.8rem' : '0.9rem' }}>
-                <span style={{ color: '#888' }}>DON'T HAVE AN ACCOUNT? </span>
+                <span style={{ color: '#888' }}>DON'T HAVE AN ACCOUNT?</span>
                 <Link 
                   to="/signup" 
-                  className="aeonik-mono"
+                  className="aeonik-mono login-signup-link"
                   style={{
                     color: '#39FF14',
                     textDecoration: 'underline',
                     fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                    marginLeft: '0.25rem',
                   }}
                 >
                   CREATE ACCOUNT

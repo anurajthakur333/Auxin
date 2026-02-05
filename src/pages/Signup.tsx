@@ -19,6 +19,8 @@ const Signup: React.FC = () => {
   const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isExtraSmall, setIsExtraSmall] = useState(false);
   
   const { signup, googleLogin, user } = useAuth();
   const navigate = useNavigate();
@@ -98,6 +100,28 @@ const Signup: React.FC = () => {
     } catch (error) {
       console.error('Setup error:', error);
     }
+  }, []);
+
+  // Track viewport width for responsive layout
+  // - isSmallScreen: layout tweaks (e.g., gap) below 682px
+  // - isExtraSmall: tighter spacing below 400px
+  useEffect(() => {
+    const handleResize = () => {
+      try {
+        const w = window.innerWidth;
+        setIsSmallScreen(w < 682);
+        setIsExtraSmall(w <= 400);
+      } catch (error) {
+        console.error('Viewport check error (Signup):', error);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -215,6 +239,15 @@ const Signup: React.FC = () => {
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
           }
+          /* Signup two-column grid gap: 0 on small screens, 2rem on >= 682px */
+          .signup-grid-two-column {
+            gap: 0;
+          }
+          @media (min-width: 682px) {
+            .signup-grid-two-column {
+              gap: 2rem !important;
+            }
+          }
           /* Remove all outlines from checkbox */
           input[type="checkbox"] {
             outline: none !important;
@@ -227,6 +260,7 @@ const Signup: React.FC = () => {
             width: 16px !important;
             height: 16px !important;
             position: relative !important;
+            flex-shrink: 0 !important;
           }
           input[type="checkbox"]:focus {
             outline: none !important;
@@ -259,55 +293,85 @@ const Signup: React.FC = () => {
             font-size: 12px !important;
             font-weight: bold !important;
           }
+        @media (min-width: 650px) and (max-width: 680px) {
+  .signup-grid-two-column {
+    gap: 1rem !important;
+  }
+}
+
         `}
       </style>
 
       
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '0',
-          padding: '3rem',
-          width: '100%',
-          maxWidth: '800px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
-        }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: isExtraSmall ? '0.75rem' : '2rem',
+          minHeight: 0,
+          overflow: 'auto',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '0',
+            padding: isExtraSmall ? '1.25rem' : (isSmallScreen ? '2rem' : '3rem'),
+            width: '100%',
+            maxWidth: '800px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+            boxSizing: 'border-box',
+            marginTop: isExtraSmall ? '3rem' : '0rem',
+            marginBottom: isExtraSmall ? '3rem' : '0rem'
+          }}
+        >
      
 
           {/* Signup Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-mono" style={{ 
-              color: 'white', 
-              fontSize: '1.5rem', 
-              fontWeight: '600',
-              marginBottom: '0.5rem',
-              textAlign: 'center',
-            }}>
+            <h2
+              className="aeonik-mono"
+              style={{
+                color: 'white',
+                fontSize: isExtraSmall ? '1.25rem' : '1.5rem',
+                fontWeight: '600',
+                marginBottom: isExtraSmall ? '0.25rem' : '0.5rem',
+                textAlign: 'center',
+              }}
+            >
               CREATE ACCOUNT
             </h2>
             
-            <p className="aeonik-mono" style={{ 
-              color: '#888', 
-              fontSize: '0.9rem', 
-              textAlign: 'center',
-              marginBottom: '2rem'
-            }}>
+            <p
+              className="aeonik-mono"
+              style={{
+                color: '#888',
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                textAlign: 'center',
+                marginBottom: isExtraSmall ? '1rem' : '2rem',
+              }}
+            >
               JOIN AUXIN TODAY
             </p>
 
             {error && (
-              <div className="aeonik-mono" style={{
-                background: 'rgba(255, 0, 0, 0.1)',
-                border: '1px solid rgba(255, 0, 0, 0.3)',
-                borderRadius: '0',
-                padding: '0.75rem',
-                marginBottom: '1rem',
-                color: '#ff6b6b',
-                fontSize: '0.9rem',
-                textAlign: 'center'
-              }}>
+              <div
+                className="aeonik-mono"
+                style={{
+                  background: 'rgba(255, 0, 0, 0.1)',
+                  border: '1px solid rgba(255, 0, 0, 0.3)',
+                  borderRadius: '0',
+                  padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                  marginBottom: isExtraSmall ? '0.75rem' : '1rem',
+                  color: '#ff6b6b',
+                  fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                  textAlign: 'center',
+                }}
+              >
                 {error}
               </div>
             )}
@@ -317,18 +381,20 @@ const Signup: React.FC = () => {
               width: '100%',
               height: '1px',
               background: 'rgba(255, 255, 255, 0.2)',
-              marginBottom: '2rem'
+              marginBottom: isExtraSmall ? '1rem' : '2rem'
             }} />
 
             {/* 2x2 Grid Layout: Name/Email on left, Password/Confirm Password on right */}
-            <div style={{
-              display: 'flex',
-              gap: '2rem',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              marginBottom: '1.5rem'
-            }}>
+            <div
+              className="signup-grid-two-column"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                marginBottom: '1.5rem',
+              }}
+            >
               {/* Left column: Name and Email */}
               <div style={{ flex: 1, minWidth: '260px' }}>
                 {/* Name Field */}
@@ -743,6 +809,7 @@ const Signup: React.FC = () => {
                   appearance: 'none',
                   WebkitAppearance: 'none',
                   MozAppearance: 'none',
+                  flexShrink: 0,
                   marginTop: '2px'
                 }}
               />
@@ -861,14 +928,8 @@ const Signup: React.FC = () => {
                 className="aeonik-mono"
                 style={{ 
                   color: '#39FF14', 
-                  textDecoration: 'none',
+                  textDecoration: 'underline',
                   fontSize: '0.9rem'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.textDecoration = 'underline';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.textDecoration = 'none';
                 }}
               >
                 SIGN IN
