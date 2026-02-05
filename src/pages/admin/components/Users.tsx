@@ -1413,22 +1413,24 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
       )}
 
       {!loading && !error && activeUsers.length > 0 && (
-        <div
-          style={{
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+        <div style={{ overflowX: "auto" }}>
+          <div
+            style={{
+              minWidth: "900px",
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               borderRadius: "0px",
               overflow: "hidden",
             }}
           >
-        {/* Table Header */}
+            {/* Table Header */}
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr 1fr 1fr 1.5fr",
                 padding: "20px 25px",
-            background: "rgba(57, 255, 20, 0.05)",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                background: "rgba(57, 255, 20, 0.05)",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
                 alignItems: "start",
               }}
             >
@@ -1578,8 +1580,8 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
               </div>
             </div>
 
-        {/* Table Rows */}
-        {activeUsers.map((user, index) => (
+            {/* Table Rows */}
+            {activeUsers.map((user, index) => (
               <div
                 key={user.id}
                 style={{
@@ -1800,6 +1802,7 @@ const Users = ({ showBannedByDefault = false }: UsersProps) => {
                 </div>
               </div>
             ))}
+          </div>
         </div>
       )}
 
