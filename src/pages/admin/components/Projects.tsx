@@ -303,7 +303,6 @@ const Projects = () => {
             SEARCH
           </label>
           <Input
-            label=""
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="SEARCH BY NAME, CODE, CLIENT..."
@@ -579,7 +578,7 @@ const Projects = () => {
                   <div className="aeonik-mono" style={{ fontSize: "10px", color: "rgba(255, 255, 255, 0.5)", marginBottom: "3px" }}>
                     PROGRESS
                   </div>
-                  <div className="aeonik-mono" style={{ fontSize: "14px", color: "#FFF" }}>
+                  <div className="aeonik-mono" style={{ fontSize: "14px", color: "#39FF14" }}>
                     {project.progress}%
                   </div>
                 </div>
@@ -619,25 +618,50 @@ const Projects = () => {
                 )}
               </div>
 
-              {/* Progress Bar */}
+              {/* Progress Bar - same segmented style as dashboard */}
               <div style={{ marginBottom: "15px" }}>
-                <div
-                  style={{
-                    height: "4px",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    borderRadius: "0px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${project.progress}%`,
-                      background: getStatusColor(project.status),
-                      transition: "width 0.3s ease",
-                    }}
-                  />
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                  <span className="aeonik-mono" style={{ fontSize: "10px", color: "rgba(255, 255, 255, 0.5)" }}>
+                    PROGRESS
+                  </span>
+                  <span className="aeonik-mono" style={{ fontSize: "12px", color: "#39FF14", fontWeight: 600 }}>
+                    {project.progress}%
+                  </span>
                 </div>
+                {(() => {
+                  const totalSegments = 30;
+                  const progressRatio = project.progress / 100;
+                  const activeSegments = Math.round(progressRatio * totalSegments);
+                  return (
+                    <div
+                      style={{
+                        width: "100%",
+                        padding: "4px 0",
+                        background: "transparent",
+                        borderRadius: "0px",
+                        display: "flex",
+                        gap: "5px",
+                      }}
+                    >
+                      {Array.from({ length: totalSegments }).map((_, index) => {
+                        const filled = index < activeSegments;
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              flex: 1,
+                              height: "100px",
+                              borderRadius: "0px",
+                              background: filled ? "#39FF14" : "rgba(255, 255, 255, 0.25)",
+                              opacity: filled ? 1 : 0.8,
+                              transition: "background 0.3s ease, opacity 0.3s ease",
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Actions */}
