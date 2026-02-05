@@ -11,6 +11,7 @@ const ForgotPassword: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isExtraSmall, setIsExtraSmall] = useState(false);
   
   // Validation states
   const [emailError, setEmailError] = useState('');
@@ -34,6 +35,24 @@ const ForgotPassword: React.FC = () => {
     return () => {
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
+  // Track viewport width for extra-small layout tweaks
+  useEffect(() => {
+    const handleResize = () => {
+      try {
+        setIsExtraSmall(window.innerWidth <= 400);
+      } catch (error) {
+        console.error('Viewport check error (ForgotPassword):', error);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -204,78 +223,110 @@ const ForgotPassword: React.FC = () => {
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #39FF14 !important;
           }
+          /* Extra small screens: prevent input overflow */
+          @media (max-width: 400px) {
+            .forgot-input {
+              box-sizing: border-box !important;
+              max-width: 100% !important;
+            }
+          }
         `}
       </style>
 
       
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '0',
-          padding: '3rem',
-          width: '100%',
-          maxWidth: '450px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
-        }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: isExtraSmall ? '0.75rem' : '2rem',
+          minHeight: 0,
+          overflow: 'auto',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '0',
+            padding: isExtraSmall ? '1.5rem' : '3rem',
+            width: '100%',
+            maxWidth: '450px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+            boxSizing: 'border-box',
+          }}
+        >
      
           {/* Forgot Password Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-mono" style={{ 
-              color: 'white', 
-              fontSize: '1.5rem', 
-              fontWeight: '600',
-              marginBottom: '1rem',
-              textAlign: 'center'
-            }}>
+            <h2
+              className="aeonik-mono"
+              style={{
+                color: 'white',
+                fontSize: isExtraSmall ? '1.25rem' : '1.5rem',
+                fontWeight: '600',
+                marginBottom: isExtraSmall ? '0.5rem' : '1rem',
+                textAlign: 'center',
+              }}
+            >
               RESET PASSWORD
             </h2>
             
-            <p className="aeonik-mono" style={{ 
-              color: '#888', 
-              fontSize: '0.9rem', 
-              textAlign: 'center',
-              marginBottom: '2rem'
-            }}>
+            <p
+              className="aeonik-mono"
+              style={{
+                color: '#888',
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                textAlign: 'center',
+                marginBottom: isExtraSmall ? '1rem' : '2rem',
+              }}
+            >
               ENTER YOUR EMAIL ADDRESS AND WE'LL SEND YOU INSTRUCTIONS TO RESET YOUR PASSWORD
             </p>
 
             {error && (
-              <div className="aeonik-mono" style={{
-                background: 'rgba(255, 0, 0, 0.1)',
-                border: '1px solid rgba(255, 0, 0, 0.3)',
-                borderRadius: '0',
-                padding: '0.75rem',
-                marginBottom: '1rem',
-                color: '#ff6b6b',
-                fontSize: '0.9rem',
-                textAlign: 'center'
-              }}>
+              <div
+                className="aeonik-mono"
+                style={{
+                  background: 'rgba(255, 0, 0, 0.1)',
+                  border: '1px solid rgba(255, 0, 0, 0.3)',
+                  borderRadius: '0',
+                  padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                  marginBottom: isExtraSmall ? '0.75rem' : '1rem',
+                  color: '#ff6b6b',
+                  fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                  textAlign: 'center',
+                }}
+              >
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="aeonik-mono" style={{
-                background: 'rgba(57, 255, 20, 0.1)',
-                border: '1px solid rgba(57, 255, 20, 0.3)',
-                borderRadius: '0',
-                padding: '0.75rem',
-                marginBottom: '1rem',
-                color: '#39FF14',
-                fontSize: '0.9rem',
-                textAlign: 'center'
-              }}>
+              <div
+                className="aeonik-mono"
+                style={{
+                  background: 'rgba(57, 255, 20, 0.1)',
+                  border: '1px solid rgba(57, 255, 20, 0.3)',
+                  borderRadius: '0',
+                  padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                  marginBottom: isExtraSmall ? '0.75rem' : '1rem',
+                  color: '#39FF14',
+                  fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                  textAlign: 'center',
+                }}
+              >
                 {success}
               </div>
             )}
 
             {/* Email Field */}
-            <div style={{ marginBottom: '2rem' }}>
+            <div style={{ marginBottom: isExtraSmall ? '1.5rem' : '2rem' }}>
               <label className="aeonik-mono" style={{ 
                 color: 'white', 
-                fontSize: '0.9rem', 
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem', 
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
