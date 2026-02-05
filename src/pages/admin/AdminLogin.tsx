@@ -13,6 +13,7 @@ const AdminLogin: React.FC = () => {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   
   const navigate = useNavigate();
 
@@ -53,7 +54,14 @@ const AdminLogin: React.FC = () => {
         // Redirect to admin dashboard
         navigate('/admin/dashboard', { replace: true });
       } else {
-        setError((data.error || 'INVALID CREDENTIALS').toUpperCase());
+        // For invalid credentials or other auth failures, show a strong legal warning
+        const baseMessage = (data.error || 'INVALID CREDENTIALS').toUpperCase();
+        const legalWarning =
+          '⚠️ WARNING: RESTRICTED AREA\n' +
+          'UNAUTHORIZED ACCESS IS A PUNISHABLE OFFENSE UNDER SECTION 43 AND SECTION 66 OF THE INFORMATION TECHNOLOGY ACT, 2000 (INDIA).\n' +
+          'VIOLATORS MAY FACE CRIMINAL PROSECUTION, FINES, AND IMPRISONMENT.\n' +
+          'ALL ACCESS ATTEMPTS ARE LOGGED.';
+        setError(`${baseMessage}\n\n${legalWarning}`);
       }
     } catch (err) {
       console.error('🔐 Admin login error:', err);
@@ -62,6 +70,229 @@ const AdminLogin: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Lock admin login to desktop-only (width > 900px)
+  React.useEffect(() => {
+    const handleResize = () => {
+      try {
+        setIsSmallScreen(window.innerWidth <= 900);
+      } catch (err) {
+        console.error('Viewport check error (AdminLogin):', err);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Desktop-only gate: show a refined access denied screen on small widths
+  if (isSmallScreen) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #0a0a0a 0%, #000000 100%)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Animated background grid */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `
+              linear-gradient(rgba(255, 0, 0, 0.03) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255, 0, 0, 0.03) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+            opacity: 0.3,
+            zIndex: 0,
+          }}
+        />
+
+        {/* Content container */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            maxWidth: '600px',
+            width: '100%',
+            textAlign: 'center',
+          }}
+        >
+          {/* Lock icon */}
+          <div
+            style={{
+              marginBottom: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <div
+              style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.05))',
+                border: '2px solid rgba(255, 82, 82, 0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 40px rgba(255, 0, 0, 0.3)',
+              }}
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#ff5252"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1
+            className="aeonik-mono"
+            style={{
+              color: '#ff5252',
+              fontSize: '2.5rem',
+              letterSpacing: '0.3em',
+              fontWeight: 700,
+              marginBottom: '1rem',
+              textTransform: 'uppercase',
+              textShadow: '0 0 20px rgba(255, 82, 82, 0.5)',
+            }}
+          >
+            ACCESS DENIED
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            className="aeonik-mono"
+            style={{
+              color: '#888',
+              fontSize: '0.9rem',
+              marginBottom: '3rem',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Desktop Access Required
+          </p>
+
+          {/* Warning box */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(255, 82, 82, 0.15), rgba(0, 0, 0, 0.8))',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 82, 82, 0.4)',
+              borderRadius: '0px',
+              padding: '2rem',
+              marginBottom: '2rem',
+              boxShadow: '0 20px 60px rgba(255, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            }}
+          >
+            <div
+              className="aeonik-mono"
+              style={{
+                color: '#ff9090',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                marginBottom: '1.5rem',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              <span style={{ fontSize: '1.2rem' }}>⚠</span>
+              WARNING · RESTRICTED ADMIN AREA
+            </div>
+
+            <div
+              className="aeonik-mono"
+              style={{
+                color: '#f6e088',
+                fontSize: '0.7rem',
+                lineHeight: 1.8,
+                marginBottom: '1rem',
+                letterSpacing: '0.05em',
+              }}
+            >
+              UNAUTHORIZED ACCESS IS A PUNISHABLE OFFENSE UNDER SECTION 43 AND SECTION 66 OF THE INFORMATION TECHNOLOGY ACT, 2000 (INDIA).
+            </div>
+
+            <div
+              className="aeonik-mono"
+              style={{
+                color: '#f6e088',
+                fontSize: '0.7rem',
+                lineHeight: 1.8,
+                marginBottom: '1rem',
+                letterSpacing: '0.05em',
+              }}
+            >
+              VIOLATORS MAY FACE CRIMINAL PROSECUTION, FINES, AND IMPRISONMENT.
+            </div>
+
+            <div
+              style={{
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                paddingTop: '1rem',
+                marginTop: '1rem',
+              }}
+            >
+              <div
+                className="aeonik-mono"
+                style={{
+                  color: '#e3e7ef',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                ALL ACCESS ATTEMPTS ARE LOGGED.
+              </div>
+            </div>
+          </div>
+
+          {/* Info message */}
+          <div
+            className="aeonik-mono"
+            style={{
+              color: '#666',
+              fontSize: '0.75rem',
+              letterSpacing: '0.05em',
+              lineHeight: 1.6,
+            }}
+          >
+            This administrative interface requires a desktop environment for security and compliance purposes.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -133,49 +364,77 @@ const AdminLogin: React.FC = () => {
       </style>
 
       
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2.5rem' }}>
           <div style={{
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.95))',
             backdropFilter: 'blur(20px)',
             borderRadius: '0px',
-            padding: '3rem',
+            padding: '3rem 3.25rem',
             width: '100%',
-            maxWidth: '400px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
+            maxWidth: '460px',
+            border: '1px solid rgba(255, 255, 255, 0.14)',
+            boxShadow: '0 32px 80px rgba(0, 0, 0, 0.85)',
+            boxSizing: 'border-box',
           }}>
           {/* Login Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-mono" style={{ 
-              color: 'white', 
-              fontSize: '1.5rem', 
-              marginBottom: '0.5rem',
-              textAlign: 'center'
-            }}>
-              ADMIN LOGIN
-            </h2>
-            
-            <p className="aeonik-mono" style={{ 
-              color: '#888', 
-              fontSize: '0.9rem', 
-              textAlign: 'center',
-              marginBottom: '2rem'
-            }}>
-              ADMINISTRATOR ACCESS
-            </p>
+            {/* Header with badge */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.75rem' }}>
+              <div>
+                <h2 className="aeonik-mono" style={{ 
+                  color: 'white', 
+                  fontSize: '1.4rem', 
+                  marginBottom: '0.25rem',
+                  letterSpacing: '0.15em',
+                }}>
+                  ADMIN LOGIN
+                </h2>
+                <p className="aeonik-mono" style={{ 
+                  color: '#888', 
+                  fontSize: '0.75rem', 
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                }}>
+                  RESTRICTED SYSTEM ACCESS
+                </p>
+              </div>
+              <div
+                className="aeonik-mono"
+                style={{
+                  border: '1px solid rgba(255, 0, 0, 0.7)',
+                  color: '#ff6b6b',
+                  fontSize: '0.7rem',
+                  padding: '0.35rem 0.65rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.18em',
+                  background: 'rgba(255, 0, 0, 0.1)',
+                }}
+              >
+                ALERT
+              </div>
+            </div>
 
             {error && (
-              <div className="aeonik-mono" style={{
-                background: 'rgba(255, 0, 0, 0.1)',
-                border: '1px solid rgba(255, 0, 0, 0.3)',
-                borderRadius: '0px',
-                padding: '0.75rem',
-                marginBottom: '1rem',
-                color: '#ff6b6b',
-                fontSize: '0.9rem',
-                textAlign: 'center'
-              }}>
-                {error}
+              <div
+                className="aeonik-mono"
+                style={{
+                  background: 'rgba(255, 0, 0, 0.08)',
+                  border: '1px solid rgba(255, 0, 0, 0.6)',
+                  borderRadius: '0px',
+                  padding: '0.9rem',
+                  marginBottom: '1.25rem',
+                  color: '#ff6b6b',
+                  fontSize: '0.85rem',
+                  textAlign: 'left',
+                  textTransform: 'uppercase',
+                  boxShadow: '0 0 25px rgba(255, 0, 0, 0.25)',
+                }}
+              >
+                {error.split('\n').map((line, idx) => (
+                  <div key={idx} style={{ marginBottom: idx === error.split('\n').length - 1 ? 0 : 4 }}>
+                    {line}
+                  </div>
+                ))}
               </div>
             )}
 
