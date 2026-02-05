@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import useSound from '../hooks/useSound';
 import ScrambleText from '../components/Scramble';
 import '../styles/fonts.css';
 import '../styles/Main.css';
@@ -19,6 +20,7 @@ const Login: React.FC = () => {
   const [isExtraSmall, setIsExtraSmall] = useState(false);
 
   const { login, googleLogin, user } = useAuth();
+  const playClick = useSound('/src/assets/Sound/Click1.mp3', { volume: 0.4 });
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -659,6 +661,11 @@ const Login: React.FC = () => {
                     marginBottom: isExtraSmall ? '0.35rem' : '0.5rem',
                     textTransform: 'uppercase',
                   }}
+                  onClick={() => {
+                    if (!isLoading) {
+                      playClick();
+                    }
+                  }}
                   onMouseEnter={() => {
                
                   }}
@@ -698,7 +705,10 @@ const Login: React.FC = () => {
                 {/* Google Login Button */}
                 <button
                   type="button"
-                  onClick={googleLogin}
+                  onClick={() => {
+                    playClick();
+                    googleLogin();
+                  }}
                   className="aeonik-mono"
                   style={{
                     width: '100%',

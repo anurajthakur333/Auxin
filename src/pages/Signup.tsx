@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ScrambleText from '../components/Scramble';
 import '../styles/fonts.css';
 import '../styles/Main.css';
+import useSound from '../hooks/useSound';
 
 const Signup: React.FC = () => {
   const [name, setName] = useState('');
@@ -25,6 +26,7 @@ const Signup: React.FC = () => {
   const { signup, googleLogin, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const playClick = useSound('/src/assets/Sound/Click1.mp3', { volume: 0.4 });
 
   // Add global error handler
   useEffect(() => {
@@ -848,6 +850,11 @@ const Signup: React.FC = () => {
                 marginBottom: '1.5rem',
                 textTransform: 'uppercase'
               }}
+              onClick={() => {
+                if (!isLoading) {
+                  playClick();
+                }
+              }}
               onMouseEnter={() => {
                 if (!isLoading) {
 
@@ -877,7 +884,10 @@ const Signup: React.FC = () => {
             {/* Google Signup Button */}
             <button
               type="button"
-              onClick={googleLogin}
+              onClick={() => {
+                playClick();
+                googleLogin();
+              }}
               className="aeonik-mono"
               style={{
                 width: '100%',

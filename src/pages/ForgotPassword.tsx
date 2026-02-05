@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ScrambleText from '../components/Scramble';
 import '../styles/fonts.css';
 import '../styles/Main.css';
+import useSound from '../hooks/useSound';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ const ForgotPassword: React.FC = () => {
   
   const { user } = useAuth();
   const navigate = useNavigate();
+  const playClick = useSound('/src/assets/Sound/Click1.mp3', { volume: 0.4 });
 
   // Add global error handler
   useEffect(() => {
@@ -428,6 +430,11 @@ const ForgotPassword: React.FC = () => {
                 transition: 'all 0.3s ease',
                 opacity: (isLoading || success) ? 0.7 : 1,
                 marginBottom: '1rem'
+              }}
+              onClick={() => {
+                if (!isLoading && !success) {
+                  playClick();
+                }
               }}
               onMouseEnter={() => {
                 if (!isLoading) {

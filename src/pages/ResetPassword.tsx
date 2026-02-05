@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ScrambleText from '../components/Scramble';
 import '../styles/fonts.css';
 import '../styles/Main.css';
+import useSound from '../hooks/useSound';
 
 const ResetPassword: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -25,6 +26,7 @@ const ResetPassword: React.FC = () => {
   
   const { user } = useAuth();
   const navigate = useNavigate();
+  const playClick = useSound('/src/assets/Sound/Click1.mp3', { volume: 0.4 });
 
   // Redirect if already logged in
   useEffect(() => {
@@ -546,6 +548,11 @@ const ResetPassword: React.FC = () => {
                 transition: 'all 0.3s ease',
                 opacity: isLoading || success ? 0.7 : 1,
                 marginBottom: isExtraSmall ? '0.75rem' : '1rem'
+              }}
+              onClick={() => {
+                if (!isLoading && !success) {
+                  playClick();
+                }
               }}
             >
               {isLoading ? (
