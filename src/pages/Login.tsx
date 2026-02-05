@@ -16,7 +16,8 @@ const Login: React.FC = () => {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+  const [isExtraSmall, setIsExtraSmall] = useState(false);
+
   const { login, googleLogin, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -126,21 +127,23 @@ const Login: React.FC = () => {
     }
   }, []);
 
-  // Track viewport width for responsive inline styles
+  // Track viewport width for responsive inline styles (mobile <= 713px, extra small <= 400px)
   useEffect(() => {
-    const checkMobile = () => {
+    const checkViewport = () => {
       try {
-        setIsMobile(window.innerWidth <= 693);
+        const w = window.innerWidth;
+        setIsMobile(w <= 713);
+        setIsExtraSmall(w <= 400);
       } catch (error) {
         console.error('Viewport check error:', error);
       }
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    checkViewport();
+    window.addEventListener('resize', checkViewport);
 
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('resize', checkViewport);
     };
   }, []);
 
@@ -291,40 +294,56 @@ const Login: React.FC = () => {
             font-size: 12px !important;
             font-weight: bold !important;
           }
+          /* Extra small screens: prevent overflow */
+          @media (max-width: 400px) {
+            .login-input {
+              box-sizing: border-box !important;
+              max-width: 100% !important;
+            }
+          }
         `}
       </style>
 
       
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: isExtraSmall ? '0.75rem' : '2rem',
+        minHeight: 0,
+        overflow: 'auto',
+      }}>
         <div style={{
           background: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(20px)',
           borderRadius: '0px',
-          padding: '3rem',
+          padding: isExtraSmall ? '1.25rem' : (isMobile ? '2rem' : '3rem'),
           width: '100%',
           maxWidth: '800px',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+          boxSizing: 'border-box',
         }}>
           {/* Logo */}
 
           {/* Login Form */}
           <form onSubmit={handleSubmit}>
-            <h2 className="aeonik-mono" style={{ 
-              color: 'white', 
-              fontSize: '1.5rem', 
-              marginBottom: '0.5rem',
+            <h2 className="aeonik-mono" style={{
+              color: 'white',
+              fontSize: isExtraSmall ? '1.25rem' : '1.5rem',
+              marginBottom: isExtraSmall ? '0.25rem' : '0.5rem',
               textAlign: 'center',
-              fontWeight: '600'
+              fontWeight: '600',
             }}>
               LOGIN
             </h2>
-            
-            <p className="aeonik-mono" style={{ 
-              color: '#888', 
-              fontSize: '0.9rem', 
+
+            <p className="aeonik-mono" style={{
+              color: '#888',
+              fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
               textAlign: 'center',
-              marginBottom: '2rem'
+              marginBottom: isExtraSmall ? '1rem' : '2rem',
             }}>
               WELCOME BACK TO AUXIN
             </p>
@@ -334,11 +353,11 @@ const Login: React.FC = () => {
                 background: 'rgba(57, 255, 20, 0.1)',
                 border: '1px solid rgba(57, 255, 20, 0.3)',
                 borderRadius: '0px',
-                padding: '0.75rem',
-                marginBottom: '1rem',
+                padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                marginBottom: isExtraSmall ? '0.75rem' : '1rem',
                 color: '#39FF14',
-                fontSize: '0.9rem',
-                textAlign: 'center'
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                textAlign: 'center',
               }}>
                 {successMessage}
               </div>
@@ -349,11 +368,11 @@ const Login: React.FC = () => {
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
                 borderRadius: '0px',
-                padding: '0.75rem',
-                marginBottom: '1rem',
+                padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                marginBottom: isExtraSmall ? '0.75rem' : '1rem',
                 color: '#ff6b6b',
-                fontSize: '0.9rem',
-                textAlign: 'center'
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                textAlign: 'center',
               }}>
                 {error}
               </div>
@@ -364,7 +383,7 @@ const Login: React.FC = () => {
               width: '100%',
               height: '1px',
               background: 'rgba(255, 255, 255, 0.2)',
-              marginBottom: '2rem'
+              marginBottom: isExtraSmall ? '1rem' : '2rem',
             }} />
 
             {/* Layout: left = email/password, right = Google login */}
@@ -372,21 +391,22 @@ const Login: React.FC = () => {
               style={{
                 display: 'flex',
                 flexDirection: isMobile ? 'column' : 'row',
-                gap: isMobile ? '1rem' : '2rem',
+                gap: isExtraSmall ? '0.75rem' : (isMobile ? '1rem' : '2rem'),
                 alignItems: isMobile ? 'stretch' : 'flex-start',
                 justifyContent: 'space-between',
                 flexWrap: isMobile ? 'nowrap' : 'wrap',
+                minWidth: 0,
               }}
             >
               {/* Left side: Email and Password fields */}
-              <div style={{ flex: 1, minWidth: '260px' }}>
+              <div style={{ flex: 1, minWidth: isExtraSmall ? 0 : '260px' }}>
                 {/* Email Field */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-mono" style={{ 
-                color: 'white', 
-                fontSize: '0.9rem', 
+            <div style={{ marginBottom: isExtraSmall ? '1rem' : '1.5rem' }}>
+              <label className="aeonik-mono" style={{
+                color: 'white',
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                 marginBottom: '0.5rem',
-                display: 'block'
+                display: 'block',
               }}>
                 EMAIL
               </label>
@@ -461,12 +481,12 @@ const Login: React.FC = () => {
             </div>
 
             {/* Password Field */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label className="aeonik-mono" style={{ 
-                color: 'white', 
-                fontSize: '0.9rem', 
+            <div style={{ marginBottom: isExtraSmall ? '1rem' : '1.5rem' }}>
+              <label className="aeonik-mono" style={{
+                color: 'white',
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                 marginBottom: '0.5rem',
-                display: 'block'
+                display: 'block',
               }}>
                 PASSWORD
               </label>
@@ -582,11 +602,11 @@ const Login: React.FC = () => {
             </div>
 
                 {/* Remember Me */}
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  marginBottom: '1.5rem',
-                  gap: '0.5rem'
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: isExtraSmall ? '1rem' : '1.5rem',
+                  gap: '0.5rem',
                 }}>
                   <input
                     type="checkbox"
@@ -601,13 +621,13 @@ const Login: React.FC = () => {
                       boxShadow: 'none',
                       appearance: 'none',
                       WebkitAppearance: 'none',
-                      MozAppearance: 'none'
+                      MozAppearance: 'none',
                     }}
                   />
-                  <label htmlFor="remember" className="aeonik-mono" style={{ 
-                    color: 'white', 
-                    fontSize: '0.9rem',
-                    cursor: 'pointer'
+                  <label htmlFor="remember" className="aeonik-mono" style={{
+                    color: 'white',
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
+                    cursor: 'pointer',
                   }}>
                     REMEMBER ME
                   </label>
@@ -620,17 +640,17 @@ const Login: React.FC = () => {
                   className="aeonik-mono"
                   style={{
                     width: '100%',
-                    padding: '0.75rem',
+                    padding: isExtraSmall ? '0.65rem' : '0.75rem',
                     borderRadius: '0px',
                     border: 'none',
                     background: 'linear-gradient(135deg, #39FF14, #00cc00)',
                     color: '#000',
-                    fontSize: '1rem',
+                    fontSize: isExtraSmall ? '0.9rem' : '1rem',
                     cursor: isLoading ? 'not-allowed' : 'pointer',
                     transition: 'all 0.3s ease',
                     opacity: isLoading ? 0.7 : 1,
-                    marginBottom: '0.5rem',
-                    textTransform: 'uppercase'
+                    marginBottom: isExtraSmall ? '0.35rem' : '0.5rem',
+                    textTransform: 'uppercase',
                   }}
                   onMouseEnter={() => {
                
@@ -675,18 +695,18 @@ const Login: React.FC = () => {
                   className="aeonik-mono"
                   style={{
                     width: '100%',
-                    paddingTop: '0.75rem',
-                    paddingRight: '0.75rem',
-                    paddingBottom: '0.75rem',
+                    paddingTop: isExtraSmall ? '0.65rem' : '0.75rem',
+                    paddingRight: isExtraSmall ? '0.5rem' : '0.75rem',
+                    paddingBottom: isExtraSmall ? '0.65rem' : '0.75rem',
                     paddingLeft: 0,
                     borderRadius: '0px',
                     border: '1px solid rgba(255, 255, 255, 0.2)',
                     background: 'transparent',
                     color: 'white',
-                    fontSize: '0.9rem',
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    marginBottom: '1rem',
+                    marginBottom: isExtraSmall ? '0.5rem' : '1rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -716,21 +736,21 @@ const Login: React.FC = () => {
             </div>
 
             {/* Forgot Password */}
-            <div style={{ 
-              marginTop: '1.5rem', 
-              marginBottom: '1rem',
-              textAlign: isMobile ? 'center' : 'left'
+            <div style={{
+              marginTop: isExtraSmall ? '1rem' : '1.5rem',
+              marginBottom: isExtraSmall ? '0.75rem' : '1rem',
+              textAlign: isMobile ? 'center' : 'left',
             }}>
               <Link 
                 to="/forgot-password" 
                 className="aeonik-mono"
-                style={{ 
-                  color: '#39FF14', 
+                style={{
+                  color: '#39FF14',
                   textDecoration: 'none',
-                  fontSize: '0.9rem',
+                  fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                   display: isMobile ? 'inline-block' : 'flex',
                   justifyContent: isMobile ? 'center' : 'flex-start',
-                  alignItems: isMobile ? 'center' : 'flex-start'
+                  alignItems: isMobile ? 'center' : 'flex-start',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.textDecoration = 'underline';
@@ -745,18 +765,18 @@ const Login: React.FC = () => {
 
             {/* Sign Up Link */}
             <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-              <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem', display: 'flex' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: isExtraSmall ? '0.8rem' : '0.9rem', display: 'flex' }}>
                 {' '}
               </span>
-              <span className="aeonik-mono" style={{ color: '#39FF14', fontSize: '0.9rem' }}>
-                DON'T HAVE AN ACCOUNT?{' '}
+              <span className="aeonik-mono" style={{ fontSize: isExtraSmall ? '0.8rem' : '0.9rem' }}>
+                <span style={{ color: '#888' }}>DON'T HAVE AN ACCOUNT? </span>
                 <Link 
                   to="/signup" 
                   className="aeonik-mono"
-                  style={{ 
-                    color: '#39FF14', 
+                  style={{
+                    color: '#39FF14',
                     textDecoration: 'underline',
-                    fontSize: '0.9rem',
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                   }}
                 >
                   CREATE ACCOUNT
