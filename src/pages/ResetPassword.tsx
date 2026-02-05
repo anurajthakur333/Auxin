@@ -17,6 +17,7 @@ const ResetPassword: React.FC = () => {
   const [userEmail, setUserEmail] = useState('');
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isConfirmFocused, setIsConfirmFocused] = useState(false);
+  const [isExtraSmall, setIsExtraSmall] = useState(false);
   
   // Validation states
   const [passwordError, setPasswordError] = useState('');
@@ -61,6 +62,24 @@ const ResetPassword: React.FC = () => {
 
     validateToken();
   }, [token]);
+
+  // Track viewport width for extra-small layout tweaks (<= 400px)
+  useEffect(() => {
+    const handleResize = () => {
+      try {
+        setIsExtraSmall(window.innerWidth <= 400);
+      } catch (error) {
+        console.error('Viewport check error (ResetPassword):', error);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Validation functions
   const validatePassword = (password: string): string => {
@@ -143,13 +162,13 @@ const ResetPassword: React.FC = () => {
   if (!isTokenValid) {
     return (
       <div style={{ 
-        display: "flex", 
-        flexDirection: "column", 
-        minHeight: "100vh", 
-        background: "#000",
-        position: "relative",
-        zIndex: 1
-      }}>
+      display: "flex", 
+      flexDirection: "column", 
+      minHeight: "100vh", 
+      background: "#000",
+      position: "relative",
+      zIndex: 1
+    }}>
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
           <div style={{
             background: 'rgba(255, 255, 255, 0.05)',
@@ -256,28 +275,44 @@ const ResetPassword: React.FC = () => {
             color: #39FF14 !important;
             background-color: rgba(255, 255, 255, 0.05) !important;
           }
+          /* Extra small screens: prevent input overflow */
+          @media (max-width: 400px) {
+            .reset-input {
+              box-sizing: border-box !important;
+              max-width: 100% !important;
+            }
+          }
         `}
       </style>
 
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ 
+        flex: 1, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: isExtraSmall ? '0.75rem' : '2rem',
+        minHeight: 0,
+        overflow: 'auto'
+      }}>
         <div style={{
           background: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(20px)',
           borderRadius: '0',
-          padding: '3rem',
+          padding: isExtraSmall ? '1.5rem' : '3rem',
           width: '100%',
           maxWidth: '450px',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)'
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+          boxSizing: 'border-box'
         }}>
      
           {/* Reset Password Form */}
           <form onSubmit={handleSubmit}>
             <h2 className="aeonik-mono" style={{ 
               color: 'white', 
-              fontSize: '1.5rem', 
+              fontSize: isExtraSmall ? '1.25rem' : '1.5rem', 
               fontWeight: '400',
-              marginBottom: '0.5rem',
+              marginBottom: isExtraSmall ? '0.5rem' : '0.5rem',
               textAlign: 'center'
             }}>
               CREATE NEW PASSWORD
@@ -285,9 +320,9 @@ const ResetPassword: React.FC = () => {
             
             <p className="aeonik-mono" style={{ 
               color: '#888', 
-              fontSize: '0.9rem', 
+              fontSize: isExtraSmall ? '0.8rem' : '0.9rem', 
               textAlign: 'center',
-              marginBottom: '2rem'
+              marginBottom: isExtraSmall ? '1.5rem' : '2rem'
             }}>
               {userEmail ? `ENTER A NEW PASSWORD FOR ${userEmail.toUpperCase()}` : 'ENTER YOUR NEW PASSWORD BELOW'}
             </p>
@@ -297,10 +332,10 @@ const ResetPassword: React.FC = () => {
                 background: 'rgba(255, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 0, 0, 0.3)',
                 borderRadius: '0',
-                padding: '0.75rem',
-                marginBottom: '1rem',
+                padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                marginBottom: isExtraSmall ? '0.75rem' : '1rem',
                 color: '#ff6b6b',
-                fontSize: '0.9rem',
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                 textAlign: 'center'
               }}>
                 {error.toUpperCase()}
@@ -312,10 +347,10 @@ const ResetPassword: React.FC = () => {
                 background: 'rgba(57, 255, 20, 0.1)',
                 border: '1px solid rgba(57, 255, 20, 0.3)',
                 borderRadius: '0',
-                padding: '0.75rem',
-                marginBottom: '1rem',
+                padding: isExtraSmall ? '0.5rem' : '0.75rem',
+                marginBottom: isExtraSmall ? '0.75rem' : '1rem',
                 color: '#39FF14',
-                fontSize: '0.9rem',
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                 textAlign: 'center'
               }}>
                 {success.toUpperCase()}
@@ -323,10 +358,10 @@ const ResetPassword: React.FC = () => {
             )}
 
             {/* Password Field */}
-            <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: isExtraSmall ? '1.25rem' : '1.5rem' }}>
               <label className="aeonik-mono" style={{ 
                 color: 'white', 
-                fontSize: '0.9rem', 
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem', 
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
@@ -359,7 +394,7 @@ const ResetPassword: React.FC = () => {
                     border: isPasswordFocused ? '1px solid #39FF14' : '1px solid rgba(255, 255, 255, 0.2)',
                     background: 'rgba(255, 255, 255, 0.05)',
                     color: isPasswordFocused ? '#39FF14' : 'white',
-                    fontSize: '0.9rem',
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                     outline: 'none',
                     transition: 'all 0.3s ease',
                     caretColor: '#39FF14'
@@ -382,7 +417,7 @@ const ResetPassword: React.FC = () => {
                     color: '#888',
                     pointerEvents: 'none',
                     whiteSpace: 'nowrap',
-                    fontSize: '0.9rem'
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem'
                   }}>
                     <ScrambleText
                       trigger="load"
@@ -393,7 +428,7 @@ const ResetPassword: React.FC = () => {
                       fps={30}
                       duration={1000}
                     >
-                      Enter new password
+                      ENTER NEW PASSWORD
                     </ScrambleText>
                   </div>
                 )}
@@ -411,10 +446,10 @@ const ResetPassword: React.FC = () => {
             </div>
 
             {/* Confirm Password Field */}
-            <div style={{ marginBottom: '2rem' }}>
+            <div style={{ marginBottom: isExtraSmall ? '1.5rem' : '2rem' }}>
               <label className="aeonik-mono" style={{ 
                 color: 'white', 
-                fontSize: '0.9rem', 
+                fontSize: isExtraSmall ? '0.8rem' : '0.9rem', 
                 marginBottom: '0.5rem',
                 display: 'block'
               }}>
@@ -443,7 +478,7 @@ const ResetPassword: React.FC = () => {
                     border: isConfirmFocused ? '1px solid #39FF14' : '1px solid rgba(255, 255, 255, 0.2)',
                     background: 'rgba(255, 255, 255, 0.05)',
                     color: isConfirmFocused ? '#39FF14' : 'white',
-                    fontSize: '0.9rem',
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem',
                     outline: 'none',
                     transition: 'all 0.3s ease',
                     caretColor: '#39FF14'
@@ -466,7 +501,7 @@ const ResetPassword: React.FC = () => {
                     color: '#888',
                     pointerEvents: 'none',
                     whiteSpace: 'nowrap',
-                    fontSize: '0.9rem'
+                    fontSize: isExtraSmall ? '0.8rem' : '0.9rem'
                   }}>
                     <ScrambleText
                       trigger="load"
@@ -477,7 +512,7 @@ const ResetPassword: React.FC = () => {
                       fps={30}
                       duration={1000}
                     >
-                      Confirm new password
+                      CONFIRM PASSWORD
                     </ScrambleText>
                   </div>
                 )}
@@ -501,16 +536,16 @@ const ResetPassword: React.FC = () => {
               className="aeonik-mono"
               style={{
                 width: '100%',
-                padding: '0.75rem',
+                padding: isExtraSmall ? '0.65rem' : '0.75rem',
                 borderRadius: '0',
                 border: 'none',
                 background: 'linear-gradient(135deg, #39FF14, #00cc00)',
                 color: '#000',
-                fontSize: '1rem',
+                fontSize: isExtraSmall ? '0.9rem' : '1rem',
                 cursor: isLoading || success ? 'not-allowed' : 'pointer',
                 transition: 'all 0.3s ease',
                 opacity: isLoading || success ? 0.7 : 1,
-                marginBottom: '1rem'
+                marginBottom: isExtraSmall ? '0.75rem' : '1rem'
               }}
             >
               {isLoading ? (
@@ -527,14 +562,14 @@ const ResetPassword: React.FC = () => {
                   fps={30}
                   duration={800}
                 >
-                  R  E  S  E  T     P  A  S  S  W  O  R  D
+                  RESET PASSWORD
                 </ScrambleText>
               )}
             </button>
 
             {/* Back to Login Link */}
             <div style={{ textAlign: 'center' }}>
-              <span className="aeonik-mono" style={{ color: '#888', fontSize: '0.9rem' }}>
+              <span className="aeonik-mono" style={{ color: '#888', fontSize: isExtraSmall ? '0.8rem' : '0.9rem' }}>
                 REMEMBER YOUR PASSWORD?{' '}
               </span>
               <Link 
@@ -543,7 +578,7 @@ const ResetPassword: React.FC = () => {
                 style={{ 
                   color: '#39FF14', 
                   textDecoration: 'none',
-                  fontSize: '0.9rem'
+                  fontSize: isExtraSmall ? '0.8rem' : '0.9rem'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.textDecoration = 'underline';
